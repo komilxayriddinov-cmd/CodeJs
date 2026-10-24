@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeJS — Brauzerda kod laboratoriyasi</title>
+  <meta name="description" content="CodeJS — brauzerda JavaScript, HTML va CSS o'rganish: darsliklar, 200+ topshiriq, jonli kod muharriri va sinf o'yinlari." />
+  <meta name="theme-color" content="#0a0e1a" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="CodeJS" />
+  <meta property="og:title" content="CodeJS — Brauzerda JS, HTML va CSS o'rganing" />
+  <meta property="og:description" content="Darsliklar, 200+ topshiriq, jonli kod muharriri va sinf o'yinlari. O'rnatish shart emas — brauzerning o'zida ishlaydi." />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Splash: sessiyada faqat bir marta ko'rsatilsin -->
+  <script>
+    try {
+      if (sessionStorage.getItem('codejs.splashed') === '1') {
+        document.documentElement.classList.add('no-splash');
+      }
+    } catch(e) {}
+  </script>
+
+  <style>
+    html.no-splash #splash { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SPLASH SCREEN
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="splash">
+  <div class="splash-bg-grid"></div>
+  <div class="splash-content">
+    <div class="splash-logo">
+      <!-- Animated brackets -->
+      <span class="splash-bracket splash-bracket-left">{</span>
+      <span class="splash-bracket splash-bracket-right">}</span>
+
+      <!-- Lightning bolt -->
+      <div class="splash-bolt">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bolt-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#00d4ff"/>
+              <stop offset="50%" style="stop-color:#a855f7"/>
+              <stop offset="100%" style="stop-color:#ec4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z" fill="url(#bolt-grad)"/>
+        </svg>
+      </div>
+
+      <!-- Orbiting particles -->
+      <div class="splash-orbit">
+        <div class="splash-particle"></div>
+        <div class="splash-particle"></div>
+        <div class="splash-particle"></div>
+      </div>
+    </div>
+
+    <div class="splash-title">
+      <span class="ch code-part" style="--i:0; animation-delay:0.4s">c</span>
+      <span class="ch code-part" style="--i:1; animation-delay:0.45s">o</span>
+      <span class="ch code-part" style="--i:2; animation-delay:0.5s">d</span>
+      <span class="ch code-part" style="--i:3; animation-delay:0.55s">e</span>
+      <span class="ch js-part" style="--i:4; animation-delay:0.65s">J</span>
+      <span class="ch js-part" style="--i:5; animation-delay:0.7s">S</span>
+    </div>
+
+    <div class="splash-tagline">brauzerda kod yozing — hech narsa o'rnatmang</div>
+
+    <div class="splash-loader">
+      <div class="splash-loader-bar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NAVBAR
+     ═══════════════════════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand" id="nav-brand-home">
+    <div class="nav-brand-icon">{}</div>
+    <span><span class="code">code</span><span class="js">JS</span></span>
+  </div>
+
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#bosh-sahifa" class="active" data-nav="bosh-sahifa" data-uz="Bosh sahifa" data-en="Home" data-ru="Главная">Bosh sahifa</a></li>
+    <li><a href="#xususiyatlar" data-nav="xususiyatlar" data-uz="Xususiyatlar" data-en="Features" data-ru="Функции">Xususiyatlar</a></li>
+    <li><a href="#darsliklar" data-nav="darsliklar" data-uz="Darsliklar" data-en="Lessons" data-ru="Уроки">Darsliklar</a></li>
+    <li><a href="#muharrir" data-nav="muharrir" data-uz="Muharrir" data-en="Editor" data-ru="Редактор">Muharrir</a></li>
+    <li><a href="#oyinlar" data-nav="oyinlar" data-uz="O'yinlar" data-en="Games" data-ru="Игры">O'yinlar</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <!-- Coin Badge (visible when logged in - click to open shop) -->
+    <div class="coin-badge" id="nav-coin-badge" style="display:none; cursor:pointer;" onclick="openCoinShop()" title="Coin Do'konini ochish">
+      <span class="coin-icon">🪙</span>
+      <span id="nav-coins-count">0</span>
+    </div>
+
+    <!-- Coin Shop Button -->
+    <button class="btn btn-secondary" onclick="openCoinShop()" style="padding:7px 14px; font-size:13px; border-color:rgba(251, 191, 36, 0.4); color:var(--accent-yellow); display:inline-flex; align-items:center; gap:6px;">
+      <span>🛒</span> <span data-uz="Do'kon" data-en="Shop" data-ru="Магазин">Do'kon</span>
+    </button>
+
+    <!-- Auth Container: Login Button OR User Profile -->
+    <div id="nav-auth-container">
+      <button class="nav-auth-btn" id="nav-login-btn" onclick="openAuthModal('login')">
+        🔐 <span data-uz="Kirish" data-en="Login" data-ru="Войти">Kirish</span>
+      </button>
+      
+      <div class="nav-user" id="nav-user-profile" style="display:none;" onclick="toggleUserDropdown(event)">
+        <div class="nav-avatar" id="nav-avatar">A</div>
+        <div class="nav-user-info">
+          <div class="nav-user-name" id="nav-username">Foydalanuvchi</div>
+          <div class="nav-user-coins">🪙 <span id="nav-user-coins-val">0</span></div>
+        </div>
+        
+        <!-- User Dropdown Menu -->
+        <div class="user-dropdown" id="user-dropdown">
+          <div class="dropdown-header">
+            <div class="dropdown-header-name" id="dropdown-name">Foydalanuvchi</div>
+            <div class="dropdown-header-email" id="dropdown-email">user@codejs.uz</div>
+            <div class="dropdown-coins">🪙 <span id="dropdown-coins-val">0</span> CodeJS Coins</div>
+          </div>
+          <button class="dropdown-item" onclick="openProfileModal()">
+            <span>👤</span> <span data-uz="Mening profilim" data-en="My Profile" data-ru="Мой профиль">Mening profilim</span>
+          </button>
+          <button class="dropdown-item" onclick="openCoinShop()">
+            <span>🛒</span> <span data-uz="Coin Do'koni" data-en="Coin Shop" data-ru="Магазин монет">Coin Do'koni</span>
+          </button>
+          <a href="admin.html" class="dropdown-item" id="admin-dropdown-link" style="display:none; text-decoration:none;">
+            <span>⚙️</span> <span data-uz="Admin Panel" data-en="Admin Panel" data-ru="Панель администратора">Admin Panel</span>
+          </a>
+          <button class="dropdown-item" onclick="claimDailyReward()">
+            <span>🎁</span> <span data-uz="Kunlik bonus (+50 🪙)" data-en="Daily Bonus (+50 🪙)" data-ru="Ежедневный бонус (+50 🪙)">Kunlik bonus (+50 🪙)</span>
+          </button>
+          <button class="dropdown-item danger" onclick="logoutUser()">
+            <span>🚪</span> <span data-uz="Chiqish" data-en="Logout" data-ru="Выйти">Chiqish</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <select class="nav-lang-select" id="lang-select">
+      <option value="uz">🇺🇿 O'zbekcha</option>
+      <option value="en">🇬🇧 English</option>
+      <option value="ru">🇷🇺 Русский</option>
+    </select>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">🌙</button>
+    <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     HERO SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="hero" id="bosh-sahifa">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-glow-3"></div>
+
+    <div class="hero-particles" id="hero-particles"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      <span data-uz="v2.0 — Yangilangan platforma" data-en="v2.0 — Updated platform" data-ru="v2.0 — Обновлённая платформа">v2.0 — Yangilangan platforma</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span data-uz="Brauzerda" data-en="Learn" data-ru="Изучайте">Brauzerda</span>
+      <br />
+      <span class="gradient-text" data-uz="JavaScript o'rganing" data-en="JavaScript in Browser" data-ru="JavaScript в браузере">JavaScript o'rganing</span>
+    </h1>
+
+    <p class="hero-subtitle" data-uz="Darsliklar, 200+ topshiriq, jonli kod muharriri va sinf o'yinlari. Hech narsa o'rnatish shart emas — brauzeringizning o'zida ishlaydi." data-en="Lessons, 200+ tasks, live code editor, and classroom games. No installation required — works right in your browser." data-ru="Уроки, 200+ заданий, живой редактор кода и классные игры. Установка не требуется — работает прямо в браузере.">
+      Darsliklar, 200+ topshiriq, jonli kod muharriri va sinf o'yinlari. Hech narsa o'rnatish shart emas — brauzeringizning o'zida ishlaydi.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="scrollToSection('darsliklar')" data-uz="📚 Darsliklarni boshlash" data-en="📚 Start Learning" data-ru="📚 Начать обучение">
+        📚 Darsliklarni boshlash
+      </button>
+      <button class="btn btn-secondary" onclick="scrollToSection('muharrir')" data-uz="⚡ Kod yozish" data-en="⚡ Write Code" data-ru="⚡ Писать код">
+        ⚡ Kod yozish
+      </button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-value" id="stat-lessons">0</div>
+        <div class="hero-stat-label" data-uz="Darsliklar" data-en="Lessons" data-ru="Уроки">Darsliklar</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value" id="stat-tasks">0</div>
+        <div class="hero-stat-label" data-uz="Topshiriqlar" data-en="Tasks" data-ru="Задания">Topshiriqlar</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value" id="stat-games">0</div>
+        <div class="hero-stat-label" data-uz="O'yinlar" data-en="Games" data-ru="Игры">O'yinlar</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value" id="stat-users">0</div>
+        <div class="hero-stat-label" data-uz="Foydalanuvchilar" data-en="Users" data-ru="Пользователи">Foydalanuvchilar</div>
+      </div>
+    </div>
+
+    <div class="hero-code-preview">
+      <div class="code-window">
+        <div class="code-window-header">
+          <div class="code-window-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="code-window-tab">
+            <span>📄</span> app.js
+          </div>
+          <div style="width:48px"></div>
+        </div>
+        <div class="code-window-body" id="typing-code">
+          <!-- Typed code will appear here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FEATURES SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section" id="xususiyatlar">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label" data-uz="Xususiyatlar" data-en="Features" data-ru="Функции">Xususiyatlar</div>
+      <h2 class="section-title" data-uz="Nima uchun CodeJS?" data-en="Why CodeJS?" data-ru="Почему CodeJS?">Nima uchun <span class="gradient-text">CodeJS?</span></h2>
+      <p class="section-desc" data-uz="Zamonaviy vositalar, interaktiv darsliklar va o'yin orqali o'rganish — hammasi bitta platformada." data-en="Modern tools, interactive lessons, and learning through games — all in one platform." data-ru="Современные инструменты, интерактивные уроки и обучение через игры — всё на одной платформе.">
+        Zamonaviy vositalar, interaktiv darsliklar va o'yin orqali o'rganish — hammasi bitta platformada.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon cyan">⚡</div>
+        <h3 class="feature-title" data-uz="Jonli kod muharriri" data-en="Live Code Editor" data-ru="Живой редактор кода">Jonli kod muharriri</h3>
+        <p class="feature-desc" data-uz="HTML, CSS va JavaScript ni yozing — natija bir zumda ko'ring. Hech narsa o'rnatish kerak emas." data-en="Write HTML, CSS, and JavaScript — see results instantly. No installation needed." data-ru="Пишите HTML, CSS и JavaScript — результат виден мгновенно. Установка не нужна.">
+          HTML, CSS va JavaScript ni yozing — natija bir zumda ko'ring. Hech narsa o'rnatish kerak emas.
+        </p>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon purple">📚</div>
+        <h3 class="feature-title" data-uz="Bosqichma-bosqich darsliklar" data-en="Step-by-step Lessons" data-ru="Пошаговые уроки">Bosqichma-bosqich darsliklar</h3>
+        <p class="feature-desc" data-uz="Noldan professional darajagacha — har bir mavzu tushuntirish va amaliy mashqlar bilan." data-en="From zero to pro — each topic with explanations and practical exercises." data-ru="От нуля до профессионала — каждая тема с объяснениями и практическими упражнениями.">
+          Noldan professional darajagacha — har bir mavzu tushuntirish va amaliy mashqlar bilan.
+        </p>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon pink">🎮</div>
+        <h3 class="feature-title" data-uz="O'yin orqali o'rganish" data-en="Learn Through Games" data-ru="Обучение через игры">O'yin orqali o'rganish</h3>
+        <p class="feature-desc" data-uz="Viktorina, tez yozish poygasi va UNO — bilimingizni sinfda sinab ko'ring!" data-en="Quiz, typing race, and UNO — test your knowledge in the classroom!" data-ru="Викторина, гонка печати и UNO — проверьте знания в классе!">
+          Viktorina, tez yozish poygasi va UNO — bilimingizni sinfda sinab ko'ring!
+        </p>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon green">📱</div>
+        <h3 class="feature-title" data-uz="Har qanday qurilmada" data-en="Any Device" data-ru="На любом устройстве">Har qanday qurilmada</h3>
+        <p class="feature-desc" data-uz="Telefon, planshet yoki kompyuter — CodeJS barcha qurilmalarda ishlaydi." data-en="Phone, tablet, or computer — CodeJS works on all devices." data-ru="Телефон, планшет или компьютер — CodeJS работает на всех устройствах.">
+          Telefon, planshet yoki kompyuter — CodeJS barcha qurilmalarda ishlaydi.
+        </p>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon orange">🏆</div>
+        <h3 class="feature-title" data-uz="200+ topshiriq" data-en="200+ Tasks" data-ru="200+ заданий">200+ topshiriq</h3>
+        <p class="feature-desc" data-uz="Amaliy topshiriqlar bilan bilimingizni mustahkamlang. Har bir mavzu uchun alohida mashqlar." data-en="Reinforce your knowledge with practical tasks. Separate exercises for each topic." data-ru="Закрепляйте знания практическими заданиями. Отдельные упражнения для каждой темы.">
+          Amaliy topshiriqlar bilan bilimingizni mustahkamlang. Har bir mavzu uchun alohida mashqlar.
+        </p>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon yellow">🌙</div>
+        <h3 class="feature-title" data-uz="Qorong'i / Yorug' rejim" data-en="Dark / Light Mode" data-ru="Тёмная / Светлая тема">Qorong'i / Yorug' rejim</h3>
+        <p class="feature-desc" data-uz="Ko'zingizni asrab qoling — istalgan rejimda qulay ishlang." data-en="Protect your eyes — work comfortably in any mode." data-ru="Берегите глаза — работайте комфортно в любом режиме.">
+          Ko'zingizni asrab qoling — istalgan rejimda qulay ishlang.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     LESSONS / CURRICULUM SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section" id="darsliklar">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label" data-uz="Darsliklar" data-en="Lessons" data-ru="Уроки">Darsliklar</div>
+      <h2 class="section-title" data-uz="O'quv dasturi" data-en="Curriculum" data-ru="Учебная программа">O'quv <span class="gradient-text">dasturi</span></h2>
+      <p class="section-desc" data-uz="Har bir mavzuni chuqur o'rganing — oddiydan murakkabga qarab yuring." data-en="Study each topic in depth — go from simple to complex." data-ru="Изучайте каждую тему глубоко — от простого к сложному.">
+        Har bir mavzuni chuqur o'rganing — oddiydan murakkabga qarab yuring.
+      </p>
+    </div>
+
+    <div class="lessons-container reveal">
+      <div class="lessons-sidebar">
+        <div class="lesson-categories" id="lesson-categories">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+      <div class="lessons-grid" id="lessons-grid">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PLAYGROUND / EDITOR SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section" id="muharrir">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label" data-uz="Jonli muharrir" data-en="Live Editor" data-ru="Живой редактор">Jonli muharrir</div>
+      <h2 class="section-title" data-uz="Kod yozing — natijani ko'ring" data-en="Write Code — See Results" data-ru="Пишите код — видите результат">Kod yozing — <span class="gradient-text">natijani ko'ring</span></h2>
+      <p class="section-desc" data-uz="Brauzerda to'g'ridan-to'g'ri HTML, CSS va JavaScript yozing. O'zgarishlar bir zumda ko'rsatiladi." data-en="Write HTML, CSS, and JavaScript directly in the browser. Changes are shown instantly." data-ru="Пишите HTML, CSS и JavaScript прямо в браузере. Изменения отображаются мгновенно.">
+        Brauzerda to'g'ridan-to'g'ri HTML, CSS va JavaScript yozing. O'zgarishlar bir zumda ko'rsatiladi.
+      </p>
+    </div>
+
+    <div class="playground-wrapper reveal">
+      <div class="playground-editor">
+        <div class="playground-editor-header">
+          <div class="playground-tabs">
+            <button class="playground-tab active" data-tab="html" onclick="switchTab('html')">HTML</button>
+            <button class="playground-tab" data-tab="css" onclick="switchTab('css')">CSS</button>
+            <button class="playground-tab" data-tab="js" onclick="switchTab('js')">JS</button>
+          </div>
+          <button class="playground-run-btn" onclick="runPlayground()">
+            ▶ <span data-uz="Ishga tushirish" data-en="Run" data-ru="Запустить">Ishga tushirish</span>
+          </button>
+        </div>
+        <textarea class="playground-textarea" id="editor-html" spellcheck="false" placeholder="HTML kodni yozing...">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #0a0e1a, #1a1040);
+      font-family: 'Inter', sans-serif;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      color: white;
+      animation: fadeIn 0.8s ease;
+    }
+    .card h1 {
+      background: linear-gradient(135deg, #00d4ff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2em;
+      margin-bottom: 12px;
+    }
+    .card p { color: #8b95b0; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="card"&gt;
+    &lt;h1&gt;Salom, CodeJS! 🚀&lt;/h1&gt;
+    &lt;p&gt;Brauzerda kod yozishni boshlang&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+        <textarea class="playground-textarea" id="editor-css" spellcheck="false" placeholder="CSS kodni yozing..." style="display:none">/* CSS kodingiz */
+body {
+  font-family: sans-serif;
+  background: #0a0e1a;
+  color: white;
+}</textarea>
+        <textarea class="playground-textarea" id="editor-js" spellcheck="false" placeholder="JavaScript kodni yozing..." style="display:none">// JavaScript kodingiz
+console.log("Salom, CodeJS!");</textarea>
+      </div>
+      <div class="playground-output">
+        <div class="playground-output-header">
+          <span>📺</span>
+          <span data-uz="Natija" data-en="Output" data-ru="Результат">Natija</span>
+        </div>
+        <div class="playground-output-body">
+          <iframe id="output-frame" title="Output"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GAMES SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section" id="oyinlar">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label" data-uz="O'yinlar" data-en="Games" data-ru="Игры">O'yinlar</div>
+      <h2 class="section-title" data-uz="O'yin orqali o'rganing" data-en="Learn Through Games" data-ru="Учитесь через игры">O'yin orqali <span class="gradient-text">o'rganing</span></h2>
+      <p class="section-desc" data-uz="Viktorina, tez yozish va UNO — bilimingizni qiziqarli tarzda sinab ko'ring." data-en="Quiz, speed typing, and UNO — test your knowledge in a fun way." data-ru="Викторина, скоростная печать и UNO — проверьте знания весело.">
+        Viktorina, tez yozish va UNO — bilimingizni qiziqarli tarzda sinab ko'ring.
+      </p>
+    </div>
+
+    <div class="games-grid">
+      <div class="game-card reveal reveal-delay-1" onclick="openQuiz()">
+        <div class="game-card-visual quiz-bg">
+          <span class="game-visual-icon">🧠</span>
+        </div>
+        <div class="game-card-body">
+          <span class="game-card-tag tag-solo" data-uz="Yakka" data-en="Solo" data-ru="Одиночная">Yakka</span>
+          <h3 class="game-card-title" data-uz="JS Viktorina" data-en="JS Quiz" data-ru="JS Викторина">JS Viktorina</h3>
+          <p class="game-card-desc" data-uz="JavaScript bilimingizni 20 ta savol bilan sinab ko'ring. Har bir savol uchun 30 soniya." data-en="Test your JavaScript knowledge with 20 questions. 30 seconds per question." data-ru="Проверьте знания JavaScript в 20 вопросах. 30 секунд на вопрос.">
+            JavaScript bilimingizni 20 ta savol bilan sinab ko'ring. Har bir savol uchun 30 soniya.
+          </p>
+          <div class="game-card-footer">
+            <span class="game-players">❓ 20 savol</span>
+            <button class="game-play-btn" data-uz="O'ynash" data-en="Play" data-ru="Играть">O'ynash</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-card reveal reveal-delay-2" onclick="openTypingGame()">
+        <div class="game-card-visual typing-bg">
+          <span class="game-visual-icon">⌨️</span>
+        </div>
+        <div class="game-card-body">
+          <span class="game-card-tag tag-competitive" data-uz="Raqobatli" data-en="Competitive" data-ru="Соревновательная">Raqobatli</span>
+          <h3 class="game-card-title" data-uz="Tez yozish poygasi" data-en="Speed Typing Race" data-ru="Гонка скоростной печати">Tez yozish poygasi</h3>
+          <p class="game-card-desc" data-uz="JavaScript kod parchalarini iloji boricha tez yozing. Tezligingizni o'lchang!" data-en="Type JavaScript code snippets as fast as you can. Measure your speed!" data-ru="Печатайте фрагменты JavaScript кода как можно быстрее. Измерьте скорость!">
+            JavaScript kod parchalarini iloji boricha tez yozing. Tezligingizni o'lchang!
+          </p>
+          <div class="game-card-footer">
+            <span class="game-players">⏱️ WPM</span>
+            <button class="game-play-btn" data-uz="O'ynash" data-en="Play" data-ru="Играть">O'ynash</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-card reveal reveal-delay-3" onclick="openUnoGame()">
+        <div class="game-card-visual uno-bg">
+          <span class="game-visual-icon">🃏</span>
+        </div>
+        <div class="game-card-body">
+          <span class="game-card-tag tag-multiplayer" data-uz="Ko'p o'yinchi" data-en="Multiplayer" data-ru="Мультиплеер">Ko'p o'yinchi</span>
+          <h3 class="game-card-title" data-uz="Code UNO" data-en="Code UNO" data-ru="Code UNO">Code UNO</h3>
+          <p class="game-card-desc" data-uz="JavaScript savollariga javob berib, UNO kartalarini tashlang. Do'stlaringiz bilan o'ynang!" data-en="Answer JavaScript questions and play UNO cards. Play with your friends!" data-ru="Отвечайте на вопросы JavaScript и играйте в UNO. Играйте с друзьями!">
+            JavaScript savollariga javob berib, UNO kartalarini tashlang. Do'stlaringiz bilan o'ynang!
+          </p>
+          <div class="game-card-footer">
+            <span class="game-players">👥 2–6 o'yinchi</span>
+            <button class="game-play-btn" data-uz="O'ynash" data-en="Play" data-ru="Играть">O'ynash</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     QUIZ MODAL
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="quiz-modal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <h2 class="modal-title" data-uz="🧠 JS Viktorina" data-en="🧠 JS Quiz" data-ru="🧠 JS Викторина">🧠 JS Viktorina</h2>
+      <button class="modal-close" onclick="closeModal('quiz-modal')">✕</button>
+    </div>
+    <div id="quiz-content">
+      <div class="quiz-progress">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quiz-progress-fill" style="width:0%"></div>
+        </div>
+        <span class="quiz-progress-text" id="quiz-progress-text">0 / 10</span>
+      </div>
+      <div class="quiz-question-card">
+        <div class="quiz-question-num" id="quiz-q-num">Savol 1</div>
+        <div class="quiz-question-text" id="quiz-q-text"></div>
+        <div class="quiz-code-block" id="quiz-q-code" style="display:none"></div>
+        <div class="quiz-options" id="quiz-options"></div>
+      </div>
+      <div style="text-align:center; margin-top:20px">
+        <button class="btn btn-primary" id="quiz-next-btn" onclick="nextQuizQuestion()" style="display:none" data-uz="Keyingi savol →" data-en="Next question →" data-ru="Следующий вопрос →">Keyingi savol →</button>
+      </div>
+    </div>
+    <div id="quiz-result" style="display:none; text-align:center; padding:20px 0;">
+      <div style="font-size:64px; margin-bottom:16px">🏆</div>
+      <h3 id="quiz-result-title" style="font-size:24px; margin-bottom:8px;"></h3>
+      <p id="quiz-result-score" style="color:var(--text-secondary); margin-bottom:24px;"></p>
+      <button class="btn btn-primary" onclick="startQuiz()" data-uz="Qayta boshlash" data-en="Restart" data-ru="Перезапуск">Qayta boshlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TYPING GAME MODAL
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="typing-modal">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header">
+      <h2 class="modal-title" data-uz="⌨️ Tez yozish poygasi" data-en="⌨️ Speed Typing Race" data-ru="⌨️ Гонка печати">⌨️ Tez yozish poygasi</h2>
+      <button class="modal-close" onclick="closeModal('typing-modal')">✕</button>
+    </div>
+    <div class="typing-game-area" style="padding:24px; border:none;">
+      <div class="typing-stats">
+        <div class="typing-stat">
+          <div class="typing-stat-value" id="typing-wpm">0</div>
+          <div class="typing-stat-label">WPM</div>
+        </div>
+        <div class="typing-stat">
+          <div class="typing-stat-value" id="typing-accuracy">100%</div>
+          <div class="typing-stat-label" data-uz="Aniqlik" data-en="Accuracy" data-ru="Точность">Aniqlik</div>
+        </div>
+        <div class="typing-stat">
+          <div class="typing-stat-value" id="typing-time">0s</div>
+          <div class="typing-stat-label" data-uz="Vaqt" data-en="Time" data-ru="Время">Vaqt</div>
+        </div>
+      </div>
+      <div class="typing-text-display" id="typing-display"></div>
+      <input class="typing-input" id="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <div style="text-align:center; margin-top:16px">
+        <button class="btn btn-secondary" onclick="startTypingGame()" data-uz="🔄 Qayta boshlash" data-en="🔄 Restart" data-ru="🔄 Перезапуск">🔄 Qayta boshlash</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     UNO GAME MODAL
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="uno-modal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <h2 class="modal-title">🃏 Code UNO</h2>
+      <button class="modal-close" onclick="closeModal('uno-modal')">✕</button>
+    </div>
+    <div id="uno-game-area" style="text-align:center; padding:24px 0;">
+      <div style="font-size:48px; margin-bottom:16px">🃏</div>
+      <p style="color:var(--text-secondary); margin-bottom:24px; font-size:16px;" data-uz="Savolga to'g'ri javob bering va karta tashlang!" data-en="Answer correctly and play a card!" data-ru="Ответьте правильно и сыграйте карту!">
+        Savolga to'g'ri javob bering va karta tashlang!
+      </p>
+      <div id="uno-question-area" style="display:none;">
+        <div class="quiz-question-card" style="text-align:left;">
+          <div class="quiz-question-text" id="uno-q-text"></div>
+          <div class="quiz-code-block" id="uno-q-code" style="display:none"></div>
+          <div class="quiz-options" id="uno-options"></div>
+        </div>
+      </div>
+      <div id="uno-cards" style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:24px;">
+        <!-- Filled by JS -->
+      </div>
+      <div style="margin-top:24px">
+        <div style="font-size:14px; color:var(--text-muted); margin-bottom:8px;" data-uz="Sizning kartalaringiz:" data-en="Your cards:" data-ru="Ваши карты:">Sizning kartalaringiz:</div>
+        <div id="uno-hand" style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;"></div>
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-primary" onclick="startUnoGame()" data-uz="🎮 Boshlash" data-en="🎮 Start" data-ru="🎮 Начать">🎮 Boshlash</button>
+      </div>
+      <div id="uno-score" style="margin-top:16px; font-size:14px; color:var(--text-secondary);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     AUTH MODAL (LOGIN & REGISTER)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay auth-modal" id="auth-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="auth-modal-title">🔐 Kirish</h2>
+      <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Kirish</button>
+      <button class="auth-tab" id="auth-tab-register" onclick="switchAuthTab('register')">Ro'yxatdan o'tish</button>
+    </div>
+
+    <!-- Login Form -->
+    <form class="auth-form" id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">Email yoki Login</label>
+        <input type="text" class="form-input" id="login-email" placeholder="admin@codejs.uz yoki email" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Parol</label>
+        <input type="password" class="form-input" id="login-password" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+      <div class="form-error" id="login-error"></div>
+      <button type="submit" class="auth-submit">Kirish 🚀</button>
+      <div style="font-size:12px; color:var(--text-muted); text-align:center; margin-top:8px;">
+        💡 Admin hisobi: <b style="color:var(--accent-cyan)">admin@codejs.uz</b> / <b style="color:var(--accent-cyan)">komil777</b>
+      </div>
+    </form>
+
+    <!-- Register Form -->
+    <form class="auth-form" id="register-form" style="display:none;" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label class="form-label">Ismingiz yoki Taxallusingiz</label>
+        <input type="text" class="form-input" id="reg-name" placeholder="Masalan: Sardor" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email manzil</label>
+        <input type="email" class="form-input" id="reg-email" placeholder="example@mail.com" required autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Parol (kamida 4 belgi)</label>
+        <input type="password" class="form-input" id="reg-password" placeholder="••••••••" required autocomplete="new-password" />
+      </div>
+      <div class="form-error" id="reg-error"></div>
+      <button type="submit" class="auth-submit">Ro'yxatdan o'tish (+50 🪙 Bonus!)</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     USER PROFILE MODAL
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h2 class="modal-title">👤 Mening profilim</h2>
+      <button class="modal-close" onclick="closeModal('profile-modal')">✕</button>
+    </div>
+    <div style="text-align:center; padding:16px 0;">
+      <div class="nav-avatar" id="profile-avatar-large" style="width:72px; height:72px; font-size:32px; margin:0 auto 16px;">U</div>
+      <h3 id="profile-modal-name" style="font-size:22px; font-weight:700; margin-bottom:4px;">Foydalanuvchi</h3>
+      <p id="profile-modal-email" style="color:var(--text-muted); font-size:14px; margin-bottom:16px;">user@codejs.uz</p>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+        <div style="background:var(--bg-primary); border:1px solid var(--border-subtle); padding:16px; border-radius:var(--radius-md);">
+          <div style="font-size:24px; font-weight:800; color:var(--accent-yellow); font-family:var(--font-mono);" id="profile-modal-coins">0 🪙</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">CodeJS Tangalari</div>
+        </div>
+        <div style="background:var(--bg-primary); border:1px solid var(--border-subtle); padding:16px; border-radius:var(--radius-md);">
+          <div style="font-size:24px; font-weight:800; color:var(--accent-cyan); font-family:var(--font-mono);" id="profile-modal-lessons">0</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Tugallangan darslar</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(0, 212, 255, 0.05); border:1px solid var(--border-accent); border-radius:var(--radius-md); padding:16px; text-align:left; font-size:13px; line-height:1.6; color:var(--text-secondary);">
+        <div>📅 <b>A'zo bo'lingan sana:</b> <span id="profile-modal-date">-</span></div>
+        <div>🎖️ <b>Rol:</b> <span id="profile-modal-role" style="font-weight:700; color:var(--accent-cyan);">Foydalanuvchi</span></div>
+        <div>🏆 <b>Daraja:</b> <span id="profile-modal-rank" style="color:var(--accent-yellow); font-weight:700;">Yangi o'rganuvchi</span></div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+        <button class="btn btn-secondary" onclick="closeModal('profile-modal')">Yopish</button>
+        <button class="btn btn-primary" onclick="closeModal('profile-modal'); scrollToSection('darsliklar');">📚 Darslarga o'tish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     INTERACTIVE LESSON MODAL (FULL WORKING LESSONS)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay lesson-modal" id="lesson-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="lesson-viewer-meta">
+          <span class="lesson-viewer-badge" id="lesson-cat-badge" style="background:rgba(0,212,255,0.1); color:var(--accent-cyan);">HTML</span>
+          <span class="lesson-viewer-coins">🪙 +20 tanga</span>
+        </div>
+        <h2 class="modal-title" id="lesson-modal-title" style="margin-top:6px;">Dars nomi</h2>
+      </div>
+      <button class="modal-close" onclick="closeModal('lesson-modal')">✕</button>
+    </div>
+
+    <!-- Progress indicator -->
+    <div class="lesson-progress-bar">
+      <div class="lesson-progress-track">
+        <div class="lesson-progress-fill" id="lesson-detail-progress" style="width:0%"></div>
+      </div>
+      <div class="lesson-progress-text" id="lesson-detail-status">Tugallanmagan</div>
+    </div>
+
+    <!-- Lesson Theory & Examples -->
+    <div class="lesson-content" id="lesson-modal-content">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- Interactive Challenge -->
+    <div class="lesson-challenge" id="lesson-challenge-box">
+      <div class="lesson-challenge-title">
+        <span>⚡</span> Amaliy topshiriq (Challenge)
+      </div>
+      <p class="lesson-challenge-desc" id="lesson-challenge-desc">
+        Topshiriq sharti bu yerda ko'rinadi.
+      </p>
+
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px; font-weight:600;">
+        KODINGIZNI YOZING:
+      </div>
+      <textarea class="lesson-challenge-editor" id="lesson-challenge-code" spellcheck="false" placeholder="// Kodingizni yozing..."></textarea>
+
+      <div class="lesson-challenge-actions">
+        <button class="btn btn-primary" id="lesson-run-btn" onclick="checkCurrentLesson()">
+          ▶ Natijani tekshirish (+20 🪙)
+        </button>
+        <button class="btn btn-secondary" onclick="resetLessonCode()">
+          🔄 Qayta tiklash
+        </button>
+      </div>
+
+      <!-- Result Feedback -->
+      <div class="lesson-challenge-result" id="lesson-challenge-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     COIN POPUP & FLOATING COIN FEEDBACK
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="coin-earn-popup" id="coin-earn-popup">
+  <div style="font-size: 48px; margin-bottom: 8px;">🪙✨</div>
+  <div class="coin-earn-amount" id="coin-earn-amount">+20</div>
+  <div class="coin-earn-label" id="coin-earn-label">Tanga berildi!</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     COIN SHOP MODAL (Avatarlar, Nik Ramkalari, Unvonlar)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay shop-modal" id="shop-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-size:32px;">🛒</span>
+        <div>
+          <h2 class="modal-title" style="margin:0;">CodeJS Coin Do'koni</h2>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+            Tangalaringiz evaziga avatarlar, ramkalar va unvonlar xarid qiling!
+          </div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('shop-modal')">✕</button>
+    </div>
+
+    <!-- Balance bar -->
+    <div class="shop-balance-bar">
+      <div>
+        <div style="font-size:12px; color:var(--text-muted);">Sizning balansingiz:</div>
+        <div class="shop-balance-val">🪙 <span id="shop-user-balance">0</span> CodeJS Coins</div>
+      </div>
+      <button class="btn btn-primary" onclick="closeModal('shop-modal'); scrollToSection('darsliklar');" style="padding:8px 16px; font-size:13px;">
+        ⚡ Tanga yig'ish (Darslar)
+      </button>
+    </div>
+
+    <!-- Shop Tabs -->
+    <div class="shop-tabs">
+      <button class="shop-tab-btn active" id="shop-tab-avatars" onclick="switchShopTab('avatars')">
+        <span>🎭</span> Avatarlar (12+)
+      </button>
+      <button class="shop-tab-btn" id="shop-tab-frames" onclick="switchShopTab('frames')">
+        <span>🖼️</span> Nik & Avatar Ramkalari
+      </button>
+      <button class="shop-tab-btn" id="shop-tab-titles" onclick="switchShopTab('titles')">
+        <span>👑</span> Maxsus Unvonlar
+      </button>
+    </div>
+
+    <!-- Shop Items Grid -->
+    <div class="shop-grid" id="shop-items-grid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <div class="footer-brand-name">
+        <span class="code">code</span><span class="js">JS</span>
+      </div>
+      <p class="footer-brand-desc" data-uz="Brauzerda JavaScript, HTML va CSS o'rganish uchun bepul platforma. O'qituvchilar va o'quvchilar uchun." data-en="Free platform for learning JavaScript, HTML, and CSS in the browser. For teachers and students." data-ru="Бесплатная платформа для изучения JavaScript, HTML и CSS в браузере. Для учителей и студентов.">
+        Brauzerda JavaScript, HTML va CSS o'rganish uchun bepul platforma. O'qituvchilar va o'quvchilar uchun.
+      </p>
+      <div class="footer-socials">
+        <a href="#" class="footer-social-link" aria-label="Telegram">📨</a>
+        <a href="#" class="footer-social-link" aria-label="GitHub">💻</a>
+        <a href="#" class="footer-social-link" aria-label="YouTube">📺</a>
+        <a href="#" class="footer-social-link" aria-label="Instagram">📸</a>
+      </div>
+    </div>
+
+    <div>
+      <h4 class="footer-col-title" data-uz="Platforma" data-en="Platform" data-ru="Платформа">Platforma</h4>
+      <ul class="footer-links">
+        <li><a href="#darsliklar" data-uz="Darsliklar" data-en="Lessons" data-ru="Уроки">Darsliklar</a></li>
+        <li><a href="#muharrir" data-uz="Muharrir" data-en="Editor" data-ru="Редактор">Muharrir</a></li>
+        <li><a href="#oyinlar" data-uz="O'yinlar" data-en="Games" data-ru="Игры">O'yinlar</a></li>
+        <li><a href="#" data-uz="Topshiriqlar" data-en="Tasks" data-ru="Задания">Topshiriqlar</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="footer-col-title" data-uz="O'rganish" data-en="Learning" data-ru="Обучение">O'rganish</h4>
+      <ul class="footer-links">
+        <li><a href="#">JavaScript</a></li>
+        <li><a href="#">HTML</a></li>
+        <li><a href="#">CSS</a></li>
+        <li><a href="#">DOM API</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="footer-col-title" data-uz="Qo'shimcha" data-en="More" data-ru="Ещё">Qo'shimcha</h4>
+      <ul class="footer-links">
+        <li><a href="#" data-uz="Haqida" data-en="About" data-ru="О нас">Haqida</a></li>
+        <li><a href="#" data-uz="Aloqa" data-en="Contact" data-ru="Контакты">Aloqa</a></li>
+        <li><a href="#" data-uz="Maxfiylik" data-en="Privacy" data-ru="Конфиденциальность">Maxfiylik</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 CodeJS. <span data-uz="Barcha huquqlar himoyalangan." data-en="All rights reserved." data-ru="Все права защищены.">Barcha huquqlar himoyalangan.</span></span>
+    <span data-uz="❤️ bilan O'zbekistondan" data-en="Made with ❤️ from Uzbekistan" data-ru="Сделано с ❤️ из Узбекистана">❤️ bilan O'zbekistondan</span>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOAST NOTIFICATIONS
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+// ─── GLOBAL STATE ──────────────────────────────────────────────
+let currentLang = 'uz';
+let currentTheme = 'dark';
+
+// ─── SPLASH SCREEN ─────────────────────────────────────────────
+(function initSplash() {
+  const splash = document.getElementById('splash');
+  if (!splash || document.documentElement.classList.contains('no-splash')) return;
+
+  setTimeout(() => {
+    splash.classList.add('fade-out');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      try { sessionStorage.setItem('codejs.splashed', '1'); } catch(e) {}
+    }, 600);
+  }, 3000);
+})();
+
+// ─── THEME TOGGLE ──────────────────────────────────────────────
+const themeBtn = document.getElementById('theme-toggle');
+
+function setTheme(theme) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+  try { localStorage.setItem('codejs.theme', theme); } catch(e) {}
+}
+
+themeBtn.addEventListener('click', () => {
+  setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+});
+
+// Load saved theme
+try {
+  const saved = localStorage.getItem('codejs.theme');
+  if (saved) setTheme(saved);
+} catch(e) {}
+
+// ─── LANGUAGE SYSTEM ───────────────────────────────────────────
+const langSelect = document.getElementById('lang-select');
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+    const text = el.getAttribute('data-' + lang);
+    if (text) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = text;
+      } else {
+        el.textContent = text;
+      }
+    }
+  });
+  langSelect.value = lang;
+  try { localStorage.setItem('codejs.lang', lang); } catch(e) {}
+}
+
+langSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+
+try {
+  const savedLang = localStorage.getItem('codejs.lang');
+  if (savedLang) {
+    setTimeout(() => setLanguage(savedLang), 100);
+  }
+} catch(e) {}
+
+// ─── NAVBAR SCROLL ─────────────────────────────────────────────
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ─── MOBILE MENU ───────────────────────────────────────────────
+const mobileToggle = document.getElementById('mobile-toggle');
+const navLinks = document.getElementById('nav-links');
+
+mobileToggle.addEventListener('click', () => {
+  mobileToggle.classList.toggle('active');
+  navLinks.classList.toggle('mobile-open');
+});
+
+// Close on link click
+navLinks.addEventListener('click', (e) => {
+  if (e.target.tagName === 'A') {
+    mobileToggle.classList.remove('active');
+    navLinks.classList.remove('mobile-open');
+  }
+});
+
+// ─── SMOOTH SCROLL ─────────────────────────────────────────────
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Nav brand home
+document.getElementById('nav-brand-home').addEventListener('click', () => {
+  scrollToSection('bosh-sahifa');
+});
+
+// Active nav tracking
+const navLinkElements = document.querySelectorAll('.nav-links a');
+const sections = document.querySelectorAll('section[id]');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.offsetTop - 100;
+    if (window.scrollY >= top) current = s.id;
+  });
+  navLinkElements.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('data-nav') === current);
+  });
+});
+
+// ─── SCROLL REVEAL ─────────────────────────────────────────────
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// ─── HERO COUNTER ANIMATION ───────────────────────────────────
+function animateCounter(el, target, suffix = '') {
+  let current = 0;
+  const step = Math.ceil(target / 60);
+  const interval = setInterval(() => {
+    current += step;
+    if (current >= target) {
+      current = target;
+      clearInterval(interval);
+    }
+    el.textContent = current + suffix;
+  }, 30);
+}
+
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCounter(document.getElementById('stat-lessons'), 48);
+      animateCounter(document.getElementById('stat-tasks'), 202, '+');
+      animateCounter(document.getElementById('stat-games'), 3);
+      animateCounter(document.getElementById('stat-users'), 5200, '+');
+      statsObserver.disconnect();
+    }
+  });
+}, { threshold: 0.5 });
+
+statsObserver.observe(document.querySelector('.hero-stats'));
+
+// ─── HERO CODE TYPING EFFECT ──────────────────────────────────
+const codeLines = [
+  { num: '1', content: '<span class="code-comment">// CodeJS bilan o\'rganing ⚡</span>' },
+  { num: '2', content: '<span class="code-keyword">const</span> <span class="code-variable">talaba</span> <span class="code-operator">=</span> <span class="code-bracket">{</span>' },
+  { num: '3', content: '  <span class="code-string">ism</span>: <span class="code-string">"Ali"</span>,' },
+  { num: '4', content: '  <span class="code-string">daraja</span>: <span class="code-string">"boshlang\'ich"</span>,' },
+  { num: '5', content: '  <span class="code-string">topshiriqlar</span>: <span class="code-number">42</span>,' },
+  { num: '6', content: '<span class="code-bracket">}</span>;' },
+  { num: '7', content: '' },
+  { num: '8', content: '<span class="code-keyword">function</span> <span class="code-function">o\'rganish</span>(<span class="code-variable">mavzu</span>) <span class="code-bracket">{</span>' },
+  { num: '9', content: '  <span class="code-keyword">return</span> <span class="code-string">`${<span class="code-variable">mavzu</span>} o\'rganildi ✅`</span>;' },
+  { num: '10', content: '<span class="code-bracket">}</span>' },
+];
+
+function typeCode() {
+  const container = document.getElementById('typing-code');
+  container.innerHTML = '';
+  let lineIndex = 0;
+
+  function addLine() {
+    if (lineIndex >= codeLines.length) {
+      // Add cursor at the end
+      const lastLine = container.lastChild;
+      if (lastLine) {
+        const cursor = document.createElement('span');
+        cursor.className = 'typing-cursor';
+        lastLine.querySelector('.code-line').lastChild.appendChild(cursor);
+      }
+      return;
+    }
+
+    const line = codeLines[lineIndex];
+    const div = document.createElement('div');
+    div.innerHTML = `<div class="code-line"><span class="code-line-num">${line.num}</span><span>${line.content}</span></div>`;
+    div.style.opacity = '0';
+    div.style.transform = 'translateX(-10px)';
+    container.appendChild(div);
+
+    requestAnimationFrame(() => {
+      div.style.transition = 'all 0.3s ease';
+      div.style.opacity = '1';
+      div.style.transform = 'translateX(0)';
+    });
+
+    lineIndex++;
+    setTimeout(addLine, 150);
+  }
+
+  setTimeout(addLine, 1500);
+}
+
+typeCode();
+
+// ─── HERO FLOATING PARTICLES ──────────────────────────────────
+const codeSnippets = ['const', 'let', 'function', '=>', 'return', 'if', 'else', 'for', 'while', 'class', 'import', 'export', '{}', '[]', '()', ';', 'async', 'await', 'try', 'catch', 'map()', 'filter()'];
+
+function createParticles() {
+  const container = document.getElementById('hero-particles');
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement('div');
+    p.className = 'code-particle';
+    p.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 15 + 's';
+    p.style.animationDuration = (15 + Math.random() * 10) + 's';
+    container.appendChild(p);
+  }
+}
+createParticles();
+
+// ─── LESSONS DATA & RENDERING ──────────────────────────────────
+const lessonsData = {
+  uz: {
+    categories: [
+      { id: 'html', icon: '🏗️', name: 'HTML Asoslari', count: 12 },
+      { id: 'css', icon: '🎨', name: 'CSS Stillari', count: 14 },
+      { id: 'js-basics', icon: '⚡', name: 'JS Asoslari', count: 10 },
+      { id: 'js-functions', icon: '🔧', name: 'Funksiyalar', count: 8 },
+      { id: 'js-arrays', icon: '📦', name: 'Massivlar', count: 6 },
+      { id: 'js-objects', icon: '🧩', name: 'Obyektlar', count: 6 },
+      { id: 'dom', icon: '🌐', name: 'DOM API', count: 8 },
+      { id: 'async', icon: '⏳', name: 'Asinxron JS', count: 4 },
+    ],
+    lessons: {
+      'html': [
+        { num: '01', title: 'HTML nima?', desc: 'Veb sahifalar tuzilishi haqida', difficulty: 'easy' },
+        { num: '02', title: 'Teglar va elementlar', desc: 'Asosiy HTML teglari', difficulty: 'easy' },
+        { num: '03', title: 'Sarlavhalar va paragraflar', desc: 'h1-h6 va p teglar', difficulty: 'easy' },
+        { num: '04', title: 'Havolalar', desc: 'a tegi va navigatsiya', difficulty: 'easy' },
+        { num: '05', title: 'Rasmlar', desc: 'img tegi va atributlar', difficulty: 'easy' },
+        { num: '06', title: 'Ro\'yxatlar', desc: 'ul, ol va li teglar', difficulty: 'easy' },
+        { num: '07', title: 'Jadvallar', desc: 'table, tr, td teglar', difficulty: 'medium' },
+        { num: '08', title: 'Formalar', desc: 'input, form va button', difficulty: 'medium' },
+        { num: '09', title: 'Semantik teglar', desc: 'header, nav, main, footer', difficulty: 'medium' },
+        { num: '10', title: 'Media elementlar', desc: 'audio va video teglar', difficulty: 'medium' },
+        { num: '11', title: 'Meta ma\'lumotlar', desc: 'head va meta teglar', difficulty: 'hard' },
+        { num: '12', title: 'HTML5 yangiliklari', desc: 'Zamonaviy HTML xususiyatlari', difficulty: 'hard' },
+      ],
+      'css': [
+        { num: '01', title: 'CSS nima?', desc: 'Stillash asoslari', difficulty: 'easy' },
+        { num: '02', title: 'Ranglar', desc: 'color, background-color', difficulty: 'easy' },
+        { num: '03', title: 'Shriftlar', desc: 'font-family, font-size', difficulty: 'easy' },
+        { num: '04', title: 'Box model', desc: 'margin, padding, border', difficulty: 'medium' },
+        { num: '05', title: 'Flexbox', desc: 'display: flex va xususiyatlar', difficulty: 'medium' },
+        { num: '06', title: 'Grid', desc: 'CSS Grid joylashuvi', difficulty: 'medium' },
+        { num: '07', title: 'Pozitsiya', desc: 'relative, absolute, fixed', difficulty: 'medium' },
+        { num: '08', title: 'Animatsiyalar', desc: 'transition va animation', difficulty: 'hard' },
+        { num: '09', title: 'Responsive dizayn', desc: 'Media queries', difficulty: 'hard' },
+        { num: '10', title: 'CSS o\'zgaruvchilar', desc: 'Custom properties', difficulty: 'hard' },
+        { num: '11', title: 'Pseudo-elementlar', desc: '::before va ::after', difficulty: 'hard' },
+        { num: '12', title: 'Transformatsiyalar', desc: 'transform va o\'tishlar', difficulty: 'hard' },
+        { num: '13', title: 'Selektorlar', desc: 'Murakkab selektorlar', difficulty: 'medium' },
+        { num: '14', title: 'Glassmorphism', desc: 'Zamonaviy dizayn texnikasi', difficulty: 'hard' },
+      ],
+      'js-basics': [
+        { num: '01', title: 'JavaScript nima?', desc: 'Til haqida kirish', difficulty: 'easy' },
+        { num: '02', title: 'O\'zgaruvchilar', desc: 'let, const, var', difficulty: 'easy' },
+        { num: '03', title: 'Ma\'lumot turlari', desc: 'string, number, boolean...', difficulty: 'easy' },
+        { num: '04', title: 'Operatorlar', desc: 'Arifmetik va mantiqiy', difficulty: 'easy' },
+        { num: '05', title: 'Shartli ifodalar', desc: 'if, else, switch', difficulty: 'medium' },
+        { num: '06', title: 'Sikllar', desc: 'for, while, do...while', difficulty: 'medium' },
+        { num: '07', title: 'Template literals', desc: 'Backtick va ifodalar', difficulty: 'easy' },
+        { num: '08', title: 'Ternary operator', desc: 'Qisqa shart yozish', difficulty: 'medium' },
+        { num: '09', title: 'Xatolarni ushlash', desc: 'try...catch...finally', difficulty: 'hard' },
+        { num: '10', title: 'Strict mode', desc: '"use strict" rejimi', difficulty: 'hard' },
+      ],
+      'js-functions': [
+        { num: '01', title: 'Funksiyalar', desc: 'function deklaratsiyasi', difficulty: 'easy' },
+        { num: '02', title: 'Arrow funksiyalar', desc: '() => {} sintaksisi', difficulty: 'medium' },
+        { num: '03', title: 'Parametrlar', desc: 'Default va rest parametrlar', difficulty: 'medium' },
+        { num: '04', title: 'Scope', desc: 'Qamrov va closure', difficulty: 'hard' },
+        { num: '05', title: 'Callback', desc: 'Funksiya argument sifatida', difficulty: 'hard' },
+        { num: '06', title: 'IIFE', desc: 'Darhol bajariladigan funksiya', difficulty: 'hard' },
+        { num: '07', title: 'Rekursiya', desc: 'O\'zini chaqiruvchi funksiya', difficulty: 'hard' },
+        { num: '08', title: 'Higher-order', desc: 'Yuqori tartibli funksiyalar', difficulty: 'hard' },
+      ],
+      'js-arrays': [
+        { num: '01', title: 'Massiv yaratish', desc: '[] va Array()', difficulty: 'easy' },
+        { num: '02', title: 'Massiv metodlari', desc: 'push, pop, shift...', difficulty: 'medium' },
+        { num: '03', title: 'map() va filter()', desc: 'Massivni o\'zgartirish', difficulty: 'medium' },
+        { num: '04', title: 'reduce()', desc: 'Massivni qisqartirish', difficulty: 'hard' },
+        { num: '05', title: 'Destructuring', desc: 'Massiv ajratish', difficulty: 'medium' },
+        { num: '06', title: 'Spread operator', desc: '...massiv bilan ishlash', difficulty: 'medium' },
+      ],
+      'js-objects': [
+        { num: '01', title: 'Obyektlar', desc: 'Object yaratish', difficulty: 'easy' },
+        { num: '02', title: 'Xususiyatlar', desc: 'Dot va bracket notation', difficulty: 'easy' },
+        { num: '03', title: 'Metodlar', desc: 'Obyekt funksiyalari', difficulty: 'medium' },
+        { num: '04', title: 'this kalit so\'zi', desc: 'Kontekst va this', difficulty: 'hard' },
+        { num: '05', title: 'Destructuring', desc: 'Obyekt ajratish', difficulty: 'medium' },
+        { num: '06', title: 'Class', desc: 'OOP va klasslar', difficulty: 'hard' },
+      ],
+      'dom': [
+        { num: '01', title: 'DOM nima?', desc: 'Document Object Model', difficulty: 'easy' },
+        { num: '02', title: 'Element tanlash', desc: 'querySelector va boshqalar', difficulty: 'easy' },
+        { num: '03', title: 'Element o\'zgartirish', desc: 'innerHTML, textContent', difficulty: 'medium' },
+        { num: '04', title: 'Hodisalar', desc: 'addEventListener', difficulty: 'medium' },
+        { num: '05', title: 'Forma hodisalari', desc: 'submit va input', difficulty: 'medium' },
+        { num: '06', title: 'Element yaratish', desc: 'createElement va appendChild', difficulty: 'medium' },
+        { num: '07', title: 'Stillarni o\'zgartirish', desc: 'style va classList', difficulty: 'medium' },
+        { num: '08', title: 'LocalStorage', desc: 'Ma\'lumot saqlash', difficulty: 'hard' },
+      ],
+      'async': [
+        { num: '01', title: 'Callback', desc: 'Asinxron boshlang\'ich', difficulty: 'medium' },
+        { num: '02', title: 'Promise', desc: 'Va\'da (Promise) asoslari', difficulty: 'hard' },
+        { num: '03', title: 'async/await', desc: 'Zamonaviy asinxron yozuv', difficulty: 'hard' },
+        { num: '04', title: 'Fetch API', desc: 'Serverdan ma\'lumot olish', difficulty: 'hard' },
+      ],
+    }
+  },
+  en: {
+    categories: [
+      { id: 'html', icon: '🏗️', name: 'HTML Basics', count: 12 },
+      { id: 'css', icon: '🎨', name: 'CSS Styles', count: 14 },
+      { id: 'js-basics', icon: '⚡', name: 'JS Basics', count: 10 },
+      { id: 'js-functions', icon: '🔧', name: 'Functions', count: 8 },
+      { id: 'js-arrays', icon: '📦', name: 'Arrays', count: 6 },
+      { id: 'js-objects', icon: '🧩', name: 'Objects', count: 6 },
+      { id: 'dom', icon: '🌐', name: 'DOM API', count: 8 },
+      { id: 'async', icon: '⏳', name: 'Async JS', count: 4 },
+    ],
+    lessons: {}
+  },
+  ru: {
+    categories: [
+      { id: 'html', icon: '🏗️', name: 'Основы HTML', count: 12 },
+      { id: 'css', icon: '🎨', name: 'Стили CSS', count: 14 },
+      { id: 'js-basics', icon: '⚡', name: 'Основы JS', count: 10 },
+      { id: 'js-functions', icon: '🔧', name: 'Функции', count: 8 },
+      { id: 'js-arrays', icon: '📦', name: 'Массивы', count: 6 },
+      { id: 'js-objects', icon: '🧩', name: 'Объекты', count: 6 },
+      { id: 'dom', icon: '🌐', name: 'DOM API', count: 8 },
+      { id: 'async', icon: '⏳', name: 'Асинхронный JS', count: 4 },
+    ],
+    lessons: {}
+  }
+};
+
+// Always fall back to 'uz' lessons
+function getLessons(cat) {
+  const lang = lessonsData[currentLang];
+  if (lang.lessons && lang.lessons[cat]) return lang.lessons[cat];
+  return lessonsData.uz.lessons[cat] || [];
+}
+
+function getCategories() {
+  return lessonsData[currentLang]?.categories || lessonsData.uz.categories;
+}
+
+let currentCategory = 'html';
+
+function renderLessonCategories() {
+  const container = document.getElementById('lesson-categories');
+  const cats = getCategories();
+  container.innerHTML = cats.map(cat => `
+    <button class="lesson-cat-btn ${cat.id === currentCategory ? 'active' : ''}" 
+            onclick="selectCategory('${cat.id}')">
+      <span class="lesson-cat-icon">${cat.icon}</span>
+      <span>${cat.name}</span>
+      <span class="lesson-cat-count">${cat.count}</span>
+    </button>
+  `).join('');
+}
+
+function renderLessons(catId) {
+  const container = document.getElementById('lessons-grid');
+  const lessons = getLessons(catId);
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  const completed = user?.completedLessons || [];
+  
+  const diffLabels = {
+    uz: { easy: 'Oson', medium: "O'rta", hard: 'Qiyin' },
+    en: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
+    ru: { easy: 'Легко', medium: 'Средне', hard: 'Сложно' },
+  };
+
+  container.innerHTML = lessons.map(l => {
+    const isDone = completed.includes(`${catId}-${l.num}`);
+    return `
+      <div class="lesson-card ${isDone ? 'completed' : ''}" onclick="openLesson('${catId}', '${l.num}')" style="cursor:pointer;" title="Darsni boshlash">
+        <div class="lesson-card-num">#${l.num}</div>
+        <div class="lesson-card-title">${l.title}</div>
+        <div class="lesson-card-desc">${l.desc}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+          <span class="lesson-card-difficulty difficulty-${l.difficulty}">
+            ${l.difficulty === 'easy' ? '🟢' : l.difficulty === 'medium' ? '🟡' : '🔴'}
+            ${(diffLabels[currentLang] || diffLabels.uz)[l.difficulty]}
+          </span>
+          <span style="font-size:12px; color:var(--accent-yellow); font-weight:700;">
+            ${isDone ? '✅ Bajarilgan' : '🪙 +20'}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function selectCategory(catId) {
+  currentCategory = catId;
+  renderLessonCategories();
+  renderLessons(catId);
+}
+
+renderLessonCategories();
+renderLessons('html');
+
+// ─── PLAYGROUND ────────────────────────────────────────────────
+let activeTab = 'html';
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.playground-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  document.querySelectorAll('.playground-textarea').forEach(ta => {
+    ta.style.display = 'none';
+  });
+  document.getElementById('editor-' + tab).style.display = 'block';
+}
+
+function runPlayground() {
+  const htmlCode = document.getElementById('editor-html').value;
+  const cssCode = document.getElementById('editor-css').value;
+  const jsCode = document.getElementById('editor-js').value;
+
+  const frame = document.getElementById('output-frame');
+  const doc = frame.contentDocument || frame.contentWindow.document;
+
+  const fullCode = `
+    <!DOCTYPE html>
+    <html>
+    <head><style>${cssCode}</style></head>
+    <body>
+      ${htmlCode}
+      <script>${jsCode}<\/script>
+    </body>
+    </html>
+  `;
+
+  doc.open();
+  doc.write(fullCode);
+  doc.close();
+
+  showToast('✅ Kod ishga tushirildi!');
+}
+
+// Auto-run on load
+setTimeout(runPlayground, 500);
+
+// ─── QUIZ GAME ─────────────────────────────────────────────────
+const quizQuestions = [
+  {
+    q: 'JavaScript da o\'zgaruvchi e\'lon qilish uchun qaysi kalit so\'z ishlatiladi?',
+    code: null,
+    options: ['var', 'let', 'const', 'Hammasi to\'g\'ri'],
+    correct: 3
+  },
+  {
+    q: 'typeof null qiymati nima?',
+    code: 'console.log(typeof null);',
+    options: ['"null"', '"undefined"', '"object"', '"boolean"'],
+    correct: 2
+  },
+  {
+    q: 'Massivga element qo\'shish uchun qaysi metod ishlatiladi?',
+    code: null,
+    options: ['push()', 'add()', 'insert()', 'append()'],
+    correct: 0
+  },
+  {
+    q: 'Quyidagi kod natijasi nima?',
+    code: 'console.log(2 + "2");',
+    options: ['4', '"22"', 'NaN', 'Error'],
+    correct: 1
+  },
+  {
+    q: 'Arrow funksiya sintaksisi qaysi?',
+    code: null,
+    options: ['function => {}', '() -> {}', '() => {}', 'fn() => {}'],
+    correct: 2
+  },
+  {
+    q: 'DOM da element tanlash uchun qaysi metod ishlatiladi?',
+    code: null,
+    options: ['getElement()', 'querySelector()', 'findElement()', 'selectElement()'],
+    correct: 1
+  },
+  {
+    q: 'Quyidagi kod natijasi nima?',
+    code: 'console.log([] == false);',
+    options: ['true', 'false', 'undefined', 'Error'],
+    correct: 0
+  },
+  {
+    q: '=== operatori nimani tekshiradi?',
+    code: null,
+    options: ['Faqat qiymatni', 'Faqat turni', 'Qiymat va turni', 'Hech narsani'],
+    correct: 2
+  },
+  {
+    q: 'Promise ning 3 ta holati qaysi?',
+    code: null,
+    options: ['start, end, error', 'pending, fulfilled, rejected', 'open, closed, error', 'init, done, fail'],
+    correct: 1
+  },
+  {
+    q: 'Quyidagi kod natijasi nima?',
+    code: 'console.log("5" - 3);',
+    options: ['"53"', '2', 'NaN', 'Error'],
+    correct: 1
+  },
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function openQuiz() {
+  document.getElementById('quiz-modal').classList.add('active');
+  startQuiz();
+}
+
+function startQuiz() {
+  quizIndex = 0;
+  quizScore = 0;
+  quizAnswered = false;
+  document.getElementById('quiz-content').style.display = 'block';
+  document.getElementById('quiz-result').style.display = 'none';
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  quizAnswered = false;
+  const q = quizQuestions[quizIndex];
+  document.getElementById('quiz-progress-fill').style.width = (quizIndex / quizQuestions.length * 100) + '%';
+  document.getElementById('quiz-progress-text').textContent = `${quizIndex + 1} / ${quizQuestions.length}`;
+  document.getElementById('quiz-q-num').textContent = `Savol ${quizIndex + 1}`;
+  document.getElementById('quiz-q-text').textContent = q.q;
+
+  const codeBlock = document.getElementById('quiz-q-code');
+  if (q.code) {
+    codeBlock.textContent = q.code;
+    codeBlock.style.display = 'block';
+  } else {
+    codeBlock.style.display = 'none';
+  }
+
+  const optionsContainer = document.getElementById('quiz-options');
+  const markers = ['A', 'B', 'C', 'D'];
+  optionsContainer.innerHTML = q.options.map((opt, i) => `
+    <div class="quiz-option" onclick="answerQuiz(${i})" id="quiz-opt-${i}">
+      <span class="quiz-option-marker">${markers[i]}</span>
+      <span>${opt}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('quiz-next-btn').style.display = 'none';
+}
+
+function answerQuiz(index) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const q = quizQuestions[quizIndex];
+  const options = document.querySelectorAll('.quiz-option');
+
+  options.forEach((opt, i) => {
+    if (i === q.correct) opt.classList.add('correct');
+    if (i === index && i !== q.correct) opt.classList.add('wrong');
+    opt.style.pointerEvents = 'none';
+  });
+
+  if (index === q.correct) {
+    quizScore++;
+    if (typeof addCoins === 'function') addCoins(10, 'Viktorina to\'g\'ri javobi!');
+  }
+
+  document.getElementById('quiz-next-btn').style.display = 'inline-flex';
+}
+
+function nextQuizQuestion() {
+  quizIndex++;
+  if (quizIndex >= quizQuestions.length) {
+    showQuizResult();
+    return;
+  }
+  renderQuizQuestion();
+}
+
+function showQuizResult() {
+  document.getElementById('quiz-content').style.display = 'none';
+  document.getElementById('quiz-result').style.display = 'block';
+
+  const percent = Math.round(quizScore / quizQuestions.length * 100);
+  let title = '';
+  if (percent >= 80) {
+    title = '🌟 Ajoyib natija!';
+    if (typeof addCoins === 'function') addCoins(30, 'Viktorina a\'lo natijasi!');
+  } else if (percent >= 60) {
+    title = '👍 Yaxshi natija!';
+    if (typeof addCoins === 'function') addCoins(15, 'Viktorina muvaffaqiyati!');
+  } else if (percent >= 40) {
+    title = '📚 Davom eting!';
+  } else {
+    title = '💪 Ko\'proq mashq qiling!';
+  }
+
+  document.getElementById('quiz-result-title').textContent = title;
+  document.getElementById('quiz-result-score').textContent = `${quizScore} / ${quizQuestions.length} to'g'ri (${percent}%)`;
+}
+
+// ─── TYPING GAME ───────────────────────────────────────────────
+const typingTexts = [
+  'const greeting = "Hello, World!";',
+  'function add(a, b) { return a + b; }',
+  'const arr = [1, 2, 3].map(x => x * 2);',
+  'document.querySelector(".btn").addEventListener("click", handler);',
+  'const { name, age } = person;',
+  'async function fetchData() { const res = await fetch(url); }',
+  'const sum = numbers.reduce((a, b) => a + b, 0);',
+  'class User { constructor(name) { this.name = name; } }',
+];
+
+let typingText = '';
+let typingStart = 0;
+let typingErrors = 0;
+let typingTotal = 0;
+let typingTimer = null;
+
+function openTypingGame() {
+  document.getElementById('typing-modal').classList.add('active');
+  startTypingGame();
+}
+
+function startTypingGame() {
+  typingText = typingTexts[Math.floor(Math.random() * typingTexts.length)];
+  typingStart = 0;
+  typingErrors = 0;
+  typingTotal = 0;
+
+  if (typingTimer) clearInterval(typingTimer);
+
+  const display = document.getElementById('typing-display');
+  display.innerHTML = `<span class="current">${typingText[0]}</span><span class="remaining">${typingText.slice(1)}</span>`;
+
+  const input = document.getElementById('typing-input');
+  input.value = '';
+  input.focus();
+  input.placeholder = currentLang === 'uz' ? 'Yozishni boshlang...' : currentLang === 'en' ? 'Start typing...' : 'Начните печатать...';
+
+  document.getElementById('typing-wpm').textContent = '0';
+  document.getElementById('typing-accuracy').textContent = '100%';
+  document.getElementById('typing-time').textContent = '0s';
+
+  let startTime = null;
+
+  input.oninput = function() {
+    if (!startTime) {
+      startTime = Date.now();
+      typingTimer = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('typing-time').textContent = elapsed + 's';
+
+        // WPM calculation
+        const words = input.value.trim().split(/\s+/).length;
+        const minutes = (Date.now() - startTime) / 60000;
+        if (minutes > 0) {
+          document.getElementById('typing-wpm').textContent = Math.round(words / minutes);
+        }
+      }, 500);
+    }
+
+    const typed = input.value;
+    typingTotal = typed.length;
+    typingErrors = 0;
+
+    let html = '';
+    for (let i = 0; i < typingText.length; i++) {
+      if (i < typed.length) {
+        if (typed[i] === typingText[i]) {
+          html += `<span class="correct">${typingText[i]}</span>`;
+        } else {
+          html += `<span class="incorrect">${typingText[i]}</span>`;
+          typingErrors++;
+        }
+      } else if (i === typed.length) {
+        html += `<span class="current">${typingText[i]}</span>`;
+      } else {
+        html += `<span class="remaining">${typingText[i]}</span>`;
+      }
+    }
+
+    display.innerHTML = html;
+
+    // Accuracy
+    const accuracy = typingTotal > 0 ? Math.round(((typingTotal - typingErrors) / typingTotal) * 100) : 100;
+    document.getElementById('typing-accuracy').textContent = accuracy + '%';
+
+    // Complete
+    if (typed.length >= typingText.length) {
+      clearInterval(typingTimer);
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      showToast(`🏁 Tugadi! Vaqt: ${elapsed}s, Aniqlik: ${accuracy}%`);
+      if (typeof addCoins === 'function') addCoins(15, 'Tez yozish poygasi bonusi!');
+      input.oninput = null;
+    }
+  };
+}
+
+// ─── UNO GAME ──────────────────────────────────────────────────
+const unoColors = ['#f38ba8', '#a6e3a1', '#89b4fa', '#fab387', '#cba6f7', '#f9e2af'];
+const unoValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+2', '⊘', '↻'];
+
+let unoHand = [];
+let unoTopCard = null;
+let unoScore_val = 0;
+
+function openUnoGame() {
+  document.getElementById('uno-modal').classList.add('active');
+}
+
+function createUnoCard(color, value) {
+  return { color, value };
+}
+
+function renderUnoCard(card, clickable = false, onclick = '') {
+  return `<div style="
+    width:60px; height:90px; 
+    background:${card.color}; 
+    border-radius:10px; 
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; font-weight:800; color:white;
+    border: 2px solid rgba(255,255,255,0.3);
+    cursor:${clickable ? 'pointer' : 'default'};
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px ${card.color}40;
+    ${clickable ? 'transform: translateY(0);' : ''}
+  " ${clickable ? `onclick="${onclick}" onmouseenter="this.style.transform='translateY(-8px) scale(1.05)'" onmouseleave="this.style.transform='translateY(0)'"` : ''}>
+    ${card.value}
+  </div>`;
+}
+
+function startUnoGame() {
+  unoHand = [];
+  unoScore_val = 0;
+
+  // Deal 7 cards
+  for (let i = 0; i < 7; i++) {
+    unoHand.push(createUnoCard(
+      unoColors[Math.floor(Math.random() * unoColors.length)],
+      unoValues[Math.floor(Math.random() * unoValues.length)]
+    ));
+  }
+
+  // Top card
+  unoTopCard = createUnoCard(
+    unoColors[Math.floor(Math.random() * unoColors.length)],
+    unoValues[Math.floor(Math.random() * 10)]
+  );
+
+  document.getElementById('uno-question-area').style.display = 'none';
+  renderUnoBoard();
+}
+
+function renderUnoBoard() {
+  // Top card pile
+  document.getElementById('uno-cards').innerHTML = `
+    <div style="text-align:center">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Tepki karta</div>
+      ${renderUnoCard(unoTopCard)}
+    </div>
+  `;
+
+  // Hand
+  document.getElementById('uno-hand').innerHTML = unoHand.map((card, i) => 
+    renderUnoCard(card, true, `playUnoCard(${i})`)
+  ).join('');
+
+  document.getElementById('uno-score').textContent = `Ball: ${unoScore_val} | Kartalar: ${unoHand.length}`;
+
+  if (unoHand.length === 0) {
+    document.getElementById('uno-score').innerHTML = `<span style="font-size:24px">🎉</span> Siz yutdingiz! Ball: ${unoScore_val}`;
+    if (typeof addCoins === 'function') addCoins(30, 'UNO o\'yini g\'olibi bonusi!');
+  }
+}
+
+function playUnoCard(index) {
+  const card = unoHand[index];
+
+  // Can play if color or value matches
+  if (card.color === unoTopCard.color || card.value === unoTopCard.value || card.value === '+2' || card.value === '⊘' || card.value === '↻') {
+    unoTopCard = card;
+    unoHand.splice(index, 1);
+    unoScore_val += 10;
+
+    // Show a quick JS question
+    askUnoQuestion();
+  } else {
+    showToast('❌ Bu kartani tashlash mumkin emas! Rang yoki raqam mos kelishi kerak.');
+  }
+}
+
+function askUnoQuestion() {
+  const questions = [
+    { q: 'typeof "hello" =?', options: ['string', 'object', 'undefined'], correct: 0 },
+    { q: 'null == undefined ?', options: ['true', 'false', 'error'], correct: 0 },
+    { q: '[].length = ?', options: ['0', 'undefined', 'null'], correct: 0 },
+    { q: '10 % 3 = ?', options: ['1', '3', '0'], correct: 0 },
+    { q: '"2" + 2 = ?', options: ['"22"', '4', 'NaN'], correct: 0 },
+  ];
+
+  const q = questions[Math.floor(Math.random() * questions.length)];
+  document.getElementById('uno-question-area').style.display = 'block';
+  document.getElementById('uno-q-text').textContent = q.q;
+
+  const optContainer = document.getElementById('uno-options');
+  optContainer.innerHTML = q.options.map((opt, i) => `
+    <div class="quiz-option" onclick="answerUno(${i}, ${q.correct})">
+      <span class="quiz-option-marker">${['A','B','C'][i]}</span>
+      <span>${opt}</span>
+    </div>
+  `).join('');
+}
+
+function answerUno(selected, correct) {
+  if (selected === correct) {
+    unoScore_val += 5;
+    if (typeof addCoins === 'function') addCoins(5, 'UNO to\'g\'ri javob!');
+    showToast('✅ To\'g\'ri! +5 ball');
+  } else {
+    // Draw a penalty card
+    unoHand.push(createUnoCard(
+      unoColors[Math.floor(Math.random() * unoColors.length)],
+      unoValues[Math.floor(Math.random() * unoValues.length)]
+    ));
+    showToast('❌ Noto\'g\'ri! +1 karta');
+  }
+  document.getElementById('uno-question-area').style.display = 'none';
+  renderUnoBoard();
+}
+
+// ─── MODALS ────────────────────────────────────────────────────
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  if (typingTimer) clearInterval(typingTimer);
+}
+
+// Close on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove('active');
+      if (typingTimer) clearInterval(typingTimer);
+    }
+  });
+});
+
+// ─── TOAST ─────────────────────────────────────────────────────
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ─── KEYBOARD SHORTCUTS ────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  // Escape to close modals
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    if (typingTimer) clearInterval(typingTimer);
+  }
+});
+
+// ─── PLAYGROUND AUTO-RUN WITH DEBOUNCE ─────────────────────────
+let playgroundDebounce;
+document.querySelectorAll('.playground-textarea').forEach(ta => {
+  ta.addEventListener('input', () => {
+    clearTimeout(playgroundDebounce);
+    playgroundDebounce = setTimeout(runPlayground, 800);
+  });
+});
+</script>
+
+<!-- CodeJS Platform Engine (Auth, Coins, Lessons) -->
+<script src="app.js"></script>
+
+</body>
+</html>

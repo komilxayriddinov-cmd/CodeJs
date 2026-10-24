@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeJS — Administrator Paneli</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .admin-header {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+    .admin-brand-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 100px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid var(--accent-purple);
+      color: var(--accent-purple);
+      font-weight: 700;
+    }
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .admin-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: calc(100vh - 64px);
+    }
+    .badge-role {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-admin {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .badge-user {
+      background: rgba(0, 212, 255, 0.1);
+      color: #38bdf8;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+    }
+    .action-btn-sm {
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .action-btn-sm:hover {
+      background: var(--bg-card);
+      border-color: var(--accent-cyan);
+      transform: translateY(-1px);
+    }
+    .action-btn-sm.danger:hover {
+      border-color: #f38ba8;
+      color: #f38ba8;
+    }
+    .admin-tab-content {
+      display: none;
+    }
+    .admin-tab-content.active {
+      display: block;
+    }
+    .airdrop-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Admin Navbar -->
+  <header class="admin-header">
+    <a href="index.html" class="admin-brand">
+      <div class="nav-brand-icon" style="width:32px; height:32px; font-size:16px;">{}</div>
+      <span><span class="code">code</span><span class="js">JS</span></span>
+      <span class="admin-brand-tag">Admin Panel</span>
+    </a>
+
+    <div class="admin-header-actions">
+      <div id="admin-user-display" style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600;">
+        <span class="coin-badge">👑 Admin</span>
+        <span id="current-admin-name">Admin</span>
+      </div>
+      <a href="index.html" class="btn btn-secondary" style="padding:8px 16px; font-size:13px; text-decoration:none;">
+        ⬅️ Saytga qaytish
+      </a>
+    </div>
+  </header>
+
+  <!-- Admin Main Layout -->
+  <div class="admin-container">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-title">Boshqaruv</div>
+      <nav class="admin-nav">
+        <button class="admin-nav-item active" onclick="switchAdminSection('users')">
+          <span class="nav-icon">👥</span> Foydalanuvchilar
+        </button>
+        <button class="admin-nav-item" onclick="switchAdminSection('airdrop')">
+          <span class="nav-icon">🪙</span> Tangalar tarqatish (Airdrop)
+        </button>
+        <button class="admin-nav-item" onclick="switchAdminSection('lessons')">
+          <span class="nav-icon">📚</span> Darsliklar tahlili
+        </button>
+        <button class="admin-nav-item" onclick="switchAdminSection('settings')">
+          <span class="nav-icon">⚙️</span> Tizim sozlamalari
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+
+      <!-- Stats Grid -->
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">👥</div>
+          <div class="admin-stat-value" id="stat-total-users">0</div>
+          <div class="admin-stat-label">Jami foydalanuvchilar</div>
+          <div class="admin-stat-change up">↑ Yangi a'zolar</div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">🪙</div>
+          <div class="admin-stat-value" id="stat-total-coins">0</div>
+          <div class="admin-stat-label">Muomaladagi tangalar</div>
+          <div class="admin-stat-change up">🪙 CodeJS Coins</div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">🎓</div>
+          <div class="admin-stat-value" id="stat-completed-lessons">0</div>
+          <div class="admin-stat-label">Bajarilgan darslar</div>
+          <div class="admin-stat-change up">↑ Bilim oluvchilar</div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">⚡</div>
+          <div class="admin-stat-value" style="color:var(--accent-green); background:none; -webkit-text-fill-color:initial;">Faol</div>
+          <div class="admin-stat-label">Platforma holati</div>
+          <div class="admin-stat-change up">🟢 Barcha tizimlar joyida</div>
+        </div>
+      </div>
+
+      <!-- SECTION 1: USERS MANAGEMENT -->
+      <section id="section-users" class="admin-tab-content active">
+        <div class="admin-table-wrapper">
+          <div class="admin-table-header">
+            <div>
+              <div class="admin-table-title">Foydalanuvchilar ro'yxati</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Platformadagi barcha ro'yxatdan o'tgan foydalanuvchilar</div>
+            </div>
+            <div style="display:flex; gap:12px;">
+              <input type="text" class="admin-table-search" id="user-search" placeholder="Qidirish (ism, email)..." oninput="renderUsersTable()" />
+              <button class="btn btn-primary" onclick="openAddUserModal()" style="padding:8px 16px; font-size:13px;">
+                ➕ Yangi foydalanuvchi
+              </button>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Foydalanuvchi</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Tangalar</th>
+                  <th>Darslar</th>
+                  <th>Qo'shilgan</th>
+                  <th style="text-align:right;">Amallar</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <!-- Injected by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: AIRDROP COINS -->
+      <section id="section-airdrop" class="admin-tab-content">
+        <div class="airdrop-card">
+          <h2 style="font-size:24px; font-weight:800; margin-bottom:8px;">🎁 Barcha foydalanuvchilarga Coin tarqatish</h2>
+          <p style="color:var(--text-secondary); margin-bottom:24px; font-size:14px;">
+            Bir bosish orqali barcha faol o'quvchilarga bayram yoki rag'batlantirish uchun qo'shimcha tangalar sovg'a qiling.
+          </p>
+
+          <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+            <button class="btn btn-primary" onclick="airdropCoins(50)">🪙 +50 Coin tarqatish</button>
+            <button class="btn btn-primary" onclick="airdropCoins(100)">🪙 +100 Coin tarqatish</button>
+            <button class="btn btn-primary" onclick="airdropCoins(500)">👑 +500 Coin tarqatish</button>
+          </div>
+
+          <div style="background:var(--bg-primary); border:1px solid var(--border-subtle); padding:20px; border-radius:var(--radius-md); max-width:480px;">
+            <div style="font-weight:700; margin-bottom:12px; font-size:14px;">Ixtiyoriy miqdorda tarqatish:</div>
+            <div style="display:flex; gap:10px;">
+              <input type="number" class="form-input" id="custom-airdrop-amount" placeholder="Miqdori (masalan: 250)" min="1" />
+              <button class="btn btn-primary" onclick="airdropCustomCoins()">Tarqatish</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: LESSONS ANALYTICS -->
+      <section id="section-lessons" class="admin-tab-content">
+        <div class="admin-table-wrapper" style="padding:24px;">
+          <h2 style="font-size:20px; font-weight:800; margin-bottom:16px;">📚 Kurslar va Dasturlar ko'rsatkichi</h2>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;" id="lessons-stats-cards">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: SETTINGS -->
+      <section id="section-settings" class="admin-tab-content">
+        <div class="airdrop-card">
+          <h2 style="font-size:22px; font-weight:800; margin-bottom:8px;">⚙️ Tizim va Ma'lumotlar boshqaruvi</h2>
+          <p style="color:var(--text-secondary); margin-bottom:20px; font-size:14px;">
+            Baza ma'lumotlarini qayta tiklash yoki namunaviy ma'lumotlar bilan to'ldirish.
+          </p>
+
+          <div style="display:flex; gap:16px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="resetDefaultData()">
+              🔄 Birlamchi ma'lumotlarni qayta tiklash
+            </button>
+            <button class="btn btn-secondary" onclick="exportData()">
+              💾 Ma'lumotlarni JSON ko'rinishida yuklash
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ADD USER MODAL -->
+  <div class="modal-overlay" id="add-user-modal">
+    <div class="modal" style="max-width:440px">
+      <div class="modal-header">
+        <h2 class="modal-title">➕ Yangi foydalanuvchi</h2>
+        <button class="modal-close" onclick="closeModal('add-user-modal')">✕</button>
+      </div>
+      <form onsubmit="handleCreateUser(event)" style="display:flex; flex-direction:column; gap:16px;">
+        <div class="form-group">
+          <label class="form-label">Ism</label>
+          <input type="text" class="form-input" id="new-user-name" required placeholder="Ali Valiyev" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="new-user-email" required placeholder="ali@gmail.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Parol</label>
+          <input type="password" class="form-input" id="new-user-password" required placeholder="••••••••" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rol</label>
+          <select class="form-input" id="new-user-role">
+            <option value="user">O'quvchi (User)</option>
+            <option value="admin">Administrator (Admin)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Boshlang'ich tangalar</label>
+          <input type="number" class="form-input" id="new-user-coins" value="100" />
+        </div>
+        <button type="submit" class="auth-submit">Saqlash</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN GUARD MODAL (if accessed without admin role) -->
+  <div class="modal-overlay" id="admin-guard-modal">
+    <div class="modal" style="max-width:420px; text-align:center;">
+      <div style="font-size:48px; margin-bottom:12px;">🛡️</div>
+      <h2 style="font-size:22px; font-weight:800; margin-bottom:8px;">Admin Paneli Himoyalangan</h2>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:20px;">
+        Ushbu sahifaga faqat CodeJS administratorlari kirishi mumkin.
+      </p>
+      
+      <div style="background:var(--bg-primary); border:1px solid var(--border-subtle); padding:16px; border-radius:var(--radius-md); text-align:left; font-size:13px; margin-bottom:20px;">
+        <div><b>Standart Admin login:</b> <span style="color:var(--accent-cyan)">admin@codejs.uz</span></div>
+        <div style="margin-top:4px;"><b>Parol:</b> <span style="color:var(--accent-cyan)">komil777</span></div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%; margin-bottom:10px;" onclick="quickLoginAdmin()">
+        👑 Admin sifatida darhol kirish
+      </button>
+      <a href="index.html" class="btn btn-secondary" style="width:100%; text-decoration:none; display:inline-block;">
+        Asosiy saytga qaytish
+      </a>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // ─── ADMIN AUTH & INIT ──────────────────────────────────────────
+    function checkAdminAuth() {
+      const user = getCurrentUser();
+      if (!user || user.role !== 'admin') {
+        document.getElementById('admin-guard-modal').classList.add('active');
+      } else {
+        document.getElementById('admin-guard-modal').classList.remove('active');
+        document.getElementById('current-admin-name').textContent = user.name;
+        refreshDashboard();
+      }
+    }
+
+    function quickLoginAdmin() {
+      const users = getUsers();
+      let admin = users.find(u => u.role === 'admin');
+      if (!admin) {
+        admin = {
+          id: 'admin-' + Date.now(),
+          name: 'Bosh Admin',
+          email: 'admin@codejs.uz',
+          password: 'komil777',
+          role: 'admin',
+          coins: 1000,
+          completedLessons: ['html-01', 'html-02'],
+          joined: '2026-01-01'
+        };
+        users.push(admin);
+        saveUsers(users);
+      } else {
+        admin.password = 'komil777';
+        saveUsers(users);
+      }
+      setCurrentUser(admin);
+      document.getElementById('admin-guard-modal').classList.remove('active');
+      document.getElementById('current-admin-name').textContent = admin.name;
+      showToast('👑 Administrator sifatida ulandingiz!');
+      refreshDashboard();
+    }
+
+    // ─── TABS NAVIGATION ───────────────────────────────────────────
+    function switchAdminSection(tabId) {
+      document.querySelectorAll('.admin-nav-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      const target = document.getElementById('section-' + tabId);
+      if (target) target.classList.add('active');
+    }
+
+    // ─── DASHBOARD REFRESH ─────────────────────────────────────────
+    function refreshDashboard() {
+      const users = getUsers();
+      
+      // Update top stats
+      const totalUsers = users.length;
+      const totalCoins = users.reduce((acc, u) => acc + (u.coins || 0), 0);
+      const totalLessons = users.reduce((acc, u) => acc + (u.completedLessons || []).length, 0);
+
+      document.getElementById('stat-total-users').textContent = totalUsers;
+      document.getElementById('stat-total-coins').textContent = totalCoins.toLocaleString();
+      document.getElementById('stat-completed-lessons').textContent = totalLessons;
+
+      renderUsersTable();
+      renderLessonsStats();
+    }
+
+    // ─── USERS TABLE RENDERING ─────────────────────────────────────
+    function renderUsersTable() {
+      const users = getUsers();
+      const query = (document.getElementById('user-search').value || '').toLowerCase();
+      const tbody = document.getElementById('users-tbody');
+
+      const filtered = users.filter(u => 
+        u.name.toLowerCase().includes(query) || 
+        u.email.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--text-muted);">Foydalanuvchi topilmadi</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(u => {
+        const isAdmin = u.role === 'admin';
+        return `
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="user-cell-avatar" style="width:34px; height:34px; border-radius:50%; background:var(--gradient-main); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:white;">
+                  ${u.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div style="font-weight:700;">${u.name}</div>
+                  <div style="font-size:11px; color:var(--text-muted);">${u.id}</div>
+                </div>
+              </div>
+            </td>
+            <td><code>${u.email}</code></td>
+            <td>
+              <span class="badge-role ${isAdmin ? 'badge-admin' : 'badge-user'}">
+                ${isAdmin ? '👑 Admin' : '🎓 O\'quvchi'}
+              </span>
+            </td>
+            <td><b style="color:var(--accent-yellow); font-family:var(--font-mono);">${u.coins || 0} 🪙</b></td>
+            <td><span style="font-family:var(--font-mono); font-weight:600;">${(u.completedLessons || []).length} dars</span></td>
+            <td style="color:var(--text-muted); font-size:12px;">${u.joined || '2026-01-01'}</td>
+            <td style="text-align:right;">
+              <div style="display:inline-flex; gap:6px;">
+                <button class="action-btn-sm" onclick="adjustUserCoins('${u.id}', 50)" title="+50 tanga qo'shish">➕ 50</button>
+                <button class="action-btn-sm" onclick="adjustUserCoins('${u.id}', -50)" title="-50 tanga ayirish">➖ 50</button>
+                <button class="action-btn-sm" onclick="toggleUserRole('${u.id}')" title="Rolni o'zgartirish">
+                  ${isAdmin ? '👤 O\'quvchi qilish' : '👑 Admin qilish'}
+                </button>
+                <button class="action-btn-sm danger" onclick="deleteUser('${u.id}')" title="O'chirish">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ─── USER ACTIONS ──────────────────────────────────────────────
+    function adjustUserCoins(userId, amount) {
+      const users = getUsers();
+      const user = users.find(u => u.id === userId);
+      if (!user) return;
+
+      user.coins = Math.max(0, (user.coins || 0) + amount);
+      saveUsers(users);
+
+      // If updating currently logged in user
+      const current = getCurrentUser();
+      if (current && current.id === userId) {
+        current.coins = user.coins;
+        setCurrentUser(current);
+      }
+
+      showToast(`🪙 ${user.name} hisobiga ${amount > 0 ? '+' : ''}${amount} tanga kiritildi!`);
+      refreshDashboard();
+    }
+
+    function toggleUserRole(userId) {
+      const users = getUsers();
+      const user = users.find(u => u.id === userId);
+      if (!user) return;
+
+      user.role = user.role === 'admin' ? 'user' : 'admin';
+      saveUsers(users);
+
+      const current = getCurrentUser();
+      if (current && current.id === userId) {
+        current.role = user.role;
+        setCurrentUser(current);
+      }
+
+      showToast(`👑 ${user.name} roli "${user.role}" ga o'zgartirildi.`);
+      refreshDashboard();
+    }
+
+    function deleteUser(userId) {
+      const users = getUsers();
+      const user = users.find(u => u.id === userId);
+      if (!user) return;
+
+      if (!confirm(`Haqiqatan ham "${user.name}" (${user.email}) ni o'chirmoqchimisiz?`)) {
+        return;
+      }
+
+      const filtered = users.filter(u => u.id !== userId);
+      saveUsers(filtered);
+      showToast(`🗑️ Foydalanuvchi o'chirildi.`);
+      refreshDashboard();
+    }
+
+    // ─── ADD USER ──────────────────────────────────────────────────
+    function openAddUserModal() {
+      document.getElementById('add-user-modal').classList.add('active');
+    }
+
+    function handleCreateUser(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-user-name').value.trim();
+      const email = document.getElementById('new-user-email').value.trim().toLowerCase();
+      const password = document.getElementById('new-user-password').value;
+      const role = document.getElementById('new-user-role').value;
+      const coins = parseInt(document.getElementById('new-user-coins').value) || 0;
+
+      const users = getUsers();
+      if (users.some(u => u.email.toLowerCase() === email)) {
+        alert('Bu email bilan foydalanuvchi allaqachon mavjud!');
+        return;
+      }
+
+      const newUser = {
+        id: 'user-' + Date.now(),
+        name,
+        email,
+        password,
+        role,
+        coins,
+        completedLessons: [],
+        joined: new Date().toISOString().split('T')[0]
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+      closeModal('add-user-modal');
+      showToast(`✅ ${name} muvaffaqiyatli qo'shildi!`);
+      refreshDashboard();
+    }
+
+    // ─── AIRDROP COINS ─────────────────────────────────────────────
+    function airdropCoins(amount) {
+      const users = getUsers();
+      if (users.length === 0) return;
+
+      users.forEach(u => {
+        u.coins = (u.coins || 0) + amount;
+      });
+      saveUsers(users);
+
+      const current = getCurrentUser();
+      if (current) {
+        current.coins = (current.coins || 0) + amount;
+        setCurrentUser(current);
+      }
+
+      showToast(`🎉 Barcha ${users.length} nafar foydalanuvchiga +${amount} tanga tarqatildi!`);
+      refreshDashboard();
+    }
+
+    function airdropCustomCoins() {
+      const val = parseInt(document.getElementById('custom-airdrop-amount').value);
+      if (!val || val <= 0) {
+        alert('Iltimos, musbat son kiriting!');
+        return;
+      }
+      airdropCoins(val);
+      document.getElementById('custom-airdrop-amount').value = '';
+    }
+
+    // ─── LESSONS STATS ─────────────────────────────────────────────
+    function renderLessonsStats() {
+      const container = document.getElementById('lessons-stats-cards');
+      const courses = [
+        { name: 'HTML Asoslari', icon: '🏗️', count: 12, cat: 'html' },
+        { name: 'CSS Stillari', icon: '🎨', count: 14, cat: 'css' },
+        { name: 'JavaScript Asoslari', icon: '⚡', count: 10, cat: 'js-basics' },
+        { name: 'Funksiyalar', icon: '🔧', count: 8, cat: 'js-functions' },
+        { name: 'Massivlar', icon: '📦', count: 6, cat: 'js-arrays' },
+        { name: 'DOM API', icon: '🌐', count: 8, cat: 'dom' }
+      ];
+
+      const users = getUsers();
+      container.innerHTML = courses.map(c => {
+        // Count how many lessons in this course completed
+        let completions = 0;
+        users.forEach(u => {
+          (u.completedLessons || []).forEach(lKey => {
+            if (lKey.startsWith(c.cat)) completions++;
+          });
+        });
+
+        return `
+          <div style="background:var(--bg-primary); border:1px solid var(--border-subtle); padding:20px; border-radius:var(--radius-md);">
+            <div style="font-size:28px; margin-bottom:8px;">${c.icon}</div>
+            <div style="font-weight:700; font-size:16px;">${c.name}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Jami ${c.count} ta dars</div>
+            <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; color:var(--text-secondary);">Yakunlanganlar:</span>
+              <span style="font-weight:800; color:var(--accent-cyan); font-family:var(--font-mono);">${completions} marta</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ─── RESET DEFAULT DATA ─────────────────────────────────────────
+    function resetDefaultData() {
+      if (!confirm('Haqiqatan ham barcha ma\'lumotlarni standart holatga keltirmoqchimisiz?')) return;
+      localStorage.removeItem(USERS_KEY);
+      localStorage.removeItem(CURRENT_USER_KEY);
+      initDefaultUsers();
+      quickLoginAdmin();
+      showToast('🔄 Ma\'lumotlar muvaffaqiyatli yangilandi!');
+    }
+
+    function exportData() {
+      const data = {
+        users: getUsers(),
+        exportedAt: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `codejs_backup_${Date.now()}.json`;
+      a.click();
+      showToast('💾 Zaxira nusxa yuklab olindi!');
+    }
+
+    // Modal close helper
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    }
+
+    // Check auth on load
+    window.addEventListener('DOMContentLoaded', () => {
+      initDefaultUsers();
+      checkAdminAuth();
+    });
+  </script>
+</body>
+</html>
