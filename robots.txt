@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+# Sitemap manzilini ko'rsatish
+Sitemap: https://codejs.uz/sitemap.xml
+
