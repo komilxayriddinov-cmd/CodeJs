@@ -3,5 +3,5 @@ Allow: /
 Disallow: /admin.html
 
 # Sitemap manzilini ko'rsatish
-Sitemap: https://codejs.uz/sitemap.xml
+Sitemap: https://codejs-delta.vercel.app/sitemap.xml
 

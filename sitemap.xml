@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://codejs.uz/</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://codejs-delta.vercel.app/</loc>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://codejs.uz/#darsliklar</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://codejs-delta.vercel.app/#darsliklar</loc>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://codejs.uz/#muharrir</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://codejs-delta.vercel.app/#muharrir</loc>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://codejs.uz/#oyinlar</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://codejs-delta.vercel.app/#oyinlar</loc>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://codejs.uz/#xususiyatlar</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://codejs-delta.vercel.app/#xususiyatlar</loc>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 </urlset>
-
