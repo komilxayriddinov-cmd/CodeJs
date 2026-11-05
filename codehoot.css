@@ -1,0 +1,632 @@
+/* ═══════════════════════════════════════════════════════════════
+   CODEHOOT — MULTIPLAYER JONLI VIKTORINA STILLARI (KAHOOT USLUBI)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Modal Kengaytmasi */
+#codehoot-modal.open,
+#codehoot-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#codehoot-modal.open .modal,
+#codehoot-modal.active .modal {
+  transform: translateY(0) scale(1);
+}
+
+#codehoot-modal .modal {
+  max-width: 920px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-surface, #121826);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 212, 255, 0.15);
+  border-radius: 20px;
+  padding: 24px;
+  color: var(--text-primary, #ffffff);
+  position: relative;
+}
+
+/* Codehoot Header Brand */
+.codehoot-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(0, 212, 255, 0.2));
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+/* ─── 1. ASOSIY XUSH KELIBSIZ EKRANI (WELCOME) ─────────────────── */
+.codehoot-welcome-hero {
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.codehoot-welcome-logo {
+  font-size: 56px;
+  margin-bottom: 12px;
+  animation: bounce 2s infinite ease-in-out;
+}
+
+.codehoot-welcome-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #00d4ff, #ec4899, #facc15);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.codehoot-welcome-desc {
+  font-size: 15px;
+  color: var(--text-secondary, #94a3b8);
+  max-width: 580px;
+  margin: 0 auto 32px auto;
+  line-height: 1.6;
+}
+
+.codehoot-welcome-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.codehoot-role-card {
+  flex: 1 1 240px;
+  max-width: 290px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.codehoot-role-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent-cyan, #00d4ff);
+  box-shadow: 0 12px 30px rgba(0, 212, 255, 0.2);
+  background: rgba(0, 212, 255, 0.06);
+}
+
+.codehoot-role-icon {
+  font-size: 44px;
+  margin-bottom: 14px;
+}
+
+.codehoot-role-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.codehoot-role-desc {
+  font-size: 13px;
+  color: var(--text-muted, #64748b);
+  line-height: 1.4;
+}
+
+/* ─── 2. HOST: XONA SOZLAMALARI VA LOBBY ───────────────────────── */
+.codehoot-form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.codehoot-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+  margin-bottom: 8px;
+}
+
+.codehoot-select, .codehoot-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.codehoot-select:focus, .codehoot-input:focus {
+  border-color: var(--accent-cyan, #00d4ff);
+}
+
+/* Lobby PIN ko'rgazmasi */
+.codehoot-pin-display-box {
+  background: linear-gradient(135deg, rgba(19, 104, 206, 0.25), rgba(226, 27, 60, 0.25));
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  margin: 16px 0 24px 0;
+}
+
+.codehoot-pin-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-secondary, #cbd5e1);
+  margin-bottom: 6px;
+}
+
+.codehoot-pin-number {
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #ffffff;
+  text-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+  font-family: monospace;
+}
+
+/* Lobby O'yinchilar qatori */
+.codehoot-lobby-players-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 120px;
+  max-height: 240px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.codehoot-lobby-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  padding: 6px 14px 6px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  animation: popIn 0.3s ease-out;
+}
+
+.codehoot-chip-av {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.codehoot-chip-av img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ─── 3. JONLI SAVOL VA JAVOBLAR (KAHOOT USLUBI) ───────────────── */
+.codehoot-q-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.codehoot-q-counter {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-cyan, #00d4ff);
+  background: rgba(0, 212, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.codehoot-timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.codehoot-timer-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 3px solid var(--accent-cyan, #00d4ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+}
+
+.codehoot-timer-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.codehoot-timer-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--accent-cyan, #00d4ff);
+  transition: width 1s linear, background 0.3s;
+}
+
+.codehoot-q-title {
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 18px;
+  line-height: 1.4;
+  min-height: 55px;
+}
+
+/* Bayroq va Kod media konteyneri */
+.codehoot-media-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  min-height: 140px;
+}
+
+.codehoot-flag-box {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.codehoot-flag-img {
+  max-width: 260px;
+  height: 130px;
+  object-fit: contain;
+  border-radius: 6px;
+  display: block;
+}
+
+.codehoot-code-snippet {
+  background: #0b1120;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 10px;
+  padding: 14px 20px;
+  text-align: left;
+  max-width: 90%;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  color: #38bdf8;
+}
+
+/* 4 TA KAHOOT RANG VA SHAKLLARI */
+.codehoot-answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  .codehoot-answers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.codehoot-answer-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: 14px;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.codehoot-answer-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  filter: brightness(1.15);
+}
+
+.codehoot-answer-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.codehoot-answer-btn.selected {
+  outline: 4px solid #ffffff;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
+}
+
+/* Kahoot ranglari */
+.codehoot-answer-btn.btn-red {
+  background: #e21b3c;
+}
+.codehoot-answer-btn.btn-blue {
+  background: #1368ce;
+}
+.codehoot-answer-btn.btn-yellow {
+  background: #d89e00;
+}
+.codehoot-answer-btn.btn-green {
+  background: #26890c;
+}
+
+.codehoot-shape {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.codehoot-opt-text {
+  flex: 1;
+  word-break: break-word;
+}
+
+/* ─── 4. REVEAL NATIJA EKRANI VA STATISTIKA GRAFIGI ───────────── */
+.codehoot-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+
+.codehoot-banner.correct {
+  background: rgba(38, 137, 12, 0.2);
+  border: 1px solid #26890c;
+  color: #4ade80;
+}
+
+.codehoot-banner.wrong {
+  background: rgba(226, 27, 60, 0.2);
+  border: 1px solid #e21b3c;
+  color: #f87171;
+}
+
+.codehoot-reveal-stats-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+  height: 180px;
+  padding: 20px 0;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.codehoot-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+  height: 100%;
+}
+
+.codehoot-bar-count {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.codehoot-bar-track {
+  width: 36px;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.codehoot-bar-fill {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.codehoot-bar-label {
+  font-size: 15px;
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.codehoot-bar-col.is-correct .codehoot-bar-label {
+  color: #4ade80;
+}
+
+/* ─── 5. REYTING / LEADERBOARD JADVALI ──────────────────────────── */
+.codehoot-leaderboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 340px;
+  overflow-y: auto;
+  margin-bottom: 24px;
+}
+
+.codehoot-rank-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.2s;
+}
+
+.codehoot-rank-item.is-me {
+  background: rgba(0, 212, 255, 0.12);
+  border-color: var(--accent-cyan, #00d4ff);
+}
+
+.codehoot-rank-badge {
+  font-size: 20px;
+  font-weight: 800;
+  width: 32px;
+  text-align: center;
+}
+
+.codehoot-rank-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1e293b;
+  flex-shrink: 0;
+}
+
+.codehoot-rank-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.codehoot-rank-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.codehoot-rank-score {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--accent-yellow, #fbbf24);
+}
+
+/* ─── 6. SHOHSUPA / PODIUM (1, 2, 3-O'RIN) ─────────────────────── */
+.codehoot-podium-wrapper {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
+  min-height: 300px;
+  padding-bottom: 20px;
+}
+
+.codehoot-podium-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 130px;
+}
+
+.codehoot-podium-player {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.codehoot-podium-medal {
+  font-size: 32px;
+  margin-bottom: 4px;
+}
+
+.codehoot-podium-av {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 6px auto;
+  border: 3px solid #fff;
+  background: #1e293b;
+}
+
+.codehoot-podium-av img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.codehoot-podium-name {
+  font-size: 14px;
+  font-weight: 700;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.codehoot-podium-score {
+  font-size: 13px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.codehoot-podium-reward {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent-yellow, #fbbf24);
+  background: rgba(251, 191, 36, 0.15);
+  padding: 2px 8px;
+  border-radius: 100px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.codehoot-podium-pillar {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.codehoot-podium-step.rank-1 .codehoot-podium-pillar {
+  background: linear-gradient(180deg, #ffd700, #b8860b);
+}
+
+.codehoot-podium-step.rank-2 .codehoot-podium-pillar {
+  background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+}
+
+.codehoot-podium-step.rank-3 .codehoot-podium-pillar {
+  background: linear-gradient(180deg, #cd7f32, #8b4513);
+}
+
+.pillar-num {
+  font-size: 36px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Animatsiyalar */
+@keyframes popIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.animate-pop {
+  animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

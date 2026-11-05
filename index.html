@@ -89,6 +89,7 @@
   </script>
 
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="codehoot.css" />
 
   <!-- Splash: sessiyada faqat bir marta ko'rsatilsin -->
   <script>
@@ -173,9 +174,14 @@
       <span id="nav-coins-count">0</span>
     </div>
 
-    <!-- Coin Shop Button -->
+    <!-- Code Shop Button -->
     <button class="btn btn-secondary" onclick="openCoinShop()" style="padding:7px 14px; font-size:13px; border-color:rgba(251, 191, 36, 0.4); color:var(--accent-yellow); display:inline-flex; align-items:center; gap:6px;">
       <span>🛒</span> <span data-uz="Do'kon" data-en="Shop" data-ru="Магазин">Do'kon</span>
+    </button>
+
+    <!-- Codehoot Live Quiz Button -->
+    <button class="btn btn-secondary" onclick="openCodehoot()" style="padding:7px 14px; font-size:13px; border-color:rgba(236, 72, 153, 0.4); color:#f472b6; display:inline-flex; align-items:center; gap:6px;" title="Jonli Kahoot o'yini">
+      <span>🎯</span> <span data-uz="Jonli O'yin" data-en="Live Game" data-ru="Игра">Jonli O'yin</span>
     </button>
 
     <!-- Auth Container: Login Button OR User Profile -->
@@ -206,6 +212,9 @@
           </a>
           <button class="dropdown-item" onclick="openCoinShop()">
             <span>🛒</span> <span data-uz="Coin Do'koni" data-en="Coin Shop" data-ru="Магазин монет">Coin Do'koni</span>
+          </button>
+          <button class="dropdown-item" onclick="openCodehoot()">
+            <span>🎯</span> <span data-uz="Codehoot (Jonli Viktorina)" data-en="Codehoot (Live Quiz)" data-ru="Codehoot (Викторина)">Codehoot (Jonli Viktorina)</span>
           </button>
           <a href="admin.html" class="dropdown-item" id="admin-dropdown-link" style="display:none; text-decoration:none;">
             <span>⚙️</span> <span data-uz="Admin Panel" data-en="Admin Panel" data-ru="Панель администратора">Admin Panel</span>
@@ -502,6 +511,23 @@ console.log("Salom, CodeJS!");</textarea>
     </div>
 
     <div class="games-grid">
+      <!-- 🌟 CODEHOOT — MULTIPLAYER JONLI VIKTORINA (KAHOOT) -->
+      <div class="game-card reveal reveal-delay-1" onclick="openCodehoot()" style="border-color: rgba(236, 72, 153, 0.5); box-shadow: 0 4px 20px rgba(236, 72, 153, 0.25);">
+        <div class="game-card-visual" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(0, 212, 255, 0.25));">
+          <span class="game-visual-icon" style="filter: drop-shadow(0 0 12px rgba(236, 72, 153, 0.8));">🎯</span>
+        </div>
+        <div class="game-card-body">
+          <span class="game-card-tag tag-multiplayer" style="background: linear-gradient(135deg, #ec4899, #8b5cf6); color: #fff; font-weight:700;">🔥 JONLI MULTIPLAYER</span>
+          <h3 class="game-card-title" data-uz="Codehoot (Kahoot o'yini)" data-en="Codehoot (Kahoot Game)" data-ru="Codehoot (Игра Kahoot)">Codehoot (Kahoot o'yini)</h3>
+          <p class="game-card-desc" data-uz="Xona oching yoki PIN kod bilan kiring! Davlatlar bayroqlari, JavaScript va IT mavzularida 20 tagacha o'quvchi bir vaqtda jonli bellashadi!" data-en="Create a room or join with PIN! Compete live with up to 20 players on World Flags, JavaScript, and IT topics!" data-ru="Создайте комнату или войдите по PIN! До 20 игроков соревнуются в реальном времени по флагам мира, JavaScript и IT!">
+            Xona oching yoki PIN kod bilan kiring! Davlatlar bayroqlari, JavaScript va IT mavzularida 20 tagacha o'quvchi bir vaqtda jonli bellashadi!
+          </p>
+          <div class="game-card-footer">
+            <span class="game-players">👥 1–20 o'quvchi</span>
+            <button class="game-play-btn" style="background: linear-gradient(135deg, #ec4899, #00d4ff);" data-uz="Xonaga kirish" data-en="Join Room" data-ru="Войти в комнату">Xonaga kirish</button>
+          </div>
+        </div>
+      </div>
       <div class="game-card reveal reveal-delay-1" onclick="openQuiz()">
         <div class="game-card-visual quiz-bg">
           <span class="game-visual-icon">🧠</span>
@@ -753,6 +779,231 @@ console.log("Salom, CodeJS!");</textarea>
       </div>
       <div id="uno-score" style="margin-top:16px; font-size:14px; color:var(--text-secondary);"></div>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CODEHOOT MULTIPLAYER GAME MODAL (KAHOOT STYLE)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="codehoot-modal">
+  <div class="modal">
+    <!-- Header -->
+    <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="codehoot-header-badge">🎯 Codehoot Live</span>
+        <span style="font-size:12px; color:var(--text-muted);">20 tagacha o'quvchi</span>
+      </div>
+      <button class="modal-close" onclick="closeCodehoot()">✕</button>
+    </div>
+
+    <!-- 1. WELCOME SCREEN -->
+    <div id="codehoot-welcome" class="codehoot-welcome-hero">
+      <div class="codehoot-welcome-logo">🎯</div>
+      <h2 class="codehoot-welcome-title">Codehoot Jonli Viktorina</h2>
+      <p class="codehoot-welcome-desc">
+        Haqiqiy Kahoot uslubidagi jonli multiplayer o'yin! O'qituvchi sifatida yangi xona oching yoki o'quvchi sifatida 6 xonali PIN kod orqali ulaning.
+      </p>
+
+      <div class="codehoot-welcome-actions">
+        <!-- O'quvchi -->
+        <div class="codehoot-role-card" onclick="Codehoot.openPlayerJoin()">
+          <div class="codehoot-role-icon">📱</div>
+          <div class="codehoot-role-title">Xonaga qo'shilish</div>
+          <div class="codehoot-role-desc">O'quvchi sifatida 6 xonali PIN kodni kiritib o'yin xonasiga kiring</div>
+        </div>
+
+        <!-- O'qituvchi (Host) -->
+        <div class="codehoot-role-card" onclick="Codehoot.openHostCreate()">
+          <div class="codehoot-role-icon">👑</div>
+          <div class="codehoot-role-title">Yangi xona yaratish</div>
+          <div class="codehoot-role-desc">Mavzuni (bayroqlar, JS, web, IT) va vaqtni tanlang, PIN kod oling</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. PLAYER: JOIN FORM -->
+    <div id="codehoot-player-join" style="display:none; padding:20px 0; max-width:440px; margin:0 auto; text-align:center;">
+      <div style="font-size:42px; margin-bottom:12px;">🔑</div>
+      <h3 style="font-size:22px; font-weight:700; margin-bottom:6px;">Xonaga ulanish</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">O'qituvchi taqdim etgan 6 xonali o'yin PIN kodini kiriting:</p>
+
+      <div class="codehoot-form-group">
+        <label class="codehoot-form-label" style="text-align:center;">O'YIN PIN KODI</label>
+        <input type="text" id="codehoot-join-pin" class="codehoot-input" placeholder="Masalan: 482 915" maxlength="7" style="font-size:28px; text-align:center; font-weight:800; letter-spacing:4px;" />
+      </div>
+
+      <div class="codehoot-form-group">
+        <label class="codehoot-form-label" style="text-align:center;">SIZNING ISMINGIZ (NICKNAME)</label>
+        <input type="text" id="codehoot-player-nickname" class="codehoot-input" placeholder="Ismingizni kiriting" maxlength="20" style="text-align:center; font-size:16px;" />
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:24px;">
+        <button class="btn btn-secondary" onclick="Codehoot.showScreen('welcome')" style="flex:1;">Orqaga</button>
+        <button class="btn btn-primary" onclick="Codehoot.joinRoom()" style="flex:2; background: linear-gradient(135deg, #00d4ff, #ec4899); font-weight:700;">Ulanish 🚀</button>
+      </div>
+    </div>
+
+    <!-- 3. PLAYER: LOBBY (WAITING SCREEN) -->
+    <div id="codehoot-player-lobby" style="display:none; padding:40px 20px; text-align:center;">
+      <div id="codehoot-player-lobby-avatar" style="width:80px; height:80px; border-radius:50%; margin:0 auto 16px auto; overflow:hidden; border:3px solid var(--accent-cyan); display:flex; align-items:center; justify-content:center; background:#1e293b;"></div>
+      <h3 id="codehoot-player-lobby-name" style="font-size:24px; font-weight:800; margin-bottom:8px;">O'quvchi</h3>
+      <div style="display:inline-block; background:rgba(0, 212, 255, 0.15); border:1px solid var(--accent-cyan); color:var(--accent-cyan); padding:6px 16px; border-radius:100px; font-size:13px; font-weight:700; margin-bottom:24px;">
+        ✓ Siz o'yin xonasidasiz
+      </div>
+      <p style="color:var(--text-secondary); font-size:15px; max-width:420px; margin:0 auto;">
+        O'qituvchi o'yinni boshlashini kuting. Savollar ekranda paydo bo'lishi bilan javob bering!
+      </p>
+      <div style="margin-top:30px; font-size:32px; animation: bounce 1.5s infinite;">⏳</div>
+    </div>
+
+    <!-- 4. HOST: CREATE ROOM CONFIG -->
+    <div id="codehoot-host-create" style="display:none; padding:20px 0; max-width:480px; margin:0 auto;">
+      <h3 style="font-size:22px; font-weight:800; text-align:center; margin-bottom:20px;">⚙️ Yangi o'yin sozlamalari</h3>
+
+      <div class="codehoot-form-group">
+        <label class="codehoot-form-label">Savollar mavzusi (Kategoriya)</label>
+        <select id="codehoot-host-category" class="codehoot-select">
+          <option value="flags" selected>🌍 Davlatlar bayroqlari (World Flags Quiz)</option>
+          <option value="javascript">⚡ JavaScript va dasturlash</option>
+          <option value="web">🎨 HTML va CSS veb-dizayn</option>
+          <option value="it_logic">🧩 IT texnologiyalari va mantiqiy savollar</option>
+          <option value="all">🎲 Aralash (Barcha mavzulardan)</option>
+        </select>
+      </div>
+
+      <div class="codehoot-form-group">
+        <label class="codehoot-form-label">Savollar soni</label>
+        <select id="codehoot-host-count" class="codehoot-select">
+          <option value="5">5 ta savol (Tezkor o'yin)</option>
+          <option value="10" selected>10 ta savol (Standart)</option>
+          <option value="15">15 ta savol (To'liq)</option>
+          <option value="20">20 ta savol (Chempionat)</option>
+        </select>
+      </div>
+
+      <div class="codehoot-form-group">
+        <label class="codehoot-form-label">Har bir savolga beriladigan vaqt</label>
+        <select id="codehoot-host-time" class="codehoot-select">
+          <option value="10">10 soniya (Juda tez)</option>
+          <option value="15">15 soniya (Tezkor)</option>
+          <option value="20" selected>20 soniya (Standart)</option>
+          <option value="30">30 soniya (Kengaytirilgan)</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:24px;">
+        <button class="btn btn-secondary" onclick="Codehoot.showScreen('welcome')" style="flex:1;">Orqaga</button>
+        <button class="btn btn-primary" onclick="Codehoot.createRoom()" style="flex:2; background:linear-gradient(135deg, #00d4ff, #ec4899); font-weight:700;">Xonani ochish →</button>
+      </div>
+    </div>
+
+    <!-- 5. HOST: LOBBY SCREEN -->
+    <div id="codehoot-host-lobby" style="display:none; padding:10px 0;">
+      <div class="codehoot-pin-display-box">
+        <div class="codehoot-pin-title">O'quvchilar ushbu PIN kod orqali ulanishadi:</div>
+        <div class="codehoot-pin-number" id="codehoot-lobby-pin">000 000</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Saytda "Xonaga qo'shilish" bo'limiga ushbu kodni kiriting</div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="font-size:15px; font-weight:700;">Uланган o'quvchilar:</span>
+        <span class="badge" id="codehoot-lobby-count" style="background:rgba(0, 212, 255, 0.15); color:var(--accent-cyan); font-weight:700; padding:4px 10px; border-radius:100px;">0 / 20 o'quvchi</span>
+      </div>
+
+      <!-- O'quvchilar chiplari -->
+      <div class="codehoot-lobby-players-grid" id="codehoot-lobby-players-grid"></div>
+
+      <!-- Boshqaruv tugmalari -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <button class="btn btn-secondary" onclick="Codehoot.addTestBots(3)" style="padding:10px 16px; font-size:13px;">
+          🤖 +3 ta Test Bot qo'shish
+        </button>
+        <button class="btn btn-primary" id="codehoot-host-start-btn" onclick="Codehoot.startGame()" style="background: linear-gradient(135deg, #26890c, #10b981); font-size:16px; font-weight:800; padding:12px 28px;">
+          ▶️ O'yinni boshlash!
+        </button>
+      </div>
+    </div>
+
+    <!-- 6. GAME: QUESTION SCREEN -->
+    <div id="codehoot-game-question" style="display:none; padding:10px 0;">
+      <div class="codehoot-q-header">
+        <div class="codehoot-q-counter">
+          Savol <span id="codehoot-q-current-num">1</span> / <span id="codehoot-q-total-num">10</span>
+        </div>
+        <div class="codehoot-timer-wrap">
+          <div class="codehoot-timer-circle" id="codehoot-timer-num">20</div>
+        </div>
+        <div id="codehoot-answers-count-badge" style="font-size:13px; font-weight:700; color:var(--text-secondary); background:rgba(255,255,255,0.06); padding:4px 12px; border-radius:100px;">
+          0 / 0 javob berdi
+        </div>
+      </div>
+
+      <div class="codehoot-timer-bar">
+        <div class="codehoot-timer-bar-fill" id="codehoot-timer-progress"></div>
+      </div>
+
+      <div class="codehoot-q-title" id="codehoot-q-text">Savol yuklanmoqda...</div>
+
+      <!-- Flag yoki Code media konteyneri -->
+      <div class="codehoot-media-box" id="codehoot-q-media"></div>
+
+      <!-- 4 ta rangli Kahoot javob variantlari -->
+      <div class="codehoot-answers-grid" id="codehoot-answers-grid"></div>
+
+      <div id="codehoot-player-feedback" style="display:none; text-align:center; padding:10px; margin-top:8px;"></div>
+    </div>
+
+    <!-- 7. GAME: REVEAL SCREEN -->
+    <div id="codehoot-reveal-screen" style="display:none; padding:20px 0; text-align:center;">
+      <div id="codehoot-reveal-personal"></div>
+
+      <div style="font-size:14px; color:var(--text-muted); margin-bottom:6px;">To'g'ri javob:</div>
+      <div id="codehoot-reveal-correct-text" style="font-size:24px; font-weight:800; color:#4ade80; margin-bottom:20px;"></div>
+
+      <div style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:12px;">O'quvchilar javoblar taqsimoti:</div>
+      <div class="codehoot-reveal-stats-chart" id="codehoot-reveal-stats"></div>
+
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-primary" id="codehoot-reveal-next-btn" onclick="Codehoot.showLeaderboard()" style="padding:12px 30px; font-size:15px; font-weight:700; display:none;">
+          Reytingni ko'rish →
+        </button>
+      </div>
+    </div>
+
+    <!-- 8. GAME: LEADERBOARD SCREEN -->
+    <div id="codehoot-leaderboard-screen" style="display:none; padding:15px 0;">
+      <div style="text-align:center; margin-bottom:18px;">
+        <div style="font-size:36px; margin-bottom:4px;">📊</div>
+        <h3 style="font-size:22px; font-weight:800;">Reyting jadvali</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Eng tezkor va aniq o'quvchilar peshqadamlik qilmoqda</p>
+      </div>
+
+      <div class="codehoot-leaderboard-container" id="codehoot-leaderboard-list"></div>
+
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-primary" id="codehoot-lb-next-btn" onclick="Codehoot.advanceToNextQuestion()" style="padding:12px 32px; font-size:16px; font-weight:700; display:none;">
+          Keyingi savol →
+        </button>
+      </div>
+    </div>
+
+    <!-- 9. GAME: PODIUM (FINISH) -->
+    <div id="codehoot-podium-screen" style="display:none; padding:20px 0; text-align:center;">
+      <div style="font-size:48px; margin-bottom:6px;">🎉 🏆 🎊</div>
+      <h2 style="font-size:28px; font-weight:900; margin-bottom:6px; background:linear-gradient(135deg, #ffd700, #facc15, #ff007f); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+        G'oliblar shohsupasi!
+      </h2>
+      <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Codehoot musobaqasi yakunlandi!</p>
+
+      <div id="codehoot-podium-cards"></div>
+      <div id="codehoot-my-reward-notice"></div>
+
+      <div style="margin-top:28px; display:flex; gap:12px; justify-content:center;">
+        <button class="btn btn-secondary" onclick="closeCodehoot()">Chiqish</button>
+        <button class="btn btn-primary" onclick="Codehoot.open()" style="background: linear-gradient(135deg, #00d4ff, #ec4899); font-weight:700;">Yangi o'yin 🎮</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -3000,6 +3251,9 @@ function getAiResponse(rawInput) {
 
 <!-- CodeJS Platform Engine (Auth, Coins, Lessons) -->
 <script src="app.js"></script>
+
+<!-- Codehoot Multiplayer Live Quiz Engine (Kahoot Style) -->
+<script src="codehoot.js"></script>
 
 </body>
 </html>
