@@ -1107,6 +1107,38 @@ console.log("Salom, CodeJS!");</textarea>
         <div>🏆 <b>Daraja:</b> <span id="profile-modal-rank" style="color:var(--accent-yellow); font-weight:700;">Yangi o'rganuvchi</span></div>
       </div>
 
+      <!-- ✏️ 400 COIN GA ISMNI O'ZGARTIRISH -->
+      <div id="profile-name-change-section" style="margin-top:16px; background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.1); border-radius:var(--radius-md); padding:16px; text-align:left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <span style="font-weight:700; font-size:14px; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+            <span>✏️</span> <span>Ismni o'zgartirish</span>
+          </span>
+          <span style="font-size:12px; font-weight:800; color:var(--accent-yellow); background:rgba(251, 191, 36, 0.15); border:1px solid rgba(251, 191, 36, 0.4); padding:3px 10px; border-radius:100px;">
+            🪙 400 Coin
+          </span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="profile-change-name-input" class="codehoot-input" placeholder="Yangi ismingizni kiriting..." maxlength="25" style="padding:9px 12px; font-size:14px; flex:1;" />
+          <button class="btn btn-primary" onclick="handleProfileNameChange()" style="padding:9px 16px; font-size:13px; font-weight:700; white-space:nowrap; background:linear-gradient(135deg, #fbbf24, #f59e0b); color:#000;">
+            Saqlash
+          </button>
+        </div>
+        <div id="profile-name-change-msg" style="font-size:12px; margin-top:6px; min-height:16px;"></div>
+      </div>
+
+      <!-- 🖼️ NIK & AVATAR RAMKALARI (5+ STILLAR) -->
+      <div id="profile-frames-section" style="margin-top:14px; background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.1); border-radius:var(--radius-md); padding:14px 16px; text-align:left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+          <span style="font-weight:700; font-size:13px; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+            <span>🖼️</span> <span>Mening ramkalarim (Nik & Avatar)</span>
+          </span>
+          <button class="btn btn-secondary" onclick="closeModal('profile-modal'); openCoinShop('frames');" style="padding:4px 10px; font-size:11px; border-color:rgba(0, 212, 255, 0.4); color:var(--accent-cyan);">
+            🛒 Do'kondan yangi ramka olish
+          </button>
+        </div>
+        <div id="profile-owned-frames-list" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;"></div>
+      </div>
+
       <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
         <button class="btn btn-secondary" onclick="closeModal('profile-modal')">Yopish</button>
         <button class="btn btn-primary" onclick="closeModal('profile-modal'); scrollToSection('darsliklar');">📚 Darslarga o'tish</button>
@@ -2938,12 +2970,12 @@ function renderCommunityUsers() {
       <div class="user-community-card ${isCurrent ? 'is-current-user' : ''}">
         ${isCurrent ? '<span class="user-card-current-badge">Sizning profilingiz ✅</span>' : ''}
         <div class="user-card-header">
-          <div class="user-card-avatar ${isAdmin ? 'is-admin' : ''}">
+          <div class="user-card-avatar ${u.equippedFrame || ''} ${isAdmin ? 'is-admin' : ''}">
             ${avatar}
           </div>
           <div class="user-card-info">
             <div class="user-card-name" title="${u.name}">
-              <span>${u.name}</span>
+              <span class="${u.equippedFrame ? 'name-' + u.equippedFrame : ''}">${u.name}</span>
             </div>
             <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
               <span class="user-card-role-tag ${isAdmin ? 'admin' : 'user'}">

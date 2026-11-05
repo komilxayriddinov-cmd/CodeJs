@@ -303,11 +303,12 @@ function updateAuthUI() {
       avatar.className = 'nav-avatar ' + (user.equippedFrame || '');
     }
 
-    // Username & Title Tag
+    // Username & Title Tag & Name Frame
     const username = document.getElementById('nav-username');
     if (username) {
       let titleHtml = user.equippedTitle ? `<span class="user-title-tag">${user.equippedTitle}</span>` : '';
-      username.innerHTML = user.name + titleHtml;
+      const nameClass = user.equippedFrame ? 'name-' + user.equippedFrame : '';
+      username.innerHTML = `<span class="${nameClass}">${user.name}</span>` + titleHtml;
     }
 
     const coinsVal = document.getElementById('nav-user-coins-val');
@@ -320,7 +321,8 @@ function updateAuthUI() {
     const dropName = document.getElementById('dropdown-name');
     if (dropName) {
       let titleHtml = user.equippedTitle ? ` <span class="user-title-tag">${user.equippedTitle}</span>` : '';
-      dropName.innerHTML = user.name + titleHtml;
+      const nameClass = user.equippedFrame ? 'name-' + user.equippedFrame : '';
+      dropName.innerHTML = `<span class="${nameClass}">${user.name}</span>` + titleHtml;
     }
 
     const dropEmail = document.getElementById('dropdown-email');
@@ -362,8 +364,9 @@ function openProfileModal(userId = null) {
     avatarLarge.className = 'nav-avatar ' + (user.equippedFrame || '');
   }
 
+  const nameClass = user.equippedFrame ? 'name-' + user.equippedFrame : '';
   let titleHtml = user.equippedTitle ? ` <span class="user-title-tag">${user.equippedTitle}</span>` : '';
-  document.getElementById('profile-modal-name').innerHTML = user.name + titleHtml;
+  document.getElementById('profile-modal-name').innerHTML = `<span class="${nameClass}">${user.name}</span>` + titleHtml;
   document.getElementById('profile-modal-email').textContent = user.email;
   document.getElementById('profile-modal-coins').textContent = `${user.coins || 0} 🪙`;
   document.getElementById('profile-modal-lessons').textContent = (user.completedLessons || []).length;
@@ -378,8 +381,143 @@ function openProfileModal(userId = null) {
   else if (count >= 3) rank = '🚀 Faol O\'quvchi';
   document.getElementById('profile-modal-rank').textContent = rank;
 
+  // Profil egasi bo'lsa, ism o'zgartirish va ramkalarni boshqarishni ko'rsatish
+  const isMe = !userId || (getCurrentUser() && getCurrentUser().id === user.id);
+  const nameChangeSec = document.getElementById('profile-name-change-section');
+  if (nameChangeSec) nameChangeSec.style.display = isMe ? 'block' : 'none';
+
+  const framesListEl = document.getElementById('profile-owned-frames-list');
+  if (framesListEl) {
+    if (isMe) {
+      const ownedFrames = (SHOP_ITEMS.frames || []).filter(f => (user.inventory || []).includes(f.id));
+      let chipsHtml = `
+        <button class="btn btn-secondary" onclick="unequipShopItem('frames'); openProfileModal();" style="padding:5px 12px; font-size:12px; ${!user.equippedFrame ? 'border-color:var(--accent-cyan); color:var(--accent-cyan); font-weight:700;' : ''}">
+          ${!user.equippedFrame ? '✓ Oddiy (Ramkasiz)' : 'Oddiy'}
+        </button>
+      `;
+
+      if (ownedFrames.length > 0) {
+        chipsHtml += ownedFrames.map(f => {
+          const isEquipped = user.equippedFrame === f.class;
+          return `
+            <button class="btn btn-secondary" onclick="equipShopItem('frames', '${f.id}'); openProfileModal();" style="padding:5px 12px; font-size:12px; ${isEquipped ? 'border-color:#4ade80; color:#4ade80; font-weight:700;' : ''}">
+              ${isEquipped ? '✓ ' : ''}${f.name}
+            </button>
+          `;
+        }).join('');
+      } else {
+        chipsHtml += `
+          <span style="font-size:12px; color:var(--text-muted); align-self:center;">
+            Hali ramka xarid qilmadingiz. Do'kondan 100 Coindan boshlab oling!
+          </span>
+        `;
+      }
+      framesListEl.innerHTML = chipsHtml;
+    } else {
+      framesListEl.innerHTML = '';
+    }
+  }
+
   document.getElementById('profile-modal').classList.add('active');
 }
+
+// ─── 2.1. 400 COIN GA ISMNI O'ZGARTIRISH (NAME CHANGE SYSTEM) ────
+function changeUsername(newName) {
+  const user = getCurrentUser();
+  if (!user) {
+    showToast("❌ Avval tizimga kiring!");
+    if (typeof openAuthModal === 'function') openAuthModal('login');
+    return false;
+  }
+
+  const trimmed = (newName || '').trim();
+  if (!trimmed) {
+    showToast("❌ Iltimos, yangi ismni kiriting!");
+    return false;
+  }
+
+  if (trimmed.length < 2 || trimmed.length > 25) {
+    showToast("❌ Ism 2 tadan 25 tagacha belgidan iborat bo'lishi kerak!");
+    return false;
+  }
+
+  if (trimmed === user.name) {
+    showToast("⚠️ Bu sizning hozirgi ismingiz!");
+    return false;
+  }
+
+  const COST = 400;
+  if ((user.coins || 0) < COST) {
+    showToast(`❌ Mablag' yetarli emas! Ismni o'zgartirish narxi: ${COST} 🪙. Sizda: ${user.coins || 0} 🪙`);
+    return false;
+  }
+
+  // Tangani yechish va ismni yangilash
+  user.coins -= COST;
+  const oldName = user.name;
+  user.name = trimmed;
+
+  // Bazada yangilash
+  const users = getUsers();
+  const idx = users.findIndex(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
+  if (idx !== -1) {
+    users[idx].name = trimmed;
+    users[idx].coins = user.coins;
+    saveUsers(users);
+  }
+
+  setCurrentUser(user);
+
+  showToast(`🎉 Ismingiz "${trimmed}"ga muvaffaqiyatli o'zgartirildi! (-${COST} 🪙)`);
+  if (typeof triggerCoinPopup === 'function') {
+    triggerCoinPopup(-COST, 'Ism o\'zgartirildi');
+  }
+
+  // Interfeyslarni qayta chizish
+  openProfileModal();
+  if (typeof renderCommunityUsers === 'function') {
+    renderCommunityUsers();
+  }
+  return true;
+}
+
+function handleProfileNameChange() {
+  const input = document.getElementById('profile-change-name-input');
+  const msgEl = document.getElementById('profile-name-change-msg');
+  if (!input) return;
+
+  const newName = input.value.trim();
+  if (!newName) {
+    if (msgEl) {
+      msgEl.textContent = "❌ Iltimos, yangi ism kiriting!";
+      msgEl.style.color = "#f87171";
+    }
+    return;
+  }
+
+  const success = changeUsername(newName);
+  if (success) {
+    input.value = '';
+    if (msgEl) {
+      msgEl.textContent = "✅ Ismingiz muvaffaqiyatli saqlandi (-400 🪙)!";
+      msgEl.style.color = "#4ade80";
+      setTimeout(() => { if (msgEl) msgEl.textContent = ''; }, 3500);
+    }
+  } else {
+    if (msgEl) {
+      const user = getCurrentUser();
+      if (user && (user.coins || 0) < 400) {
+        msgEl.textContent = `❌ Mablag' yetarli emas (400 🪙 kerak, sizda: ${user.coins || 0} 🪙)`;
+      } else {
+        msgEl.textContent = "❌ Ism noto'g'ri kiritildi yoki xatolik yuz berdi!";
+      }
+      msgEl.style.color = "#f87171";
+    }
+  }
+}
+
+window.changeUsername = changeUsername;
+window.handleProfileNameChange = handleProfileNameChange;
 
 // ─── 3. COIN SYSTEM ─────────────────────────────────────────────
 function addCoins(amount, reason = '') {
@@ -485,12 +623,15 @@ const SHOP_ITEMS = {
     { id: 'av-meme-9', name: 'Emperor Meme', icon: 'assets/memes/meme-9.jpg', price: 3000, desc: 'Platformaning eng qimmat va oliy darajali memi' }
   ],
   frames: [
-    { id: 'frame-neon-cyan', name: 'Neon Moviy', class: 'frame-neon-cyan', price: 100, desc: 'Kiber neon moviy jilolanuvchi ramka' },
-    { id: 'frame-cyber-purple', name: 'Kiber Binafsha', class: 'frame-cyber-purple', price: 150, desc: 'Pulsatsiyalanuvchi kiberpank binafsha aura' },
-    { id: 'frame-gold-aura', name: 'Imperator Oltini', class: 'frame-gold-aura', price: 250, desc: 'Haqiqiy oltin porlashi va hashamat' },
+    { id: 'frame-neon-cyan', name: 'Neon Moviy', class: 'frame-neon-cyan', price: 100, desc: 'Kiber neon moviy jilolanuvchi ramka va ism aurasi' },
+    { id: 'frame-cyber-purple', name: 'Kiber Binafsha', class: 'frame-cyber-purple', price: 150, desc: 'Pulsatsiyalanuvchi kiberpank binafsha ramka' },
+    { id: 'frame-matrix-green', name: 'Matritsa Yashil', class: 'frame-matrix-green', price: 200, desc: 'Haqiqiy xakerlar uslubidagi yashil kiber lazer ramka' },
+    { id: 'frame-gold-aura', name: 'Imperator Oltini', class: 'frame-gold-aura', price: 250, desc: 'Oliy darajadagi haqiqiy oltin porlashi va hashamat' },
     { id: 'frame-rainbow-chroma', name: 'RGB Chroma Wave', class: 'frame-rainbow-chroma', price: 350, desc: 'Aylanuvchi ko\'p rangli spektr animatsiyasi' },
     { id: 'frame-hellfire', name: 'Olovli Jazava', class: 'frame-hellfire', price: 450, desc: 'Miltillovchi yorqin olovli alanga ramkasi' },
-    { id: 'frame-diamond', name: 'Olmos Kristall', class: 'frame-diamond', price: 600, desc: 'Eng qimmatbaho olmosdek tovlanuvchi porlash' }
+    { id: 'frame-cosmic-portal', name: 'Zangori Koinot', class: 'frame-cosmic-portal', price: 550, desc: 'Koinot qa\'ri va sirli yulduzlar tumanligi aurasi' },
+    { id: 'frame-diamond', name: 'Olmos Kristall', class: 'frame-diamond', price: 650, desc: 'Eng qimmatbaho olmosdek tovlanuvchi kiber porlash' },
+    { id: 'frame-blood-moon', name: 'Qonli Oy (Blood Moon)', class: 'frame-blood-moon', price: 777, desc: 'Qonli qizil aura va qorong\'u qudrat nishoni' }
   ],
   titles: [
     { id: 'title-ninja', name: '⚡ JS Ninja', title: '⚡ JS Ninja', price: 100, desc: 'Nik yonida ko\'rinadigan "⚡ JS Ninja" nishoni' },
@@ -553,7 +694,13 @@ function renderShopItems() {
     if (currentShopCategory === 'avatars') {
       previewHtml = `<div class="shop-card-preview ${user?.equippedFrame || ''}">${getAvatarHtml(item.icon, item.name)}</div>`;
     } else if (currentShopCategory === 'frames') {
-      previewHtml = `<div class="shop-card-preview ${item.class}">${getAvatarHtml(user?.equippedAvatar, '😎')}</div>`;
+      const displayName = user ? user.name : 'Dasturchi';
+      previewHtml = `
+        <div class="shop-card-preview ${item.class}">${getAvatarHtml(user?.equippedAvatar, '😎')}</div>
+        <div style="margin-top:6px; margin-bottom:4px;">
+          <span class="name-${item.class}" style="font-size:12px; font-weight:700;">${displayName}</span>
+        </div>
+      `;
     } else if (currentShopCategory === 'titles') {
       previewHtml = `
         <div class="shop-card-preview" style="font-size:24px;">🏷️</div>
