@@ -7,12 +7,13 @@ const FIREBASE_CONFIG_KEY = 'codejs_firebase_config';
 
 // Standart Firebase konfiguratsiyasi (Firebase loyihangizdan olingan ma'lumotlar)
 window.DEFAULT_FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyDTJzELmjak00B8sb7baioRhSat6Vkcn_I",
+  authDomain: "codejs-678ae.firebaseapp.com",
+  projectId: "codejs-678ae",
+  storageBucket: "codejs-678ae.firebasestorage.app",
+  messagingSenderId: "114212321736",
+  appId: "1:114212321736:web:1a3c9deb55060dc7ff68fd",
+  measurementId: "G-PWDN114PKN"
 };
 
 let db = null;
@@ -224,3 +225,4 @@ if (document.readyState === 'loading') {
 } else {
   initFirebaseDatabase();
 }
+
