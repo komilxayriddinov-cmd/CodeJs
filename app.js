@@ -90,6 +90,12 @@ function saveUsers(users) {
   } catch (e) {
     console.error(e);
   }
+
+  // Cloud Database Sync
+  if (typeof syncAllUsersToCloudDebounced === 'function') {
+    syncAllUsersToCloudDebounced(users);
+  }
+
   if (typeof renderCommunityUsers === 'function') {
     renderCommunityUsers();
   }
@@ -108,6 +114,10 @@ function setCurrentUser(user) {
   try {
     if (user) {
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+      // Sync updated user profile/coins to Firestore
+      if (typeof syncUserToCloud === 'function') {
+        syncUserToCloud(user);
+      }
     } else {
       localStorage.removeItem(CURRENT_USER_KEY);
     }

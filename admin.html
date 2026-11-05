@@ -268,18 +268,75 @@
 
       <!-- SECTION 4: SETTINGS -->
       <section id="section-settings" class="admin-tab-content">
+        <!-- Firebase Cloud Database Card -->
+        <div class="airdrop-card" style="margin-bottom:24px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:28px;">🔥</span>
+              <div>
+                <h2 style="font-size:20px; font-weight:800; margin:0;">Firebase Firestore Bulutli Baza</h2>
+                <div style="font-size:13px; color:var(--text-muted); margin-top:2px;">
+                  Barcha foydalanuvchilar, tangalar va darslar real vaqtda bulutda saqlanadi
+                </div>
+              </div>
+            </div>
+            <span class="db-status-badge offline" id="db-status-badge">🟡 Mahalliy Xotira (Offline)</span>
+          </div>
+
+          <p style="color:var(--text-secondary); font-size:14px; margin-bottom:20px; line-height:1.6;">
+            Google Firebase Firestore bepul va real-vaqtda sinxronlanadigan bulutli ma'lumotlar bazasidir. Firebase kalitlaringizni quyidagi maydonlarga kiritsangiz, har qanday qurilma yoki telefondan kirgan o'quvchilar ro'yxati va tangalari avtomatik tarzda umumiy bazaga saqlanadi.
+          </p>
+
+          <form onsubmit="handleSaveFirebaseConfig(event)" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-bottom:18px;">
+            <div class="form-group">
+              <label class="form-label">apiKey</label>
+              <input type="text" class="form-input" id="fb-apiKey" placeholder="AIzaSy..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label">projectId</label>
+              <input type="text" class="form-input" id="fb-projectId" placeholder="codejs-platform" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">authDomain</label>
+              <input type="text" class="form-input" id="fb-authDomain" placeholder="codejs-platform.firebaseapp.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">appId</label>
+              <input type="text" class="form-input" id="fb-appId" placeholder="1:123456789:web:abcdef..." />
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1; display:flex; gap:12px; flex-wrap:wrap; margin-top:6px;">
+              <button type="submit" class="btn btn-primary" style="padding:10px 20px;">
+                💾 Bazani saqlash va ulash
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="triggerCloudMigration()" style="padding:10px 18px;">
+                ☁️ Hozirgi foydalanuvchilarni bulutga ko'chirish
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="clearFirebaseConfig()" style="padding:10px 18px; color:#f38ba8;">
+                🗑️ Kalitlarni tozalash
+              </button>
+            </div>
+          </form>
+
+          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:16px; border-radius:var(--radius-md); font-size:13px; color:var(--text-secondary); line-height:1.6;">
+            <b>💡 Firebase'dan kalitlarni qanday olish mumkin:</b><br />
+            1. <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--accent-cyan); text-decoration:underline;">console.firebase.google.com</a> ga kiring va bepul loyiha (Project) yarating;<br />
+            2. <b>Build ➔ Firestore Database</b> bo'limiga kirib <i>Create Database</i> (Start in Test mode) tugmasini bosing;<br />
+            3. <b>Project Settings (Sozlamalar) ➔ General ➔ Your apps</b> dan Web (&lt;/&gt;) ni tanlab, ko'rsatilgan <code>firebaseConfig</code> kalitlarini yuqoridagi kataklarga kiriting va "Saqlash" tugmasini bosing!
+          </div>
+        </div>
+
         <div class="airdrop-card">
-          <h2 style="font-size:22px; font-weight:800; margin-bottom:8px;">⚙️ Tizim va Ma'lumotlar boshqaruvi</h2>
+          <h2 style="font-size:20px; font-weight:800; margin-bottom:8px;">⚙️ Tizim va Zaxira nusxa</h2>
           <p style="color:var(--text-secondary); margin-bottom:20px; font-size:14px;">
-            Baza ma'lumotlarini qayta tiklash yoki namunaviy ma'lumotlar bilan to'ldirish.
+            Baza ma'lumotlarini JSON fayl ko'rinishida yuklab olish yoki birlamchi holatga qaytarish.
           </p>
 
           <div style="display:flex; gap:16px; flex-wrap:wrap;">
-            <button class="btn btn-secondary" onclick="resetDefaultData()">
-              🔄 Birlamchi ma'lumotlarni qayta tiklash
-            </button>
             <button class="btn btn-secondary" onclick="exportData()">
               💾 Ma'lumotlarni JSON ko'rinishida yuklash
+            </button>
+            <button class="btn btn-secondary" onclick="resetDefaultData()" style="color:#f38ba8;">
+              🔄 Birlamchi ma'lumotlarni qayta tiklash
             </button>
           </div>
         </div>
@@ -356,6 +413,11 @@
 
   <!-- Toast -->
   <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK (Cloud Firestore Database) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
 
   <script src="app.js"></script>
   <script>
@@ -524,6 +586,9 @@
 
       const filtered = users.filter(u => u.id !== userId);
       saveUsers(filtered);
+      if (typeof deleteUserFromCloud === 'function') {
+        deleteUserFromCloud(userId);
+      }
       showToast(`🗑️ Foydalanuvchi o'chirildi.`);
       refreshDashboard();
     }
@@ -655,6 +720,90 @@
       showToast('💾 Zaxira nusxa yuklab olindi!');
     }
 
+    // ─── FIREBASE CLOUD CONFIGURATION ──────────────────────────────
+    function populateFirebaseInputs() {
+      const cfg = typeof getFirebaseConfig === 'function' ? getFirebaseConfig() : {};
+      const keyEl = document.getElementById('fb-apiKey');
+      const projEl = document.getElementById('fb-projectId');
+      const authEl = document.getElementById('fb-authDomain');
+      const appEl = document.getElementById('fb-appId');
+
+      if (keyEl && cfg.apiKey) keyEl.value = cfg.apiKey;
+      if (projEl && cfg.projectId) projEl.value = cfg.projectId;
+      if (authEl && cfg.authDomain) authEl.value = cfg.authDomain;
+      if (appEl && cfg.appId) appEl.value = cfg.appId;
+
+      if (typeof updateDatabaseStatusBadge === 'function') {
+        updateDatabaseStatusBadge();
+      }
+    }
+
+    function handleSaveFirebaseConfig(e) {
+      e.preventDefault();
+      const apiKey = document.getElementById('fb-apiKey').value.trim();
+      const projectId = document.getElementById('fb-projectId').value.trim();
+      const authDomain = document.getElementById('fb-authDomain').value.trim() || (projectId ? `${projectId}.firebaseapp.com` : '');
+      const appId = document.getElementById('fb-appId').value.trim();
+
+      if (!apiKey || !projectId) {
+        alert('Iltimos, kamida apiKey va projectId maydonlarini to\'ldiring!');
+        return;
+      }
+
+      const cfg = {
+        apiKey,
+        projectId,
+        authDomain,
+        storageBucket: `${projectId}.appspot.com`,
+        messagingSenderId: '',
+        appId
+      };
+
+      if (typeof saveFirebaseConfig === 'function') {
+        saveFirebaseConfig(cfg);
+      }
+
+      showToast('💾 Firebase sozlamalari saqlandi! Baza ulanmoqda...');
+      
+      if (typeof initFirebaseDatabase === 'function') {
+        initFirebaseDatabase();
+      }
+
+      setTimeout(() => {
+        if (typeof isFirebaseConnected !== 'undefined' && isFirebaseConnected) {
+          showToast('🟢 Firebase Firestore muvaffaqiyatli ulandi!');
+          triggerCloudMigration();
+        } else {
+          showToast('⚠️ Kalitlar saqlandi. Brauzerni qayta yuklab tekshirib ko\'ring.');
+        }
+      }, 1000);
+    }
+
+    function triggerCloudMigration() {
+      if (typeof uploadLocalUsersToCloud === 'function') {
+        uploadLocalUsersToCloud();
+      } else {
+        showToast('⚠️ Avval Firebase sozlamalarini ulang.');
+      }
+    }
+
+    function clearFirebaseConfig() {
+      if (!confirm('Firebase konfiguratsiya kalitlarini o\'chirib, lokal xotiraga qaytmoqchimisiz?')) return;
+      localStorage.removeItem(FIREBASE_CONFIG_KEY);
+      const keyEl = document.getElementById('fb-apiKey');
+      const projEl = document.getElementById('fb-projectId');
+      const authEl = document.getElementById('fb-authDomain');
+      const appEl = document.getElementById('fb-appId');
+      if (keyEl) keyEl.value = '';
+      if (projEl) projEl.value = '';
+      if (authEl) authEl.value = '';
+      if (appEl) appEl.value = '';
+
+      if (typeof isFirebaseConnected !== 'undefined') isFirebaseConnected = false;
+      if (typeof updateDatabaseStatusBadge === 'function') updateDatabaseStatusBadge();
+      showToast('🗑️ Firebase kalitlari tozalandi. Lokal rejim faollashdi.');
+    }
+
     // Modal close helper
     function closeModal(id) {
       const el = document.getElementById(id);
@@ -665,6 +814,7 @@
     function bootAdmin() {
       initDefaultUsers();
       checkAdminAuth();
+      populateFirebaseInputs();
     }
 
     if (document.readyState === 'loading') {
