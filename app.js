@@ -2,6 +2,15 @@
 // CODEJS PLATFORM ENGINE — AUTH, COINS, LESSONS, COIN SHOP & ADMIN
 // ═══════════════════════════════════════════════════════════════
 
+// Universal Avatar Renderer (Supports Memes & Emojis)
+function getAvatarHtml(avatarValue, defaultName = 'U', extraStyle = '') {
+  if (avatarValue && (avatarValue.includes('/') || avatarValue.includes('.jpg') || avatarValue.includes('.png') || avatarValue.includes('.svg') || avatarValue.includes('data:image'))) {
+    return `<img src="${avatarValue}" alt="Avatar" class="avatar-img" style="width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; ${extraStyle}" />`;
+  }
+  return avatarValue || (defaultName ? defaultName.charAt(0).toUpperCase() : 'U');
+}
+window.getAvatarHtml = getAvatarHtml;
+
 // ─── 1. STORAGE & USERS INITIALIZATION ─────────────────────────
 const USERS_KEY = 'codejs_users';
 const CURRENT_USER_KEY = 'codejs_current_user';
@@ -19,8 +28,8 @@ function initDefaultUsers() {
         role: 'admin',
         coins: 1500,
         completedLessons: ['html-01', 'html-02', 'css-01', 'js-basics-01'],
-        inventory: ['av-crown', 'frame-gold-aura', 'title-king'],
-        equippedAvatar: '👑',
+        inventory: ['av-gigachad', 'frame-gold-aura', 'title-king'],
+        equippedAvatar: 'assets/memes/gigachad.jpg',
         equippedFrame: 'frame-gold-aura',
         equippedTitle: '👑 JS Qiroli',
         joined: '2026-01-10'
@@ -33,8 +42,8 @@ function initDefaultUsers() {
         role: 'user',
         coins: 250,
         completedLessons: ['html-01'],
-        inventory: ['av-rocket'],
-        equippedAvatar: '🚀',
+        inventory: ['av-doge'],
+        equippedAvatar: 'assets/memes/doge.jpg',
         equippedFrame: '',
         equippedTitle: '',
         joined: '2026-02-15'
@@ -47,8 +56,8 @@ function initDefaultUsers() {
         role: 'user',
         coins: 400,
         completedLessons: ['html-01', 'html-02', 'html-03'],
-        inventory: ['av-cat', 'frame-neon-cyan'],
-        equippedAvatar: '🐱',
+        inventory: ['av-pepe', 'frame-neon-cyan'],
+        equippedAvatar: 'assets/memes/pepe.jpg',
         equippedFrame: 'frame-neon-cyan',
         equippedTitle: '',
         joined: '2026-03-01'
@@ -272,7 +281,7 @@ function updateAuthUI() {
     // Equipped Avatar & Frame
     const avatar = document.getElementById('nav-avatar');
     if (avatar) {
-      avatar.textContent = user.equippedAvatar || user.name.charAt(0).toUpperCase();
+      avatar.innerHTML = getAvatarHtml(user.equippedAvatar, user.name);
       avatar.className = 'nav-avatar ' + (user.equippedFrame || '');
     }
 
@@ -331,7 +340,7 @@ function openProfileModal(userId = null) {
 
   const avatarLarge = document.getElementById('profile-avatar-large');
   if (avatarLarge) {
-    avatarLarge.textContent = user.equippedAvatar || user.name.charAt(0).toUpperCase();
+    avatarLarge.innerHTML = getAvatarHtml(user.equippedAvatar, user.name);
     avatarLarge.className = 'nav-avatar ' + (user.equippedFrame || '');
   }
 
@@ -435,19 +444,17 @@ function claimDailyReward() {
 // ─── 4. COIN SHOP (AVATARLAR, NIK RAMKALARI, UNVONLAR) ─────────
 const SHOP_ITEMS = {
   avatars: [
-    { id: 'av-rocket', name: 'Rocket Coder', icon: '🚀', price: 50, desc: 'Tezkor va shijoatli dasturchilar uchun' },
-    { id: 'av-ninja', name: 'Shadow Ninja', icon: '🥷', price: 80, desc: 'Xatolarni yashirincha yo\'q qiluvchi ninja' },
-    { id: 'av-mage', name: 'JS Sehrgari', icon: '🧙‍♂️', price: 100, desc: 'Murakkab algoritmlarni sehrlay oladigan ustoz' },
-    { id: 'av-robot', name: 'AI Android', icon: '🤖', price: 120, desc: 'Sun\'iy intellekt va neyron tarmoqlar bilimdoni' },
-    { id: 'av-gamer', name: 'Retro Gamer', icon: '👾', price: 150, desc: '8-bit pikselli kodlar va retro o\'yinlar ishqibozi' },
-    { id: 'av-fox', name: 'Cyber Fox', icon: '🦊', price: 180, desc: 'Chaqqon va o\'tkir zehnli kiber tulki' },
-    { id: 'av-dragon', name: 'Ajdaho Egasi', icon: '🐉', price: 220, desc: 'Qudratli backend va arxitektura afsungari' },
-    { id: 'av-lion', name: 'Oltin Sher', icon: '🦁', price: 260, desc: 'Guruh yetakchisi va Team Lead ramzi' },
-    { id: 'av-lightning', name: 'Yashin Xudosi', icon: '⚡', price: 300, desc: 'Kodlarni sekundiga 100 qatordan yozuvchi tezkor daho' },
-    { id: 'av-skull', name: 'Cyber Skull', icon: '💀', price: 350, desc: 'Xavfsizlik va oq xakerlar uchun' },
-    { id: 'av-cat', name: 'Kiber Mushukcha', icon: '🐱', price: 400, desc: 'Yoqimtoy ammo juda kuchli frontendchi' },
-    { id: 'av-alien', name: 'Koinot Mehmoni', icon: '👽', price: 450, desc: 'Boshqa sayyoralik ilg\'or arxitektor' },
-    { id: 'av-crown', name: 'CodeJS Qiroli', icon: '👑', price: 500, desc: 'CodeJS platformasining eng oliy o\'quvchisi' }
+    { id: 'av-gigachad', name: 'GigaChad', icon: 'assets/memes/gigachad.jpg', price: 150, desc: 'Senior 10x dasturchi va afsonaviy daho' },
+    { id: 'av-doge', name: 'Doge Coder', icon: 'assets/memes/doge.jpg', price: 60, desc: 'Much JavaScript, Very Clean Code, Wow!' },
+    { id: 'av-pepe', name: 'Hacker Pepe', icon: 'assets/memes/pepe.jpg', price: 100, desc: 'Kechasi bilan uxlamay buglarni tuzatuvchi' },
+    { id: 'av-harold', name: 'Hide The Pain Harold', icon: 'assets/memes/harold.jpg', price: 120, desc: 'Juma kuni soat 18:00 da production qulaganda' },
+    { id: 'av-rollsafe', name: 'Thinking Guy (Roll Safe)', icon: 'assets/memes/roll-safe.jpg', price: 80, desc: 'Kod yozmasang — xato ham bo\'lmaydi!' },
+    { id: 'av-fine', name: 'This Is Fine', icon: 'assets/memes/this-is-fine.jpg', price: 110, desc: 'Barcha testlar qizil yonganda xotirjam dasturchi' },
+    { id: 'av-success', name: 'Success Kid', icon: 'assets/memes/success-kid.jpg', price: 90, desc: 'Kod birinchi urinishdayoq xatosiz ishladi!' },
+    { id: 'av-hackerman', name: 'Hackerman', icon: 'assets/memes/hackerman.jpg', price: 140, desc: 'Faqat HTML bilib o\'zini xaker his qilgan' },
+    { id: 'av-grumpy', name: 'Grumpy Cat', icon: 'assets/memes/grumpy-cat.jpg', price: 70, desc: 'Frontend xatolariga chidolmaydigan mushuk' },
+    { id: 'av-wojak', name: 'Crying Wojak', icon: 'assets/memes/wojak.jpg', price: 50, desc: 'CSS da divni markazga keltira olmagan payt' },
+    { id: 'av-drake', name: 'Drake Hotline', icon: 'assets/memes/drake.jpg', price: 130, desc: 'Boshqa tillar ❌ — Faqat JavaScript va CodeJS ✅' }
   ],
   frames: [
     { id: 'frame-neon-cyan', name: 'Neon Moviy', class: 'frame-neon-cyan', price: 100, desc: 'Kiber neon moviy jilolanuvchi ramka' },
@@ -516,14 +523,15 @@ function renderShopItems() {
     // Preview element
     let previewHtml = '';
     if (currentShopCategory === 'avatars') {
-      previewHtml = `<div class="shop-card-preview ${user?.equippedFrame || ''}">${item.icon}</div>`;
+      previewHtml = `<div class="shop-card-preview ${user?.equippedFrame || ''}">${getAvatarHtml(item.icon, item.name)}</div>`;
     } else if (currentShopCategory === 'frames') {
-      previewHtml = `<div class="shop-card-preview ${item.class}">${user?.equippedAvatar || '😎'}</div>`;
+      previewHtml = `<div class="shop-card-preview ${item.class}">${getAvatarHtml(user?.equippedAvatar, '😎')}</div>`;
     } else if (currentShopCategory === 'titles') {
       previewHtml = `
         <div class="shop-card-preview" style="font-size:24px;">🏷️</div>
         <div style="margin-bottom:8px;"><span class="user-title-tag" style="font-size:12px; padding:3px 8px;">${item.name}</span></div>
       `;
+    }
     }
 
     // Action button
@@ -666,7 +674,7 @@ const LESSON_DATABASE = {
 &lt;/html&gt;</pre>
     `,
     challenge: 'Sahifada &lt;h1&gt; tegi ichida "Salom CodeJS" yozuvini yarating.',
-    starterCode: `<!-- h1 tegini yozing -->\n<h1>Salom CodeJS</h1>`,
+    starterCode: `<!-- h1 tegini yarating va ichiga "Salom CodeJS" yozing -->\n`,
     validator: (code) => {
       const clean = code.replace(/\s+/g, ' ').toLowerCase();
       if (clean.includes('<h1>salom codejs</h1>') || clean.includes('<h1> salom codejs </h1>')) {
@@ -689,7 +697,7 @@ const LESSON_DATABASE = {
       </div>
     `,
     challenge: 'Bir dona &lt;button&gt; tegi yarating va uning ichiga "Boshlash" matnini yozing.',
-    starterCode: `<button>Boshlash</button>`,
+    starterCode: `<!-- "Boshlash" matnli button tegini yozing -->\n`,
     validator: (code) => {
       const clean = code.toLowerCase().trim();
       if (clean.includes('<button>boshlash</button>') || (clean.includes('<button') && clean.includes('boshlash') && clean.includes('</button>'))) {
@@ -710,7 +718,7 @@ const LESSON_DATABASE = {
 &lt;p&gt;Bu paragraf matni bo'lib, uzun jumlalar uchun ishlatiladi.&lt;/p&gt;</pre>
     `,
     challenge: 'Bitta &lt;h2&gt; tegi bilan "Darslar" va uning ostidan &lt;p&gt; tegi bilan "JavaScript o\'rganamiz" matnini yozing.',
-    starterCode: `<h2>Darslar</h2>\n<p>JavaScript o'rganamiz</p>`,
+    starterCode: `<!-- h2 va p teglarini yozing -->\n`,
     validator: (code) => {
       const c = code.toLowerCase();
       if (c.includes('<h2>darslar</h2>') && c.includes('<p>javascript') && c.includes('</p>')) {
@@ -733,7 +741,7 @@ const LESSON_DATABASE = {
 }</pre>
     `,
     challenge: 'Koddagi .title klassi uchun text rangini (color) "cyan" yoki "#00d4ff" qilib stillang.',
-    starterCode: `.title {\n  color: cyan;\n}`,
+    starterCode: `.title {\n  /* Rangni (color) "cyan" qilib stillang */\n\n}`,
     validator: (code) => {
       const c = code.toLowerCase();
       if (c.includes('color:') && (c.includes('cyan') || c.includes('#00d4ff') || c.includes('rgb(0, 212, 255)'))) {
@@ -753,7 +761,7 @@ const LESSON_DATABASE = {
 console.log("Salom, CodeJS!");</pre>
     `,
     challenge: 'console.log() orqali "Hello JS" so\'zini konsolga chiqaring.',
-    starterCode: `console.log("Hello JS");`,
+    starterCode: `// console.log() orqali "Hello JS" so'zini chiqaring:\n`,
     validator: (code) => {
       if (code.includes('console.log') && (code.includes('"Hello JS"') || code.includes("'Hello JS'") || code.includes('`Hello JS`'))) {
         return { success: true };
@@ -772,7 +780,7 @@ console.log("Salom, CodeJS!");</pre>
 let tangalar = 50;         // Keyinchalik o'zgarishi mumkin</pre>
     `,
     challenge: 'nomi "ball" bo\'lgan va qiymati 100 ga teng let o\'zgaruvchisini e\'lon qiling.',
-    starterCode: `let ball = 100;`,
+    starterCode: `// "ball" nomli let o'zgaruvchisini 100 qiymati bilan e'lon qiling:\n`,
     validator: (code) => {
       const c = code.replace(/\s+/g, ' ');
       if (c.includes('let ball = 100') || c.includes('let ball=100')) {
@@ -793,7 +801,7 @@ let tangalar = 50;         // Keyinchalik o'zgarishi mumkin</pre>
 }</pre>
     `,
     challenge: 'Ikkita sonni qo\'shuvchi "qoshish(a, b)" funksiyasini yozing (u a + b ni return qilishi kerak).',
-    starterCode: `function qoshish(a, b) {\n  return a + b;\n}`,
+    starterCode: `function qoshish(a, b) {\n  // Bu yerga a va b ni qo'shib return qiling:\n\n}`,
     validator: (code) => {
       try {
         const fn = new Function(`${code}; return qoshish;`)();
@@ -837,7 +845,7 @@ const mavzu = "${item.title}";
 console.log(mavzu + " darsi muvaffaqiyatli bajarildi!");</pre>
       `,
       challenge: `console.log("${item.title}") buyrug'ini yozing va tekshiring.`,
-      starterCode: `console.log("${item.title}");`,
+      starterCode: `// ${item.title} uchun topshiriq kodini yozing:\n\n`,
       validator: (code) => {
         if (code.includes('console.log')) {
           return { success: true };

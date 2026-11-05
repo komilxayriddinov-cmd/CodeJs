@@ -2099,6 +2099,7 @@ img { max-width: 100%; display: block; }
   font-weight: 800;
   color: white;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .nav-user-info {
@@ -2885,6 +2886,7 @@ img { max-width: 100%; display: block; }
   border: 2px solid var(--border-subtle);
   position: relative;
   transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .shop-card-title {
@@ -3855,6 +3857,7 @@ img { max-width: 100%; display: block; }
   color: #050b14;
   flex-shrink: 0;
   position: relative;
+  overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
 }
 

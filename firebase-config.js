@@ -100,7 +100,10 @@ function listenToCloudUsers() {
 
       const cloudUsers = [];
       snapshot.forEach((doc) => {
-        cloudUsers.push(doc.data());
+        const data = doc.data() || {};
+        data._docId = doc.id;
+        if (!data.id) data.id = doc.id;
+        cloudUsers.push(data);
       });
 
       if (cloudUsers.length > 0) {
@@ -147,10 +150,15 @@ function listenToCloudUsers() {
 
 // 5. Bitta foydalanuvchini bulutga saqlash yoki yangilash
 function syncUserToCloud(user) {
-  if (!db || !isFirebaseConnected || isSyncingFromCloud || !user) return;
+  if (!db || !isFirebaseConnected || !user) return;
   try {
-    const docId = user.id || ('user_' + (user.email ? user.email.replace(/[^a-zA-Z0-9]/g, '_') : Date.now()));
-    db.collection('users').doc(docId).set(user, { merge: true })
+    const docId = user._docId || user.id || ('user_' + (user.email ? user.email.replace(/[^a-zA-Z0-9]/g, '_') : Date.now()));
+    const payload = Object.assign({}, user);
+    delete payload._docId;
+    return db.collection('users').doc(docId).set(payload, { merge: true })
+      .then(() => {
+        console.log('✅ Firestore yangilandi:', docId, payload.name, 'tangalar:', payload.coins);
+      })
       .catch((err) => {
         console.warn('Foydalanuvchini bulutga saqlashda xatolik:', err);
       });
@@ -163,7 +171,10 @@ function syncUserToCloud(user) {
 function deleteUserFromCloud(userId) {
   if (!db || !isFirebaseConnected || !userId) return;
   try {
-    db.collection('users').doc(userId).delete()
+    const users = typeof getUsers === 'function' ? getUsers() : [];
+    const target = users.find(u => u.id === userId || u._docId === userId);
+    const docId = target && target._docId ? target._docId : userId;
+    db.collection('users').doc(docId).delete()
       .catch((err) => {
         console.warn('Foydalanuvchini bulutdan o\'chirishda xatolik:', err);
       });
@@ -174,16 +185,18 @@ function deleteUserFromCloud(userId) {
 
 // 7. Barcha mahalliy foydalanuvchilarni bulutga yuklash (Initial Migration)
 function uploadLocalUsersToCloud() {
-  if (!db || !isFirebaseConnected) return;
+  if (!db || !isFirebaseConnected || isSyncingFromCloud) return;
   try {
     const users = typeof getUsers === 'function' ? getUsers() : [];
     if (!users || users.length === 0) return;
 
     const batch = db.batch();
     users.forEach((user) => {
-      const docId = user.id || ('user_' + (user.email ? user.email.replace(/[^a-zA-Z0-9]/g, '_') : Date.now()));
+      const docId = user._docId || user.id || ('user_' + (user.email ? user.email.replace(/[^a-zA-Z0-9]/g, '_') : Date.now()));
       const docRef = db.collection('users').doc(docId);
-      batch.set(docRef, user, { merge: true });
+      const payload = Object.assign({}, user);
+      delete payload._docId;
+      batch.set(docRef, payload, { merge: true });
     });
 
     batch.commit().then(() => {

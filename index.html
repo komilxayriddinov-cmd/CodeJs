@@ -2661,7 +2661,7 @@ function renderCommunityUsers() {
     const isAdmin = u.role === 'admin';
     const lessonsCount = (u.completedLessons || []).length;
     const coins = u.coins || 0;
-    const avatar = u.equippedAvatar || (u.name ? u.name.charAt(0).toUpperCase() : 'U');
+    const avatar = typeof getAvatarHtml === 'function' ? getAvatarHtml(u.equippedAvatar, u.name) : (u.equippedAvatar || (u.name ? u.name.charAt(0).toUpperCase() : 'U'));
     const titleTag = u.equippedTitle ? `<span class="user-title-tag">${u.equippedTitle}</span>` : '';
 
     return `

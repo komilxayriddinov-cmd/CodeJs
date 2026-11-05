@@ -504,12 +504,12 @@
           <tr>
             <td>
               <div class="user-cell">
-                <div class="user-cell-avatar" style="width:34px; height:34px; border-radius:50%; background:var(--gradient-main); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#050b14;">
-                  ${u.name.charAt(0).toUpperCase()}
+                <div class="user-cell-avatar" style="width:36px; height:36px; border-radius:50%; background:var(--gradient-main); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#050b14; overflow:hidden; flex-shrink:0;">
+                  ${typeof getAvatarHtml === 'function' ? getAvatarHtml(u.equippedAvatar, u.name) : u.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <div style="font-weight:700;">${u.name}</div>
-                  <div style="font-size:11px; color:var(--text-muted);">${u.id}</div>
+                  <div style="font-size:11px; color:var(--text-muted);">${u._docId || u.id}</div>
                 </div>
               </div>
             </td>
@@ -524,12 +524,12 @@
             <td style="color:var(--text-muted); font-size:12px;">${u.joined || '2026-01-01'}</td>
             <td style="text-align:right;">
               <div style="display:inline-flex; gap:6px;">
-                <button class="action-btn-sm" onclick="adjustUserCoins('${u.id}', 50)" title="+50 tanga qo'shish">➕ 50</button>
-                <button class="action-btn-sm" onclick="adjustUserCoins('${u.id}', -50)" title="-50 tanga ayirish">➖ 50</button>
-                <button class="action-btn-sm" onclick="toggleUserRole('${u.id}')" title="Rolni o'zgartirish">
+                <button class="action-btn-sm" onclick="adjustUserCoins('${u._docId || u.id}', 50)" title="+50 tanga qo'shish">➕ 50</button>
+                <button class="action-btn-sm" onclick="adjustUserCoins('${u._docId || u.id}', -50)" title="-50 tanga ayirish">➖ 50</button>
+                <button class="action-btn-sm" onclick="toggleUserRole('${u._docId || u.id}')" title="Rolni o'zgartirish">
                   ${isAdmin ? '👤 O\'quvchi qilish' : '👑 Admin qilish'}
                 </button>
-                <button class="action-btn-sm danger" onclick="deleteUser('${u.id}')" title="O'chirish">🗑️</button>
+                <button class="action-btn-sm danger" onclick="deleteUser('${u._docId || u.id}')" title="O'chirish">🗑️</button>
               </div>
             </td>
           </tr>
@@ -540,15 +540,20 @@
     // ─── USER ACTIONS ──────────────────────────────────────────────
     function adjustUserCoins(userId, amount) {
       const users = getUsers();
-      const user = users.find(u => u.id === userId);
+      const user = users.find(u => u.id === userId || u._docId === userId);
       if (!user) return;
 
       user.coins = Math.max(0, (user.coins || 0) + amount);
       saveUsers(users);
 
+      // Immediately sync this user to Firestore!
+      if (typeof syncUserToCloud === 'function') {
+        syncUserToCloud(user);
+      }
+
       // If updating currently logged in user
       const current = getCurrentUser();
-      if (current && current.id === userId) {
+      if (current && (current.id === userId || current._docId === userId)) {
         current.coins = user.coins;
         setCurrentUser(current);
       }
@@ -559,14 +564,18 @@
 
     function toggleUserRole(userId) {
       const users = getUsers();
-      const user = users.find(u => u.id === userId);
+      const user = users.find(u => u.id === userId || u._docId === userId);
       if (!user) return;
 
       user.role = user.role === 'admin' ? 'user' : 'admin';
       saveUsers(users);
 
+      if (typeof syncUserToCloud === 'function') {
+        syncUserToCloud(user);
+      }
+
       const current = getCurrentUser();
-      if (current && current.id === userId) {
+      if (current && (current.id === userId || current._docId === userId)) {
         current.role = user.role;
         setCurrentUser(current);
       }
@@ -577,14 +586,14 @@
 
     function deleteUser(userId) {
       const users = getUsers();
-      const user = users.find(u => u.id === userId);
+      const user = users.find(u => u.id === userId || u._docId === userId);
       if (!user) return;
 
       if (!confirm(`Haqiqatan ham "${user.name}" (${user.email}) ni o'chirmoqchimisiz?`)) {
         return;
       }
 
-      const filtered = users.filter(u => u.id !== userId);
+      const filtered = users.filter(u => u.id !== userId && u._docId !== userId);
       saveUsers(filtered);
       if (typeof deleteUserFromCloud === 'function') {
         deleteUserFromCloud(userId);
@@ -625,6 +634,9 @@
 
       users.push(newUser);
       saveUsers(users);
+      if (typeof syncUserToCloud === 'function') {
+        syncUserToCloud(newUser);
+      }
       closeModal('add-user-modal');
       showToast(`✅ ${name} muvaffaqiyatli qo'shildi!`);
       refreshDashboard();
@@ -637,6 +649,9 @@
 
       users.forEach(u => {
         u.coins = (u.coins || 0) + amount;
+        if (typeof syncUserToCloud === 'function') {
+          syncUserToCloud(u);
+        }
       });
       saveUsers(users);
 
@@ -644,6 +659,10 @@
       if (current) {
         current.coins = (current.coins || 0) + amount;
         setCurrentUser(current);
+      }
+
+      if (typeof uploadLocalUsersToCloud === 'function') {
+        uploadLocalUsersToCloud();
       }
 
       showToast(`🎉 Barcha ${users.length} nafar foydalanuvchiga +${amount} tanga tarqatildi!`);
