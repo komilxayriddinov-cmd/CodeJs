@@ -134,7 +134,11 @@ function listenToCloudUsers() {
         }
       }
     }, (error) => {
-      console.warn('Firestore onSnapshot xatoligi (Firestore Security Rules tekshirilishi kerak):', error);
+      console.warn('Firestore onSnapshot xatoligi:', error);
+      if (error && (error.code === 'permission-denied' || (error.message && error.message.includes('permission')))) {
+        console.error('DIAGNOSTIKA: Firebase Firestore Rules yopiq (PERMISSION_DENIED). Firestore Rules bo\'limida "allow read, write: if true;" deb yozib Publish tugmasini bosing.');
+        updateDatabaseStatusBadge('permission-denied');
+      }
     });
   } catch (e) {
     console.error('listenToCloudUsers xatoligi:', e);
@@ -206,15 +210,29 @@ function syncAllUsersToCloudDebounced(users) {
 }
 
 // Holat ko'rsatkichini yangilash
-function updateDatabaseStatusBadge() {
+function updateDatabaseStatusBadge(errCode) {
   const badges = document.querySelectorAll('.db-status-badge');
   badges.forEach((badge) => {
+    if (errCode === 'permission-denied') {
+      badge.innerHTML = '🔴 Baza yopiq (Rules: if true kerak)';
+      badge.className = 'db-status-badge offline';
+      badge.style.color = '#f38ba8';
+      badge.style.background = 'rgba(243, 139, 168, 0.15)';
+      badge.style.borderColor = 'rgba(243, 139, 168, 0.35)';
+      return;
+    }
     if (isFirebaseConnected) {
       badge.innerHTML = '🟢 Firebase Firestore: Ulangan';
       badge.className = 'db-status-badge connected';
+      badge.style.color = '#10b981';
+      badge.style.background = 'rgba(16, 185, 129, 0.15)';
+      badge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
     } else {
       badge.innerHTML = '🟡 Mahalliy Xotira (Offline)';
       badge.className = 'db-status-badge offline';
+      badge.style.color = '#f59e0b';
+      badge.style.background = 'rgba(245, 158, 11, 0.15)';
+      badge.style.borderColor = 'rgba(245, 158, 11, 0.35)';
     }
   });
 }
