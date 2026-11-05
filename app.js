@@ -28,8 +28,8 @@ function initDefaultUsers() {
         role: 'admin',
         coins: 1500,
         completedLessons: ['html-01', 'html-02', 'css-01', 'js-basics-01'],
-        inventory: ['av-gigachad', 'frame-gold-aura', 'title-king'],
-        equippedAvatar: 'assets/memes/gigachad.jpg',
+        inventory: ['av-meme-9', 'frame-gold-aura', 'title-king'],
+        equippedAvatar: 'assets/memes/meme-9.jpg',
         equippedFrame: 'frame-gold-aura',
         equippedTitle: '👑 JS Qiroli',
         joined: '2026-01-10'
@@ -42,8 +42,8 @@ function initDefaultUsers() {
         role: 'user',
         coins: 250,
         completedLessons: ['html-01'],
-        inventory: ['av-doge'],
-        equippedAvatar: 'assets/memes/doge.jpg',
+        inventory: ['av-meme-11'],
+        equippedAvatar: 'assets/memes/meme-11.jpg',
         equippedFrame: '',
         equippedTitle: '',
         joined: '2026-02-15'
@@ -56,8 +56,8 @@ function initDefaultUsers() {
         role: 'user',
         coins: 400,
         completedLessons: ['html-01', 'html-02', 'html-03'],
-        inventory: ['av-pepe', 'frame-neon-cyan'],
-        equippedAvatar: 'assets/memes/pepe.jpg',
+        inventory: ['av-meme-3', 'frame-neon-cyan'],
+        equippedAvatar: 'assets/memes/meme-3.jpg',
         equippedFrame: 'frame-neon-cyan',
         equippedTitle: '',
         joined: '2026-03-01'
@@ -444,17 +444,18 @@ function claimDailyReward() {
 // ─── 4. COIN SHOP (AVATARLAR, NIK RAMKALARI, UNVONLAR) ─────────
 const SHOP_ITEMS = {
   avatars: [
-    { id: 'av-gigachad', name: 'GigaChad', icon: 'assets/memes/gigachad.jpg', price: 150, desc: 'Senior 10x dasturchi va afsonaviy daho' },
-    { id: 'av-doge', name: 'Doge Coder', icon: 'assets/memes/doge.jpg', price: 60, desc: 'Much JavaScript, Very Clean Code, Wow!' },
-    { id: 'av-pepe', name: 'Hacker Pepe', icon: 'assets/memes/pepe.jpg', price: 100, desc: 'Kechasi bilan uxlamay buglarni tuzatuvchi' },
-    { id: 'av-harold', name: 'Hide The Pain Harold', icon: 'assets/memes/harold.jpg', price: 120, desc: 'Juma kuni soat 18:00 da production qulaganda' },
-    { id: 'av-rollsafe', name: 'Thinking Guy (Roll Safe)', icon: 'assets/memes/roll-safe.jpg', price: 80, desc: 'Kod yozmasang — xato ham bo\'lmaydi!' },
-    { id: 'av-fine', name: 'This Is Fine', icon: 'assets/memes/this-is-fine.jpg', price: 110, desc: 'Barcha testlar qizil yonganda xotirjam dasturchi' },
-    { id: 'av-success', name: 'Success Kid', icon: 'assets/memes/success-kid.jpg', price: 90, desc: 'Kod birinchi urinishdayoq xatosiz ishladi!' },
-    { id: 'av-hackerman', name: 'Hackerman', icon: 'assets/memes/hackerman.jpg', price: 140, desc: 'Faqat HTML bilib o\'zini xaker his qilgan' },
-    { id: 'av-grumpy', name: 'Grumpy Cat', icon: 'assets/memes/grumpy-cat.jpg', price: 70, desc: 'Frontend xatolariga chidolmaydigan mushuk' },
-    { id: 'av-wojak', name: 'Crying Wojak', icon: 'assets/memes/wojak.jpg', price: 50, desc: 'CSS da divni markazga keltira olmagan payt' },
-    { id: 'av-drake', name: 'Drake Hotline', icon: 'assets/memes/drake.jpg', price: 130, desc: 'Boshqa tillar ❌ — Faqat JavaScript va CodeJS ✅' }
+    { id: 'av-meme-11', name: 'Start Meme', icon: 'assets/memes/meme-11.jpg', price: 50, desc: 'Boshlang\'ich dasturchilar uchun kulgili mem' },
+    { id: 'av-meme-3', name: 'Fun Coder', icon: 'assets/memes/meme-3.jpg', price: 200, desc: 'Doimo kayfiyatni ko\'tarib yuruvchi dasturchi' },
+    { id: 'av-meme-5', name: 'Chill Dev', icon: 'assets/memes/meme-5.jpg', price: 200, desc: 'Hech qachon xavotirga tushmaydigan dasturchi' },
+    { id: 'av-meme-1', name: 'Classic Meme', icon: 'assets/memes/meme-1.jpg', price: 300, desc: 'Internet olamidagi eng mashhur klassik mem' },
+    { id: 'av-meme-10', name: 'Bug Hunter', icon: 'assets/memes/meme-10.jpg', price: 300, desc: 'Kechasi bilan uxlamay xatolarni qidiruvchi' },
+    { id: 'av-meme-4', name: 'Epic Reaction', icon: 'assets/memes/meme-4.jpg', price: 350, desc: 'Kod bir urinishda ishlaganda yuz ifodasi' },
+    { id: 'av-meme-2', name: 'Pro Hacker', icon: 'assets/memes/meme-2.jpg', price: 500, desc: 'Murakkab tizimlarni buzib kiruvchi kiber mutaxassis' },
+    { id: 'av-meme-8', name: 'Dark Mode', icon: 'assets/memes/meme-8.jpg', price: 666, desc: 'Faqat tunda va qora mavzuda kod yozuvchilar ramzi' },
+    { id: 'av-meme-7', name: 'Lucky 777', icon: 'assets/memes/meme-7.jpg', price: 777, desc: 'Har doim omadi chopadigan dasturchi ramzi' },
+    { id: 'av-meme-6', name: 'Senior Chad', icon: 'assets/memes/meme-6.jpg', price: 999, desc: 'Bir qator kod bilan butun loyihani qutqargan daho' },
+    { id: 'av-meme-12', name: 'Legend 2008', icon: 'assets/memes/meme-12.jpg', price: 2008, desc: 'Old-school dasturchilar va afsonaviy retro mem' },
+    { id: 'av-meme-9', name: 'Emperor Meme', icon: 'assets/memes/meme-9.jpg', price: 3000, desc: 'Platformaning eng qimmat va oliy darajali memi' }
   ],
   frames: [
     { id: 'frame-neon-cyan', name: 'Neon Moviy', class: 'frame-neon-cyan', price: 100, desc: 'Kiber neon moviy jilolanuvchi ramka' },
