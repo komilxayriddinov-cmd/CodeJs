@@ -532,7 +532,6 @@ function renderShopItems() {
         <div style="margin-bottom:8px;"><span class="user-title-tag" style="font-size:12px; padding:3px 8px;">${item.name}</span></div>
       `;
     }
-    }
 
     // Action button
     let actionBtn = '';
