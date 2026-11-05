@@ -179,11 +179,6 @@
       <span>🛒</span> <span data-uz="Do'kon" data-en="Shop" data-ru="Магазин">Do'kon</span>
     </button>
 
-    <!-- Codehoot Live Quiz Button -->
-    <button class="btn btn-secondary" onclick="openCodehoot()" style="padding:7px 14px; font-size:13px; border-color:rgba(236, 72, 153, 0.4); color:#f472b6; display:inline-flex; align-items:center; gap:6px;" title="Jonli Kahoot o'yini">
-      <span>🎯</span> <span data-uz="Jonli O'yin" data-en="Live Game" data-ru="Игра">Jonli O'yin</span>
-    </button>
-
     <!-- Auth Container: Login Button OR User Profile -->
     <div id="nav-auth-container">
       <button class="nav-auth-btn" id="nav-login-btn" onclick="openAuthModal('login')">
@@ -815,8 +810,8 @@ console.log("Salom, CodeJS!");</textarea>
         <!-- O'qituvchi (Host) -->
         <div class="codehoot-role-card" onclick="Codehoot.openHostCreate()">
           <div class="codehoot-role-icon">👑</div>
-          <div class="codehoot-role-title">Yangi xona yaratish</div>
-          <div class="codehoot-role-desc">Mavzuni (bayroqlar, JS, web, IT) va vaqtni tanlang, PIN kod oling</div>
+          <div class="codehoot-role-title">Yangi xona yaratish <span style="font-size:11px; background:rgba(236,72,153,0.2); color:#f472b6; padding:2px 8px; border-radius:100px; font-weight:700;">Faqat Admin</span></div>
+          <div class="codehoot-role-desc">Mavzu, vaqt va rejimni (tomoshabin / o'yinchi) belgilab o'yin ochish</div>
         </div>
       </div>
     </div>
@@ -891,6 +886,17 @@ console.log("Salom, CodeJS!");</textarea>
         </select>
       </div>
 
+      <div class="codehoot-form-group">
+        <label class="codehoot-form-label">Adminning o'yindagi roli</label>
+        <select id="codehoot-host-mode" class="codehoot-select">
+          <option value="spectator" selected>📺 Tomoshabin (Katta ekran / Jonli reyting namoyishi)</option>
+          <option value="player">🎮 O'yinchi (Admin ham savollarga javob beradi)</option>
+        </select>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.4;">
+          💡 <b>"Tomoshabin"</b> rejimida ekranda faqat savol, taymer va o'quvchilarning real-vaqtdagi jonli reytingi aks etadi (proyektor yoki o'qituvchi ekrani uchun qulay).
+        </div>
+      </div>
+
       <div style="display:flex; gap:12px; margin-top:24px;">
         <button class="btn btn-secondary" onclick="Codehoot.showScreen('welcome')" style="flex:1;">Orqaga</button>
         <button class="btn btn-primary" onclick="Codehoot.createRoom()" style="flex:2; background:linear-gradient(135deg, #00d4ff, #ec4899); font-weight:700;">Xonani ochish →</button>
@@ -950,6 +956,19 @@ console.log("Salom, CodeJS!");</textarea>
       <!-- 4 ta rangli Kahoot javob variantlari -->
       <div class="codehoot-answers-grid" id="codehoot-answers-grid"></div>
 
+      <!-- Tomoshabin (Admin Katta Ekran) Jonli Reyting Paneli -->
+      <div id="codehoot-spectator-panel" style="display:none; margin-top:20px; background:rgba(0,0,0,0.3); border:1px solid rgba(0,212,255,0.25); border-radius:16px; padding:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <div style="font-size:16px; font-weight:800; color:var(--accent-cyan); display:flex; align-items:center; gap:8px;">
+            <span>📊 Jonli Reyting (Tomoshabin ekrani)</span>
+          </div>
+          <button class="btn btn-primary" onclick="Codehoot.revealQuestionResult()" style="padding:6px 16px; font-size:12px; background:linear-gradient(135deg, #f59e0b, #ef4444); font-weight:700;">
+            ⏹️ Vaqtdan oldin to'xtatish
+          </button>
+        </div>
+        <div id="codehoot-spectator-leaderboard" class="codehoot-leaderboard-container" style="max-height:220px; margin-bottom:0;"></div>
+      </div>
+
       <div id="codehoot-player-feedback" style="display:none; text-align:center; padding:10px; margin-top:8px;"></div>
     </div>
 
@@ -964,8 +983,8 @@ console.log("Salom, CodeJS!");</textarea>
       <div class="codehoot-reveal-stats-chart" id="codehoot-reveal-stats"></div>
 
       <div style="text-align:center; margin-top:16px;">
-        <button class="btn btn-primary" id="codehoot-reveal-next-btn" onclick="Codehoot.showLeaderboard()" style="padding:12px 30px; font-size:15px; font-weight:700; display:none;">
-          Reytingni ko'rish →
+        <button class="btn btn-primary" id="codehoot-reveal-next-btn" onclick="Codehoot.advanceToNextQuestion()" style="padding:12px 32px; font-size:16px; font-weight:700; display:none; background:linear-gradient(135deg, #00d4ff, #26890c);">
+          Keyingi savol →
         </button>
       </div>
     </div>

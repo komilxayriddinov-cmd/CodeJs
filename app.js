@@ -65,18 +65,26 @@ function initDefaultUsers() {
     ];
     saveUsers(users);
   } else {
-    // Har doim admin parolini komil777 bilan sinxronlash
-    const admin = users.find(u => u.email === 'admin@codejs.uz');
+    // Har doim admin paroli, avatari va xaridlarini saqlab qolish
+    const admin = users.find(u => u.email === 'admin@codejs.uz' || u.role === 'admin');
     if (admin) {
       admin.password = 'komil777';
+      if (!admin.equippedAvatar) admin.equippedAvatar = 'assets/memes/meme-9.jpg';
+      if (!admin.inventory || admin.inventory.length === 0) {
+        admin.inventory = ['av-meme-9', 'frame-gold-aura', 'title-king'];
+      }
       saveUsers(users);
     }
   }
 
-  // Hozirgi sessiyadagi admin parolini ham yangilash
+  // Hozirgi sessiyadagi admin paroli va profilini ham yangilash
   const current = getCurrentUser();
-  if (current && current.email === 'admin@codejs.uz') {
+  if (current && (current.email === 'admin@codejs.uz' || current.role === 'admin')) {
     current.password = 'komil777';
+    if (!current.equippedAvatar) current.equippedAvatar = 'assets/memes/meme-9.jpg';
+    if (!current.inventory || current.inventory.length === 0) {
+      current.inventory = ['av-meme-9', 'frame-gold-aura', 'title-king'];
+    }
     setCurrentUser(current);
   }
 
@@ -123,6 +131,16 @@ function setCurrentUser(user) {
   try {
     if (user) {
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+      // Barcha foydalanuvchilar ro'yxatida ham ushbu foydalanuvchini yangilash
+      const users = getUsers();
+      const idx = users.findIndex(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
+      if (idx !== -1) {
+        users[idx] = Object.assign({}, users[idx], user);
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      } else {
+        users.push(user);
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      }
       // Sync updated user profile/coins to Firestore
       if (typeof syncUserToCloud === 'function') {
         syncUserToCloud(user);
@@ -375,7 +393,7 @@ function addCoins(amount, reason = '') {
   
   // Update in users database
   const users = getUsers();
-  const idx = users.findIndex(u => u.id === user.id);
+  const idx = users.findIndex(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
   if (idx !== -1) {
     users[idx].coins = user.coins;
     saveUsers(users);
@@ -597,7 +615,7 @@ function buyShopItem(category, itemId) {
 
   // Save in database
   const users = getUsers();
-  const idx = users.findIndex(u => u.id === user.id);
+  const idx = users.findIndex(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
   if (idx !== -1) {
     users[idx] = user;
     saveUsers(users);
@@ -626,7 +644,7 @@ function equipShopItem(category, itemId) {
   if (category === 'titles') user.equippedTitle = item.title;
 
   const users = getUsers();
-  const idx = users.findIndex(u => u.id === user.id);
+  const idx = users.findIndex(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
   if (idx !== -1) {
     users[idx] = user;
     saveUsers(users);
@@ -646,7 +664,7 @@ function unequipShopItem(category) {
   if (category === 'titles') user.equippedTitle = '';
 
   const users = getUsers();
-  const idx = users.findIndex(u => u.id === user.id);
+  const idx = users.findIndex(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
   if (idx !== -1) {
     users[idx] = user;
     saveUsers(users);

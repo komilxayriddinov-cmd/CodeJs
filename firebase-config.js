@@ -109,24 +109,60 @@ function listenToCloudUsers() {
       if (cloudUsers.length > 0) {
         isSyncingFromCloud = true;
         try {
+          const localUsers = typeof getUsers === 'function' ? getUsers() : [];
+          const current = (typeof getCurrentUser === 'function' && typeof CURRENT_USER_KEY !== 'undefined') ? getCurrentUser() : null;
+
+          // Bulut ma'lumotlarini mahalliy xaridlar bilan xavfsiz birlashtirish:
+          const mergedUsers = cloudUsers.map(cu => {
+            const localU = localUsers.find(lu => lu.id === cu.id || (lu.email && cu.email && lu.email.toLowerCase() === cu.email.toLowerCase()));
+            if (!localU) return cu;
+
+            const res = Object.assign({}, localU, cu);
+            // Xaridlarni birlashtirish (hech bir narsa o'chib ketmasligi uchun):
+            const combinedInv = new Set([...(cu.inventory || []), ...(localU.inventory || [])]);
+            res.inventory = Array.from(combinedInv);
+            if (!res.equippedAvatar && localU.equippedAvatar) res.equippedAvatar = localU.equippedAvatar;
+            if (!res.equippedFrame && localU.equippedFrame) res.equippedFrame = localU.equippedFrame;
+            if (!res.equippedTitle && localU.equippedTitle) res.equippedTitle = localU.equippedTitle;
+
+            // Agar mahalliy foydalanuvchida yangi avatar yoki xarid bo'lsa, bulutga ham sinxronlash
+            if ((localU.inventory && localU.inventory.length > (cu.inventory ? cu.inventory.length : 0)) ||
+                (localU.equippedAvatar && !cu.equippedAvatar)) {
+              syncUserToCloud(res);
+            }
+            return res;
+          });
+
+          // Mahalliyda bor, ammo bulutda hali yo'q yangi foydalanuvchilarni ham qo'shish
+          localUsers.forEach(lu => {
+            if (!mergedUsers.some(mu => mu.id === lu.id || (mu.email && lu.email && mu.email.toLowerCase() === lu.email.toLowerCase()))) {
+              mergedUsers.push(lu);
+              syncUserToCloud(lu);
+            }
+          });
+
           // Mahalliy xotiraga yozish
           if (typeof USERS_KEY !== 'undefined') {
-            localStorage.setItem(USERS_KEY, JSON.stringify(cloudUsers));
+            localStorage.setItem(USERS_KEY, JSON.stringify(mergedUsers));
           }
 
           // Hozirgi kirgan foydalanuvchi ma'lumotlarini ham yangilash
-          if (typeof getCurrentUser === 'function' && typeof CURRENT_USER_KEY !== 'undefined') {
-            const current = getCurrentUser();
-            if (current) {
-              const updatedCurrent = cloudUsers.find(u => u.id === current.id || (u.email && current.email && u.email.toLowerCase() === current.email.toLowerCase()));
-              if (updatedCurrent) {
-                localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedCurrent));
-                if (typeof updateAuthUI === 'function') updateAuthUI();
-              }
+          if (current) {
+            const matchedCurrent = mergedUsers.find(u => u.id === current.id || (u.email && current.email && u.email.toLowerCase() === current.email.toLowerCase()));
+            if (matchedCurrent) {
+              const finalCurrent = Object.assign({}, current, matchedCurrent);
+              const inv = new Set([...(matchedCurrent.inventory || []), ...(current.inventory || [])]);
+              finalCurrent.inventory = Array.from(inv);
+              if (!finalCurrent.equippedAvatar && current.equippedAvatar) finalCurrent.equippedAvatar = current.equippedAvatar;
+              if (!finalCurrent.equippedFrame && current.equippedFrame) finalCurrent.equippedFrame = current.equippedFrame;
+              if (!finalCurrent.equippedTitle && current.equippedTitle) finalCurrent.equippedTitle = current.equippedTitle;
+
+              localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(finalCurrent));
+              if (typeof updateAuthUI === 'function') updateAuthUI();
             }
           }
 
-          window.dispatchEvent(new CustomEvent('codejs:users-updated', { detail: cloudUsers }));
+          window.dispatchEvent(new CustomEvent('codejs:users-updated', { detail: mergedUsers }));
           if (typeof renderCommunityUsers === 'function') renderCommunityUsers();
           if (typeof renderUsersTable === 'function') renderUsersTable();
           if (typeof refreshDashboard === 'function') refreshDashboard();

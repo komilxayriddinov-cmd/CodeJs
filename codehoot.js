@@ -488,6 +488,7 @@ const codehootSound = new CodehootAudio();
 const Codehoot = {
   // Game state
   role: null,            // 'host' | 'player' | 'solo'
+  hostMode: 'spectator', // 'spectator' (katta ekran / tomoshabin) | 'player' (admin ham o'ynaydi)
   roomPin: null,         // 6-digit string
   roomId: null,          // 'room_123456'
   roomUnsubscribe: null, // Firestore onSnapshot unsubscription
@@ -600,8 +601,16 @@ const Codehoot = {
     return pool.slice(0, Math.min(count, pool.length));
   },
 
-  // ─── 4. XONA YARATISH (HOST / O'QITUVCHI) ─────────────────────
+  // ─── 4. XONA YARATISH (HOST / O'QITUVCHI - FAQAT ADMIN UCHUN) ──
   openHostCreate() {
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+    if (!user || user.role !== 'admin') {
+      alert("🔒 Yangi o'yin xonasini faqat Admin (o'qituvchi) yaratishi mumkin!\n\nO'quvchilar xonaga 6 xonali PIN kod orqali qo'shilishi mumkin.");
+      if (!user && typeof openAuthModal === 'function') {
+        openAuthModal('login');
+      }
+      return;
+    }
     this.role = 'host';
     this.showScreen('host-create');
   },
@@ -610,10 +619,12 @@ const Codehoot = {
     const catSelect = document.getElementById('codehoot-host-category');
     const qCountSelect = document.getElementById('codehoot-host-count');
     const timeSelect = document.getElementById('codehoot-host-time');
+    const modeSelect = document.getElementById('codehoot-host-mode');
 
     this.category = catSelect ? catSelect.value : 'flags';
     this.questionCount = qCountSelect ? parseInt(qCountSelect.value, 10) : 10;
     this.timePerQuestion = timeSelect ? parseInt(timeSelect.value, 10) : 20;
+    this.hostMode = modeSelect ? modeSelect.value : 'spectator';
 
     // 6 xonali tasodifiy PIN
     this.roomPin = Math.floor(100000 + Math.random() * 900000).toString();
@@ -622,14 +633,28 @@ const Codehoot = {
     this.currentIndex = 0;
 
     const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-    const hostName = user ? (user.username || user.name) : "O'qituvchi";
-    const hostAvatar = (user && user.avatar) ? user.avatar : "assets/memes/meme-6.jpg";
+    const hostName = user ? (user.username || user.name) : "O'qituvchi (Admin)";
+    const hostAvatar = (user && (user.equippedAvatar || user.avatar)) ? (user.equippedAvatar || user.avatar) : "assets/memes/meme-9.jpg";
+
+    const initialPlayers = {};
+    if (this.hostMode === 'player') {
+      initialPlayers[this.playerId] = {
+        id: this.playerId,
+        name: hostName + " (Admin)",
+        avatar: hostAvatar,
+        score: 0,
+        streak: 0,
+        lastAnswer: null,
+        lastAnswerCorrect: false
+      };
+    }
 
     const initialRoomState = {
       pin: this.roomPin,
       hostId: this.playerId,
       hostName: hostName,
       hostAvatar: hostAvatar,
+      hostMode: this.hostMode,
       category: this.category,
       timePerQuestion: this.timePerQuestion,
       questionCount: this.questions.length,
@@ -637,7 +662,7 @@ const Codehoot = {
       status: 'lobby', // 'lobby' | 'question' | 'reveal' | 'leaderboard' | 'finished'
       currentQuestionIndex: 0,
       questionStartTime: 0,
-      players: {},
+      players: initialPlayers,
       createdAt: Date.now(),
       updatedAt: Date.now()
     };
@@ -662,7 +687,7 @@ const Codehoot = {
         });
     } else {
       this.isLocalMode = true;
-      this.localPlayers = {};
+      this.localPlayers = Object.assign({}, initialPlayers);
     }
 
     this.showScreen('host-lobby');
@@ -731,7 +756,7 @@ const Codehoot = {
     this.roomPin = pin;
     this.roomId = 'room_' + pin;
     this.playerName = nickname;
-    this.playerAvatar = (user && user.avatar) ? user.avatar : "assets/memes/meme-1.jpg";
+    this.playerAvatar = (user && (user.equippedAvatar || user.avatar)) ? (user.equippedAvatar || user.avatar) : "assets/memes/meme-1.jpg";
     this.playerScore = 0;
     this.playerStreak = 0;
 
@@ -1021,6 +1046,8 @@ const Codehoot = {
       }
     }
 
+    const isSpectator = (this.role === 'host' && this.hostMode === 'spectator');
+
     // 4 ta javob tugmalari
     const optionsGrid = document.getElementById('codehoot-answers-grid');
     if (optionsGrid) {
@@ -1029,12 +1056,21 @@ const Codehoot = {
       
       optionsGrid.innerHTML = curQ.options.map((opt, i) => `
         <button class="codehoot-answer-btn btn-${colors[i]}" 
-                onclick="Codehoot.handlePlayerAnswer(${i})" 
+                ${isSpectator ? 'disabled style="cursor:default; transform:none;"' : `onclick="Codehoot.handlePlayerAnswer(${i})"`} 
                 id="codehoot-btn-${i}">
           <span class="codehoot-shape">${shapes[i]}</span>
           <span class="codehoot-opt-text">${this.escapeHtml(opt)}</span>
         </button>
       `).join('');
+    }
+
+    // Tomoshabin (Admin Katta Ekran) Jonli Reyting Paneli
+    const specPanel = document.getElementById('codehoot-spectator-panel');
+    if (specPanel) {
+      specPanel.style.display = isSpectator ? 'block' : 'none';
+      if (isSpectator) {
+        this.renderSpectatorLeaderboard();
+      }
     }
 
     // Holat ko'rsatkichi (kutish matnini yashirish)
@@ -1056,12 +1092,48 @@ const Codehoot = {
     const answered = players.filter(p => p.lastAnswer !== null && p.lastAnswer !== undefined).length;
     el.textContent = `${answered} / ${players.length} javob berdi`;
 
+    // Tomoshabin rejimida jonli reytingni real-vaqtda yangilab turish
+    if (this.role === 'host' && this.hostMode === 'spectator') {
+      this.renderSpectatorLeaderboard();
+    }
+
     // Agar hamma o'quvchilar javob berib bo'lgan bo'lsa va host bo'lsak, vaqtdan oldin to'xtatish
     if (this.role === 'host' && players.length > 0 && answered === players.length) {
       if (this.timerInterval) clearInterval(this.timerInterval);
       this.timerSecondsLeft = 0;
       setTimeout(() => this.revealQuestionResult(), 600);
     }
+  },
+
+  // Tomoshabin (Katta ekran) jonli reytingini chiqarish
+  renderSpectatorLeaderboard() {
+    const container = document.getElementById('codehoot-spectator-leaderboard');
+    if (!container || !this.roomData || !this.roomData.players) return;
+
+    const players = Object.values(this.roomData.players).sort((a, b) => (b.score || 0) - (a.score || 0));
+    if (players.length === 0) {
+      container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-muted);">Hali o'quvchilar ulanmagan</div>`;
+      return;
+    }
+
+    container.innerHTML = players.slice(0, 10).map((p, rank) => {
+      const hasAnswered = (p.lastAnswer !== null && p.lastAnswer !== undefined);
+      const avHtml = typeof getAvatarHtml === 'function' ? getAvatarHtml(p.avatar) : '👤';
+      const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank + 1}`;
+      const statusHtml = hasAnswered 
+        ? '<span style="color:#4ade80; font-size:12px; font-weight:700;">✓ Javob berdi</span>' 
+        : '<span style="color:var(--text-muted); font-size:12px;">⏳ O\'ylamoqda...</span>';
+
+      return `
+        <div class="codehoot-rank-item" style="padding:8px 14px; margin-bottom:6px; background:rgba(255,255,255,0.06);">
+          <div class="codehoot-rank-badge" style="font-size:16px; width:26px;">${medal}</div>
+          <div class="codehoot-rank-avatar" style="width:30px; height:30px;">${avHtml}</div>
+          <div class="codehoot-rank-name" style="font-size:14px; font-weight:600;">${this.escapeHtml(p.name)}</div>
+          <div style="margin-right:12px;">${statusHtml}</div>
+          <div class="codehoot-rank-score" style="font-size:15px;">${p.score || 0} ball</div>
+        </div>
+      `;
+    }).join('');
   },
 
   // Taymerni hisoblash
@@ -1190,6 +1262,9 @@ const Codehoot = {
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.showScreen('reveal-screen');
 
+    const specPanel = document.getElementById('codehoot-spectator-panel');
+    if (specPanel) specPanel.style.display = 'none';
+
     const curQ = this.questions[this.currentIndex];
     if (!curQ) return;
 
@@ -1260,10 +1335,18 @@ const Codehoot = {
       }).join('');
     }
 
-    // Host uchun "Reytingni ko'rish" tugmasini faollashtirish
+    // Host uchun to'g'ridan-to'g'ri "Keyingi savol" tugmasi
+    // (Har bir savoldan keyin ortiqcha reyting ekrani ko'rsatilmaydi, o'yin tez va jonli o'tadi!)
     const hostNextBtn = document.getElementById('codehoot-reveal-next-btn');
     if (hostNextBtn) {
-      hostNextBtn.style.display = (this.role === 'host') ? 'inline-flex' : 'none';
+      if (this.role === 'host') {
+        hostNextBtn.style.display = 'inline-flex';
+        const isLast = (this.currentIndex >= this.questions.length - 1);
+        hostNextBtn.textContent = isLast ? "🏆 G'oliblarni e'lon qilish" : "Keyingi savol →";
+        hostNextBtn.onclick = () => this.advanceToNextQuestion();
+      } else {
+        hostNextBtn.style.display = 'none';
+      }
     }
   },
 
