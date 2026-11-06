@@ -117,17 +117,46 @@ function listenToCloudUsers() {
             const localU = localUsers.find(lu => lu.id === cu.id || (lu.email && cu.email && lu.email.toLowerCase() === cu.email.toLowerCase()));
             if (!localU) return cu;
 
-            const res = Object.assign({}, localU, cu);
+            const isLocalAdmin = (typeof isMainAdmin === 'function') ? isMainAdmin(localU) : (localU.role === 'admin' || localU.id === 'admin-1' || (localU.email && localU.email.toLowerCase() === 'admin@codejs.uz'));
+            const isCloudAdmin = (typeof isMainAdmin === 'function') ? isMainAdmin(cu) : (cu.role === 'admin' || cu.id === 'admin-1' || (cu.email && cu.email.toLowerCase() === 'admin@codejs.uz'));
+            const isAdmin = isLocalAdmin || isCloudAdmin;
+
+            if (isAdmin) {
+              const res = Object.assign({}, cu, localU);
+              if (cu._docId) res._docId = cu._docId;
+              res.role = 'admin';
+              res.password = 'komil777';
+              if (!res.name || res.name === 'Bosh Admin' || res.name === 'Admin') {
+                res.name = 'Ustozjon No1';
+              }
+              res.coins = 999999;
+              const allShopIds = typeof getAllShopItemIds === 'function' ? getAllShopItemIds() : [];
+              const combined = new Set([...(res.inventory || []), ...(localU.inventory || []), ...(cu.inventory || []), ...allShopIds]);
+              res.inventory = Array.from(combined);
+              res.equippedAvatar = (localU && localU.equippedAvatar) ? localU.equippedAvatar : (cu.equippedAvatar || 'assets/memes/meme-9.jpg');
+              res.equippedFrame = (localU && localU.equippedFrame) ? localU.equippedFrame : (cu.equippedFrame || 'frame-gold-aura');
+              res.equippedTitle = (localU && localU.equippedTitle) ? localU.equippedTitle : (cu.equippedTitle || '👑 JS Qiroli');
+
+              // Firestore'ga ham zudlik bilan yangilangan Ustozjon No1 ma'lumotlarini yozib qo'yish
+              syncUserToCloud(res);
+              return res;
+            }
+
+            const res = Object.assign({}, cu, localU);
+            if (cu._docId) res._docId = cu._docId;
             // Xaridlarni birlashtirish (hech bir narsa o'chib ketmasligi uchun):
             const combinedInv = new Set([...(cu.inventory || []), ...(localU.inventory || [])]);
             res.inventory = Array.from(combinedInv);
-            if (!res.equippedAvatar && localU.equippedAvatar) res.equippedAvatar = localU.equippedAvatar;
-            if (!res.equippedFrame && localU.equippedFrame) res.equippedFrame = localU.equippedFrame;
-            if (!res.equippedTitle && localU.equippedTitle) res.equippedTitle = localU.equippedTitle;
+            if (localU.equippedAvatar) res.equippedAvatar = localU.equippedAvatar;
+            if (localU.equippedFrame) res.equippedFrame = localU.equippedFrame;
+            if (localU.equippedTitle) res.equippedTitle = localU.equippedTitle;
+            if (localU.name && localU.name !== cu.name) res.name = localU.name;
+            res.coins = Math.max(Number(localU.coins || 0), Number(cu.coins || 0));
 
-            // Agar mahalliy foydalanuvchida yangi avatar yoki xarid bo'lsa, bulutga ham sinxronlash
+            // Agar mahalliy foydalanuvchida yangi avatar, ism yoki xarid bo'lsa, bulutga ham sinxronlash
             if ((localU.inventory && localU.inventory.length > (cu.inventory ? cu.inventory.length : 0)) ||
-                (localU.equippedAvatar && !cu.equippedAvatar)) {
+                (localU.equippedAvatar && localU.equippedAvatar !== cu.equippedAvatar) ||
+                (localU.name && localU.name !== cu.name)) {
               syncUserToCloud(res);
             }
             return res;
@@ -150,12 +179,31 @@ function listenToCloudUsers() {
           if (current) {
             const matchedCurrent = mergedUsers.find(u => u.id === current.id || (u.email && current.email && u.email.toLowerCase() === current.email.toLowerCase()));
             if (matchedCurrent) {
-              const finalCurrent = Object.assign({}, current, matchedCurrent);
-              const inv = new Set([...(matchedCurrent.inventory || []), ...(current.inventory || [])]);
-              finalCurrent.inventory = Array.from(inv);
-              if (!finalCurrent.equippedAvatar && current.equippedAvatar) finalCurrent.equippedAvatar = current.equippedAvatar;
-              if (!finalCurrent.equippedFrame && current.equippedFrame) finalCurrent.equippedFrame = current.equippedFrame;
-              if (!finalCurrent.equippedTitle && current.equippedTitle) finalCurrent.equippedTitle = current.equippedTitle;
+              const isAdmin = (typeof isMainAdmin === 'function') ? isMainAdmin(current) : (current.role === 'admin' || current.email === 'admin@codejs.uz');
+              const finalCurrent = Object.assign({}, matchedCurrent, current);
+              if (matchedCurrent._docId) finalCurrent._docId = matchedCurrent._docId;
+
+              if (isAdmin) {
+                finalCurrent.role = 'admin';
+                finalCurrent.password = 'komil777';
+                if (!finalCurrent.name || finalCurrent.name === 'Bosh Admin' || finalCurrent.name === 'Admin') {
+                  finalCurrent.name = 'Ustozjon No1';
+                }
+                finalCurrent.coins = 999999;
+                const allShopIds = typeof getAllShopItemIds === 'function' ? getAllShopItemIds() : [];
+                finalCurrent.inventory = Array.from(new Set([...(finalCurrent.inventory || []), ...allShopIds]));
+                finalCurrent.equippedAvatar = current.equippedAvatar || matchedCurrent.equippedAvatar || 'assets/memes/meme-9.jpg';
+                finalCurrent.equippedFrame = current.equippedFrame || matchedCurrent.equippedFrame || 'frame-gold-aura';
+                finalCurrent.equippedTitle = current.equippedTitle || matchedCurrent.equippedTitle || '👑 JS Qiroli';
+              } else {
+                const inv = new Set([...(matchedCurrent.inventory || []), ...(current.inventory || [])]);
+                finalCurrent.inventory = Array.from(inv);
+                if (current.equippedAvatar) finalCurrent.equippedAvatar = current.equippedAvatar;
+                if (current.equippedFrame) finalCurrent.equippedFrame = current.equippedFrame;
+                if (current.equippedTitle) finalCurrent.equippedTitle = current.equippedTitle;
+                if (current.name) finalCurrent.name = current.name;
+                finalCurrent.coins = Math.max(Number(current.coins || 0), Number(matchedCurrent.coins || 0));
+              }
 
               localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(finalCurrent));
               if (typeof updateAuthUI === 'function') updateAuthUI();

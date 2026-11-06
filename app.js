@@ -16,19 +16,67 @@ const USERS_KEY = 'codejs_users';
 const CURRENT_USER_KEY = 'codejs_current_user';
 const DAILY_CLAIM_KEY = 'codejs_daily_claim_';
 
+function isMainAdmin(u) {
+  if (!u) return false;
+  const email = (u.email || '').toLowerCase();
+  const name = (u.name || '').toLowerCase();
+  return u.role === 'admin' || u.id === 'admin-1' || email === 'admin@codejs.uz' || name === 'ustozjon no1' || name === 'bosh admin' || name === 'admin';
+}
+window.isMainAdmin = isMainAdmin;
+
+function getAllShopItemIds() {
+  if (typeof SHOP_ITEMS !== 'undefined' && SHOP_ITEMS) {
+    const list = [];
+    if (Array.isArray(SHOP_ITEMS.avatars)) SHOP_ITEMS.avatars.forEach(a => list.push(a.id));
+    if (Array.isArray(SHOP_ITEMS.frames)) SHOP_ITEMS.frames.forEach(f => list.push(f.id));
+    if (Array.isArray(SHOP_ITEMS.titles)) SHOP_ITEMS.titles.forEach(t => list.push(t.id));
+    if (list.length > 0) return list;
+  }
+  return [
+    'av-meme-11', 'av-meme-3', 'av-meme-5', 'av-meme-28', 'av-meme-15', 'av-meme-1', 
+    'av-meme-10', 'av-meme-19', 'av-meme-27', 'av-meme-4', 'av-meme-24', 'av-meme-26', 
+    'av-meme-20', 'av-meme-2', 'av-meme-16', 'av-meme-18', 'av-meme-13', 'av-meme-22', 
+    'av-meme-17', 'av-meme-21', 'av-meme-8', 'av-meme-25', 'av-meme-23', 'av-meme-14', 
+    'av-meme-7', 'av-meme-6', 'av-meme-12', 'av-meme-9',
+    'frame-neon-cyan', 'frame-cyber-purple', 'frame-matrix-green', 'frame-gold-aura', 
+    'frame-rainbow-chroma', 'frame-hellfire', 'frame-cosmic-portal', 'frame-diamond', 'frame-blood-moon',
+    'title-ninja', 'title-pro', 'title-hunter', 'title-hacker', 'title-king', 'title-legend'
+  ];
+}
+window.getAllShopItemIds = getAllShopItemIds;
+
+function applyAdminDefaults(admin) {
+  if (!admin) return admin;
+  admin.role = 'admin';
+  admin.password = 'komil777';
+  if (!admin.name || admin.name === 'Bosh Admin' || admin.name === 'Admin') {
+    admin.name = 'Ustozjon No1';
+  }
+  admin.coins = 999999;
+  const allIds = getAllShopItemIds();
+  admin.inventory = Array.from(new Set([...(admin.inventory || []), ...allIds]));
+  if (!admin.equippedAvatar) admin.equippedAvatar = 'assets/memes/meme-9.jpg';
+  if (!admin.equippedFrame) admin.equippedFrame = 'frame-gold-aura';
+  if (!admin.equippedTitle) admin.equippedTitle = '👑 JS Qiroli';
+  return admin;
+}
+window.applyAdminDefaults = applyAdminDefaults;
+
 function initDefaultUsers() {
   let users = getUsers();
+  const allIds = getAllShopItemIds();
+
   if (!users || users.length === 0) {
     users = [
       {
         id: 'admin-1',
-        name: 'Bosh Admin',
+        name: 'Ustozjon No1',
         email: 'admin@codejs.uz',
         password: 'komil777', // Admin paroli
         role: 'admin',
-        coins: 1500,
+        coins: 999999,
         completedLessons: ['html-01', 'html-02', 'css-01', 'js-basics-01'],
-        inventory: ['av-meme-9', 'frame-gold-aura', 'title-king'],
+        inventory: allIds,
         equippedAvatar: 'assets/memes/meme-9.jpg',
         equippedFrame: 'frame-gold-aura',
         equippedTitle: '👑 JS Qiroli',
@@ -65,26 +113,21 @@ function initDefaultUsers() {
     ];
     saveUsers(users);
   } else {
-    // Har doim admin paroli, avatari va xaridlarini saqlab qolish
-    const admin = users.find(u => u.email === 'admin@codejs.uz' || u.role === 'admin');
+    // Har doim admin paroli, avatari, nomi va barcha ochiq narsalarini saqlab qolish
+    let admin = users.find(u => isMainAdmin(u));
     if (admin) {
-      admin.password = 'komil777';
-      if (!admin.equippedAvatar) admin.equippedAvatar = 'assets/memes/meme-9.jpg';
-      if (!admin.inventory || admin.inventory.length === 0) {
-        admin.inventory = ['av-meme-9', 'frame-gold-aura', 'title-king'];
-      }
+      applyAdminDefaults(admin);
       saveUsers(users);
+      if (typeof syncUserToCloud === 'function') {
+        syncUserToCloud(admin);
+      }
     }
   }
 
   // Hozirgi sessiyadagi admin paroli va profilini ham yangilash
   const current = getCurrentUser();
-  if (current && (current.email === 'admin@codejs.uz' || current.role === 'admin')) {
-    current.password = 'komil777';
-    if (!current.equippedAvatar) current.equippedAvatar = 'assets/memes/meme-9.jpg';
-    if (!current.inventory || current.inventory.length === 0) {
-      current.inventory = ['av-meme-9', 'frame-gold-aura', 'title-king'];
-    }
+  if (current && isMainAdmin(current)) {
+    applyAdminDefaults(current);
     setCurrentUser(current);
   }
 
@@ -130,6 +173,21 @@ function getCurrentUser() {
 function setCurrentUser(user) {
   try {
     if (user) {
+      if (typeof isMainAdmin === 'function' && isMainAdmin(user)) {
+        if (!user.name || user.name === 'Bosh Admin' || user.name === 'Admin') {
+          user.name = 'Ustozjon No1';
+        }
+        user.coins = 999999;
+        const allIds = typeof getAllShopItemIds === 'function' ? getAllShopItemIds() : [];
+        user.inventory = Array.from(new Set([...(user.inventory || []), ...allIds]));
+      }
+
+      // _docId ni eslab qolish
+      if (!user._docId) {
+        const existing = getUsers().find(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
+        if (existing && existing._docId) user._docId = existing._docId;
+      }
+
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
       // Barcha foydalanuvchilar ro'yxatida ham ushbu foydalanuvchini yangilash
       const users = getUsers();
@@ -195,16 +253,25 @@ function handleLogin(e) {
   const errorEl = document.getElementById('login-error');
 
   const users = getUsers();
-  const user = users.find(u => (u.email.toLowerCase() === emailInput || u.name.toLowerCase() === emailInput) && u.password === password);
+  const isTargetAdmin = (emailInput === 'admin@codejs.uz' || emailInput === 'ustozjon no1' || emailInput === 'ustozjon' || emailInput === 'bosh admin' || emailInput === 'admin') && password === 'komil777';
+
+  let user = users.find(u => (u.email.toLowerCase() === emailInput || u.name.toLowerCase() === emailInput) && u.password === password);
+  if (!user && isTargetAdmin) {
+    user = users.find(u => isMainAdmin(u));
+  }
 
   if (!user) {
     errorEl.textContent = '❌ Email yoki parol noto\'g\'ri!';
     return;
   }
 
+  if (typeof isMainAdmin === 'function' && isMainAdmin(user)) {
+    applyAdminDefaults(user);
+  }
+
   setCurrentUser(user);
   closeModal('auth-modal');
-  showToast(`👋 Xush kelibsiz, ${user.name}!`);
+  showToast(`👑 Xush kelibsiz, ${user.name}!`);
   
   if (typeof renderLessons === 'function') {
     renderLessons(currentCategory || 'html');
@@ -383,13 +450,20 @@ function openProfileModal(userId = null) {
 
   // Profil egasi bo'lsa, ism o'zgartirish va ramkalarni boshqarishni ko'rsatish
   const isMe = !userId || (getCurrentUser() && getCurrentUser().id === user.id);
+  const isAdmin = typeof isMainAdmin === 'function' && isMainAdmin(user);
   const nameChangeSec = document.getElementById('profile-name-change-section');
   if (nameChangeSec) nameChangeSec.style.display = isMe ? 'block' : 'none';
+
+  const costBadge = document.getElementById('profile-name-cost-badge');
+  if (costBadge) {
+    costBadge.textContent = isAdmin ? '👑 Bepul (Bosh Admin)' : '🪙 400 Coin';
+    costBadge.style.color = isAdmin ? '#4ade80' : 'var(--accent-yellow)';
+  }
 
   const framesListEl = document.getElementById('profile-owned-frames-list');
   if (framesListEl) {
     if (isMe) {
-      const ownedFrames = (SHOP_ITEMS.frames || []).filter(f => (user.inventory || []).includes(f.id));
+      const ownedFrames = (SHOP_ITEMS.frames || []).filter(f => isAdmin || (user.inventory || []).includes(f.id));
       let chipsHtml = `
         <button class="btn btn-secondary" onclick="unequipShopItem('frames'); openProfileModal();" style="padding:5px 12px; font-size:12px; ${!user.equippedFrame ? 'border-color:var(--accent-cyan); color:var(--accent-cyan); font-weight:700;' : ''}">
           ${!user.equippedFrame ? '✓ Oddiy (Ramkasiz)' : 'Oddiy'}
@@ -446,15 +520,19 @@ function changeUsername(newName) {
     return false;
   }
 
-  const COST = 400;
-  if ((user.coins || 0) < COST) {
+  const isAdmin = typeof isMainAdmin === 'function' && isMainAdmin(user);
+  const COST = isAdmin ? 0 : 400;
+  if (!isAdmin && (user.coins || 0) < COST) {
     showToast(`❌ Mablag' yetarli emas! Ismni o'zgartirish narxi: ${COST} 🪙. Sizda: ${user.coins || 0} 🪙`);
     return false;
   }
 
   // Tangani yechish va ismni yangilash
-  user.coins -= COST;
-  const oldName = user.name;
+  if (!isAdmin) {
+    user.coins -= COST;
+  } else {
+    user.coins = 999999;
+  }
   user.name = trimmed;
 
   // Bazada yangilash
@@ -468,8 +546,8 @@ function changeUsername(newName) {
 
   setCurrentUser(user);
 
-  showToast(`🎉 Ismingiz "${trimmed}"ga muvaffaqiyatli o'zgartirildi! (-${COST} 🪙)`);
-  if (typeof triggerCoinPopup === 'function') {
+  showToast(`🎉 Ismingiz "${trimmed}"ga muvaffaqiyatli o'zgartirildi!${isAdmin ? ' (👑 Admin uchun bepul)' : ` (-${COST} 🪙)`}`);
+  if (!isAdmin && typeof triggerCoinPopup === 'function') {
     triggerCoinPopup(-COST, 'Ism o\'zgartirildi');
   }
 
@@ -482,7 +560,6 @@ function changeUsername(newName) {
 }
 
 function handleProfileNameChange() {
-  
   const input = document.getElementById('profile-change-name-input');
   const msgEl = document.getElementById('profile-name-change-msg');
   if (!input) return;
@@ -496,18 +573,22 @@ function handleProfileNameChange() {
     return;
   }
 
+  const user = getCurrentUser();
+  const isAdmin = typeof isMainAdmin === 'function' && isMainAdmin(user);
+
   const success = changeUsername(newName);
   if (success) {
     input.value = '';
     if (msgEl) {
-      msgEl.textContent = "✅ Ismingiz muvaffaqiyatli saqlandi (-400 🪙)!";
+      msgEl.textContent = isAdmin
+        ? "✅ Ismingiz muvaffaqiyatli saqlandi (👑 Admin uchun bepul)!"
+        : "✅ Ismingiz muvaffaqiyatli saqlandi (-400 🪙)!";
       msgEl.style.color = "#4ade80";
       setTimeout(() => { if (msgEl) msgEl.textContent = ''; }, 3500);
     }
   } else {
     if (msgEl) {
-      const user = getCurrentUser();
-      if (user && (user.coins || 0) < 400) {
+      if (user && !isAdmin && (user.coins || 0) < 400) {
         msgEl.textContent = `❌ Mablag' yetarli emas (400 🪙 kerak, sizda: ${user.coins || 0} 🪙)`;
       } else {
         msgEl.textContent = "❌ Ism noto'g'ri kiritildi yoki xatolik yuz berdi!";
@@ -591,8 +672,8 @@ function claimDailyReward() {
   }
 
   localStorage.setItem(claimKey, today);
-  addCoins(50, 'Kunlik tashrif bonusi!');
-  showToast('🎁 Tabriklaymiz! Bugungi kunlik bonus: +50 🪙');
+  addCoins(30, 'Kunlik tashrif bonusi!');
+  showToast('🎁 Tabriklaymiz! Bugungi kunlik bonus: +30 🪙');
 
   const dropdown = document.getElementById('user-dropdown');
   if (dropdown) dropdown.classList.remove('open');
@@ -682,11 +763,12 @@ function renderShopItems() {
   if (!container) return;
 
   const user = getCurrentUser();
+  const isAdmin = typeof isMainAdmin === 'function' && isMainAdmin(user);
   const items = SHOP_ITEMS[currentShopCategory] || [];
   const inventory = user?.inventory || [];
 
   container.innerHTML = items.map(item => {
-    const isOwned = inventory.includes(item.id);
+    const isOwned = isAdmin || inventory.includes(item.id);
     let isEquipped = false;
 
     if (currentShopCategory === 'avatars') {
@@ -720,12 +802,12 @@ function renderShopItems() {
     let actionBtn = '';
     if (!user) {
       actionBtn = `<button class="shop-card-btn shop-btn-buy" onclick="openAuthModal('login')">Kirish kerak</button>`;
-    } else if (!isOwned) {
-      actionBtn = `<button class="shop-card-btn shop-btn-buy" onclick="buyShopItem('${currentShopCategory}', '${item.id}')">🛒 Xarid qilish</button>`;
     } else if (isEquipped) {
       actionBtn = `<button class="shop-card-btn shop-btn-equipped" onclick="unequipShopItem('${currentShopCategory}')">✅ Taqilgan (Yechish)</button>`;
-    } else {
+    } else if (isOwned) {
       actionBtn = `<button class="shop-card-btn shop-btn-equip" onclick="equipShopItem('${currentShopCategory}', '${item.id}')">✨ Taqish</button>`;
+    } else {
+      actionBtn = `<button class="shop-card-btn shop-btn-buy" onclick="buyShopItem('${currentShopCategory}', '${item.id}')">🛒 Xarid qilish</button>`;
     }
 
     return `
@@ -734,7 +816,7 @@ function renderShopItems() {
         <div class="shop-card-title">${item.name}</div>
         <div class="shop-card-desc">${item.desc}</div>
         <div class="shop-card-price">
-          ${isOwned ? '<span>✅ Xarid qilingan</span>' : `<span>🪙 ${item.price} Coin</span>`}
+          ${isOwned ? '<span style="color:#4ade80; font-weight:700;">✅ Ochiq / Xarid qilingan</span>' : `<span>🪙 ${item.price} Coin</span>`}
         </div>
         ${actionBtn}
       </div>
@@ -753,15 +835,23 @@ function buyShopItem(category, itemId) {
   const item = items.find(i => i.id === itemId);
   if (!item) return;
 
-  if ((user.coins || 0) < item.price) {
+  const isAdmin = typeof isMainAdmin === 'function' && isMainAdmin(user);
+
+  if (!isAdmin && (user.coins || 0) < item.price) {
     showToast('❌ Mablag\' yetarli emas! Darslarni bajaring yoki o\'yinlarda tanga yutib oling.');
     return;
   }
 
   // Deduct coins & add to inventory
-  user.coins -= item.price;
+  if (!isAdmin) {
+    user.coins -= item.price;
+  } else {
+    user.coins = 999999;
+  }
   if (!user.inventory) user.inventory = [];
-  user.inventory.push(item.id);
+  if (!user.inventory.includes(item.id)) {
+    user.inventory.push(item.id);
+  }
 
   // Auto equip
   if (category === 'avatars') user.equippedAvatar = item.icon;
