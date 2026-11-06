@@ -482,6 +482,7 @@ function changeUsername(newName) {
 }
 
 function handleProfileNameChange() {
+  
   const input = document.getElementById('profile-change-name-input');
   const msgEl = document.getElementById('profile-name-change-msg');
   if (!input) return;
@@ -603,19 +604,26 @@ const SHOP_ITEMS = {
     { id: 'av-meme-11', name: 'Bomj', icon: 'assets/memes/meme-11.jpg', price: 50, desc: 'Boshlang\'ich dasturchilar uchun kulgili mem' },
     { id: 'av-meme-3', name: 'Fun Coder', icon: 'assets/memes/meme-3.jpg', price: 200, desc: 'Doimo kayfiyatni ko\'tarib yuruvchi dasturchi' },
     { id: 'av-meme-5', name: 'Chill Dev', icon: 'assets/memes/meme-5.jpg', price: 200, desc: 'Hech qachon xavotirga tushmaydigan dasturchi' },
+    { id: 'av-meme-28', name: 'Sigma Mood', icon: 'assets/memes/meme-28.jpg', price: 250, desc: 'O\'ziga ishongan va zamonaviy uslubdagi mem' },
     { id: 'av-meme-15', name: 'Pixel Cat', icon: 'assets/memes/meme-15.jpg', price: 299, desc: 'Yoqimtoy va aqlli pikselli mushukcha' },
     { id: 'av-meme-1', name: 'Classic Meme', icon: 'assets/memes/meme-1.jpg', price: 300, desc: 'Internet olamidagi eng mashhur klassik mem' },
     { id: 'av-meme-10', name: 'Bug Hunter', icon: 'assets/memes/meme-10.jpg', price: 300, desc: 'Kechasi bilan uxlamay xatolarni qidiruvchi' },
     { id: 'av-meme-19', name: 'Coffee Coder', icon: 'assets/memes/meme-19.jpg', price: 300, desc: 'Kofe bilan kod yozuvchi kechki dasturchi' },
+    { id: 'av-meme-27', name: 'Haka Warrior', icon: 'assets/memes/meme-27.jpg', price: 300, desc: 'Haka jangovar raqsi — g\'oliblik va qat\'iyat ramzi' },
     { id: 'av-meme-4', name: 'Epic Reaction', icon: 'assets/memes/meme-4.jpg', price: 350, desc: 'Kod bir urinishda ishlaganda yuz ifodasi' },
+    { id: 'av-meme-24', name: 'Anime Shock', icon: 'assets/memes/meme-24.jpg', price: 400, desc: 'Kulgili va hayratda qolgan anime qahramoni memi' },
+    { id: 'av-meme-26', name: 'Kai Cenat Vibe', icon: 'assets/memes/meme-26.png', price: 400, desc: 'Trenddagi zamonaviy strimer va internet memi' },
     { id: 'av-meme-20', name: 'Cyber Hacker', icon: 'assets/memes/meme-20.jpg', price: 499, desc: 'Kiber xavfsizlik va sirli dasturchi' },
     { id: 'av-meme-2', name: 'Pro Hacker', icon: 'assets/memes/meme-2.jpg', price: 500, desc: 'Murakkab tizimlarni buzib kiruvchi kiber mutaxassis' },
     { id: 'av-meme-16', name: 'Anime Dev', icon: 'assets/memes/meme-16.jpg', price: 500, desc: 'Anime ishqibozi bo\'lgan frontend dasturchi' },
     { id: 'av-meme-18', name: 'Berdiyev', icon: 'assets/memes/meme-18.jpg', price: 500, desc: 'Mustaqil va o\'ziga ishongan sigma mushukcha' },
     { id: 'av-meme-13', name: 'Mystery Mood', icon: 'assets/memes/meme-13.jpg', price: 555, desc: 'O\'zgacha kayfiyat va sirli qarash' },
+    { id: 'av-meme-22', name: 'Money Boss', icon: 'assets/memes/meme-22.jpg', price: 599, desc: 'Ko\'p pul va boylik ramzi bo\'lgan hashamatli mem' },
     { id: 'av-meme-17', name: 'Cosmic Dev', icon: 'assets/memes/meme-17.jpg', price: 600, desc: 'Koinot qadar keng tasavvurga ega arxitektor' },
     { id: 'av-meme-21', name: 'Vibe Master', icon: 'assets/memes/meme-21.jpg', price: 650, desc: 'Doimo yuqori atmosfera va motivatsiya' },
     { id: 'av-meme-8', name: 'Dark Mode', icon: 'assets/memes/meme-8.jpg', price: 666, desc: 'Faqat tunda va qora mavzuda kod yozuvchilar ramzi' },
+    { id: 'av-meme-25', name: 'Tornado Pig', icon: 'assets/memes/meme-25.png', price: 677, desc: 'Shoshilinch vaziyatlar va tornado memi' },
+    { id: 'av-meme-23', name: 'Zoom Cat', icon: 'assets/memes/meme-23.jpg', price: 699, desc: 'Online darslar va Zoom yig\'ilishlaridagi kulgili holat' },
     { id: 'av-meme-14', name: 'Neon Legend', icon: 'assets/memes/meme-14.jpg', price: 700, desc: 'Yorqin kiber neon aura bilan porlovchi profil' },
     { id: 'av-meme-7', name: 'Lucky 777', icon: 'assets/memes/meme-7.jpg', price: 777, desc: 'Har doim omadi chopadigan dasturchi ramzi' },
     { id: 'av-meme-6', name: 'Senior Chad', icon: 'assets/memes/meme-6.jpg', price: 999, desc: 'Bir qator kod bilan butun loyihani qutqargan daho' },
