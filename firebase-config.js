@@ -129,7 +129,10 @@ function listenToCloudUsers() {
               if (!res.name || res.name === 'Bosh Admin' || res.name === 'Admin') {
                 res.name = 'Ustozjon No1';
               }
-              res.coins = 999999;
+              // Bosh admin tangasi (ekonomika uchun 0 dan boshlanadi, 999999 bo'lsa 0 ga tushiriladi)
+              if (res.coins === 999999 || typeof res.coins !== 'number') {
+                res.coins = (typeof localU.coins === 'number' && localU.coins !== 999999) ? localU.coins : 0;
+              }
               const allShopIds = typeof getAllShopItemIds === 'function' ? getAllShopItemIds() : [];
               const combined = new Set([...(res.inventory || []), ...(localU.inventory || []), ...(cu.inventory || []), ...allShopIds]);
               res.inventory = Array.from(combined);
@@ -189,7 +192,10 @@ function listenToCloudUsers() {
                 if (!finalCurrent.name || finalCurrent.name === 'Bosh Admin' || finalCurrent.name === 'Admin') {
                   finalCurrent.name = 'Ustozjon No1';
                 }
-                finalCurrent.coins = 999999;
+                // Bosh admin tangasi (ekonomika uchun 0 dan boshlanadi, 999999 bo'lsa 0 ga tushiriladi)
+                if (finalCurrent.coins === 999999 || typeof finalCurrent.coins !== 'number') {
+                  finalCurrent.coins = (typeof current.coins === 'number' && current.coins !== 999999) ? current.coins : 0;
+                }
                 const allShopIds = typeof getAllShopItemIds === 'function' ? getAllShopItemIds() : [];
                 finalCurrent.inventory = Array.from(new Set([...(finalCurrent.inventory || []), ...allShopIds]));
                 finalCurrent.equippedAvatar = current.equippedAvatar || matchedCurrent.equippedAvatar || 'assets/memes/meme-9.jpg';

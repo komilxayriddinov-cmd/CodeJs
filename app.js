@@ -52,7 +52,10 @@ function applyAdminDefaults(admin) {
   if (!admin.name || admin.name === 'Bosh Admin' || admin.name === 'Admin') {
     admin.name = 'Ustozjon No1';
   }
-  admin.coins = 999999;
+  // Bosh admin uchun tanga balansi (ekonomika uchun 0 dan boshlanadi, 999999 bo'lsa nolga tushiriladi)
+  if (admin.coins === 999999 || typeof admin.coins !== 'number') {
+    admin.coins = 0;
+  }
   const allIds = getAllShopItemIds();
   admin.inventory = Array.from(new Set([...(admin.inventory || []), ...allIds]));
   if (!admin.equippedAvatar) admin.equippedAvatar = 'assets/memes/meme-9.jpg';
@@ -74,7 +77,7 @@ function initDefaultUsers() {
         email: 'admin@codejs.uz',
         password: 'komil777', // Admin paroli
         role: 'admin',
-        coins: 999999,
+        coins: 0,
         completedLessons: ['html-01', 'html-02', 'css-01', 'js-basics-01'],
         inventory: allIds,
         equippedAvatar: 'assets/memes/meme-9.jpg',
@@ -177,7 +180,9 @@ function setCurrentUser(user) {
         if (!user.name || user.name === 'Bosh Admin' || user.name === 'Admin') {
           user.name = 'Ustozjon No1';
         }
-        user.coins = 999999;
+        if (user.coins === 999999 || typeof user.coins !== 'number') {
+          user.coins = 0;
+        }
         const allIds = typeof getAllShopItemIds === 'function' ? getAllShopItemIds() : [];
         user.inventory = Array.from(new Set([...(user.inventory || []), ...allIds]));
       }
@@ -530,8 +535,6 @@ function changeUsername(newName) {
   // Tangani yechish va ismni yangilash
   if (!isAdmin) {
     user.coins -= COST;
-  } else {
-    user.coins = 999999;
   }
   user.name = trimmed;
 
@@ -703,7 +706,7 @@ const SHOP_ITEMS = {
     { id: 'av-meme-17', name: 'Cosmic Dev', icon: 'assets/memes/meme-17.jpg', price: 600, desc: 'Koinot qadar keng tasavvurga ega arxitektor' },
     { id: 'av-meme-21', name: 'Vibe Master', icon: 'assets/memes/meme-21.jpg', price: 650, desc: 'Doimo yuqori atmosfera va motivatsiya' },
     { id: 'av-meme-8', name: 'Dark Mode', icon: 'assets/memes/meme-8.jpg', price: 666, desc: 'Faqat tunda va qora mavzuda kod yozuvchilar ramzi' },
-    { id: 'av-meme-25', name: 'Tornado Pig', icon: 'assets/memes/meme-25.png', price: 677, desc: 'Shoshilinch vaziyatlar va tornado memi' },
+    { id: 'av-meme-25', name: '67 Pig', icon: 'assets/memes/meme-25.png', price: 677, desc: 'Shoshilinch vaziyatlar va tornado memi' },
     { id: 'av-meme-23', name: 'Zoom Cat', icon: 'assets/memes/meme-23.jpg', price: 699, desc: 'Online darslar va Zoom yig\'ilishlaridagi kulgili holat' },
     { id: 'av-meme-14', name: 'Neon Legend', icon: 'assets/memes/meme-14.jpg', price: 700, desc: 'Yorqin kiber neon aura bilan porlovchi profil' },
     { id: 'av-meme-7', name: 'Lucky 777', icon: 'assets/memes/meme-7.jpg', price: 777, desc: 'Har doim omadi chopadigan dasturchi ramzi' },
@@ -845,8 +848,6 @@ function buyShopItem(category, itemId) {
   // Deduct coins & add to inventory
   if (!isAdmin) {
     user.coins -= item.price;
-  } else {
-    user.coins = 999999;
   }
   if (!user.inventory) user.inventory = [];
   if (!user.inventory.includes(item.id)) {
