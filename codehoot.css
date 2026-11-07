@@ -753,3 +753,33 @@
   border: 1px solid rgba(148, 163, 184, 0.25);
   color: #94a3b8;
 }
+
+/* ─── UMUMIY O'YIN TAYMERI (MATCH COUNTDOWN TIMER) ───────────────── */
+.codehoot-match-timer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  color: #fbbf24;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 3px 12px;
+  border-radius: 100px;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.codehoot-match-timer-badge.urgent {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #f87171;
+  animation: pulseTimer 1s infinite alternate;
+}
+
+@keyframes pulseTimer {
+  from { transform: scale(1); }
+  to { transform: scale(1.06); box-shadow: 0 0 14px rgba(239, 68, 68, 0.5); }
+}

@@ -88,8 +88,8 @@
   }
   </script>
 
-  <link rel="stylesheet" href="style.css?v=2.6" />
-  <link rel="stylesheet" href="codehoot.css?v=2.7" />
+  <link rel="stylesheet" href="style.css?v=2.8" />
+  <link rel="stylesheet" href="codehoot.css?v=2.8" />
 
   <!-- Splash: sessiyada faqat bir marta ko'rsatilsin -->
   <script>
@@ -877,16 +877,12 @@ console.log("Salom, CodeJS!");</textarea>
       </div>
 
       <div class="codehoot-form-group">
-        <label class="codehoot-form-label">Savollar soni</label>
-        <select id="codehoot-host-count" class="codehoot-select">
-          <option value="5">5 ta savol (Tezkor o'yin)</option>
-          <option value="10" selected>10 ta savol (Standart)</option>
-          <option value="15">15 ta savol (To'liq)</option>
-          <option value="20">20 ta savol (Chempionat)</option>
-          <option value="25">25 ta savol (Katta liga)</option>
-          <option value="30">30 ta savol (Super turnir - 30 ta!)</option>
-          <option value="40">40 ta savol (Marafon - 40 ta!)</option>
-          <option value="50">50 ta savol (Mega Marafon - 50 ta!)</option>
+        <label class="codehoot-form-label">⏱️ O'yin davomiyligi (Umumiy vaqt)</label>
+        <select id="codehoot-host-duration" class="codehoot-select">
+          <option value="3">⚡ 3 minut (Tezkor jang - 3 daqiqa)</option>
+          <option value="5" selected>⏱️ 5 minut (Standart jang - 5 daqiqa)</option>
+          <option value="10">🏆 10 minut (Marafon - 10 daqiqa)</option>
+          <option value="15">👑 15 minut (Katta chempionat - 15 daqiqa)</option>
         </select>
       </div>
 
@@ -947,9 +943,12 @@ console.log("Salom, CodeJS!");</textarea>
     <!-- 6. GAME: QUESTION SCREEN -->
     <div id="codehoot-game-question" style="display:none; padding:10px 0;">
       <div class="codehoot-q-header">
-        <div class="codehoot-q-counter" style="display:flex; align-items:center; gap:8px;">
-          <span>Savol <span id="codehoot-q-current-num">1</span> / <span id="codehoot-q-total-num">10</span></span>
+        <div class="codehoot-q-counter" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span>Savol <span id="codehoot-q-current-num">1</span></span>
           <span id="codehoot-q-difficulty-badge" style="display:none; font-size:11px; padding:2px 8px; border-radius:100px; border:1px solid transparent; font-weight:700;">🟢 Oson</span>
+          <div class="codehoot-match-timer-badge" title="O'yinning umumiy vaqti">
+            ⏳ <span class="codehoot-match-timer-val">05:00</span>
+          </div>
         </div>
         <div class="codehoot-timer-wrap">
           <div class="codehoot-timer-circle" id="codehoot-timer-num">20</div>
@@ -989,6 +988,11 @@ console.log("Salom, CodeJS!");</textarea>
 
     <!-- 7. GAME: REVEAL SCREEN -->
     <div id="codehoot-reveal-screen" style="display:none; padding:20px 0; text-align:center;">
+      <div style="display:flex; justify-content:center; margin-bottom:14px;">
+        <div class="codehoot-match-timer-badge" title="O'yinning umumiy vaqti">
+          ⏳ Qolgan vaqt: <span class="codehoot-match-timer-val">05:00</span>
+        </div>
+      </div>
       <div id="codehoot-reveal-personal"></div>
 
       <div style="font-size:14px; color:var(--text-muted); margin-bottom:6px;">To'g'ri javob:</div>
@@ -1009,7 +1013,10 @@ console.log("Salom, CodeJS!");</textarea>
       <div style="text-align:center; margin-bottom:18px;">
         <div style="font-size:36px; margin-bottom:4px;">📊</div>
         <h3 style="font-size:22px; font-weight:800;">Reyting jadvali</h3>
-        <p style="font-size:13px; color:var(--text-muted);">Eng tezkor va aniq o'quvchilar peshqadamlik qilmoqda</p>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">Eng tezkor va aniq o'quvchilar peshqadamlik qilmoqda</p>
+        <div class="codehoot-match-timer-badge" style="display:inline-flex;">
+          ⏳ Qolgan vaqt: <span class="codehoot-match-timer-val">05:00</span>
+        </div>
       </div>
 
       <div class="codehoot-leaderboard-container" id="codehoot-leaderboard-list"></div>
@@ -3321,10 +3328,13 @@ function getAiResponse(rawInput) {
 <script src="firebase-config.js?v=2.6"></script>
 
 <!-- CodeJS Platform Engine (Auth, Coins, Lessons) -->
-<script src="app.js?v=2.6"></script>
+<script src="app.js?v=2.8"></script>
+
+<!-- VS Code Style Editor IntelliSense & Autocomplete -->
+<script src="editor-autocomplete.js?v=2.8"></script>
 
 <!-- Codehoot Multiplayer Live Quiz Engine (Kahoot Style) -->
-<script src="codehoot.js?v=2.7"></script>
+<script src="codehoot.js?v=2.8"></script>
 
 </body>
 </html>

@@ -2501,7 +2501,11 @@ const Codehoot = {
   // Host/Game config
   category: 'flags',
   timePerQuestion: 20,
-  questionCount: 10,
+  matchDurationMinutes: 5,
+  matchDurationSeconds: 300,
+  matchStartTime: 0,
+  matchEndTime: 0,
+  matchTimerInterval: null,
   
   // Game session runtime
   questions: [],
@@ -2628,20 +2632,22 @@ const Codehoot = {
   createRoom() {
     const catSelect = document.getElementById('codehoot-host-category');
     const diffSelect = document.getElementById('codehoot-host-difficulty');
-    const qCountSelect = document.getElementById('codehoot-host-count');
+    const durationSelect = document.getElementById('codehoot-host-duration') || document.getElementById('codehoot-host-count');
     const timeSelect = document.getElementById('codehoot-host-time');
     const modeSelect = document.getElementById('codehoot-host-mode');
 
     this.category = catSelect ? catSelect.value : 'flags';
     this.difficulty = diffSelect ? diffSelect.value : 'all';
-    this.questionCount = qCountSelect ? parseInt(qCountSelect.value, 10) : 10;
+    this.matchDurationMinutes = durationSelect ? parseInt(durationSelect.value, 10) : 5;
+    this.matchDurationSeconds = this.matchDurationMinutes * 60;
     this.timePerQuestion = timeSelect ? parseInt(timeSelect.value, 10) : 20;
     this.hostMode = modeSelect ? modeSelect.value : 'spectator';
 
     // 6 xonali tasodifiy PIN
     this.roomPin = Math.floor(100000 + Math.random() * 900000).toString();
     this.roomId = 'room_' + this.roomPin;
-    this.questions = this.getQuestionsForCategory(this.category, this.questionCount, this.difficulty);
+    // Vaqtlik o'yin uchun ko'p savollar to'plamini yuklash (savol tugab qolmasligi uchun)
+    this.questions = this.getQuestionsForCategory(this.category, 60, this.difficulty);
     this.currentIndex = 0;
 
     const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
@@ -2670,6 +2676,10 @@ const Codehoot = {
       category: this.category,
       difficulty: this.difficulty || 'all',
       timePerQuestion: this.timePerQuestion,
+      matchDurationMinutes: this.matchDurationMinutes,
+      matchDurationSeconds: this.matchDurationSeconds,
+      matchStartTime: 0,
+      matchEndTime: 0,
       questionCount: this.questions.length,
       questions: this.questions,
       status: 'lobby', // 'lobby' | 'question' | 'reveal' | 'leaderboard' | 'finished'
@@ -2862,6 +2872,14 @@ const Codehoot = {
     this.questions = data.questions || [];
     this.currentIndex = data.currentQuestionIndex || 0;
 
+    // Umumiy o'yin vaqtini sinxronlash
+    if (data.matchEndTime) {
+      this.matchEndTime = data.matchEndTime;
+      if (!this.matchTimerInterval && data.status !== 'finished' && data.status !== 'lobby') {
+        this.startMatchTimer();
+      }
+    }
+
     // 1. Lobby holatida o'yinchilarni yangilash
     if (data.status === 'lobby') {
       if (this.role === 'host') {
@@ -2936,9 +2954,62 @@ const Codehoot = {
   // ─── 8. O'YINNI BOSHLASH VA BOSHQARISH (HOST) ──────────────────
   startGame() {
     if (this.questions.length === 0) {
-      this.questions = this.getQuestionsForCategory(this.category, this.questionCount);
+      this.questions = this.getQuestionsForCategory(this.category, 60, this.difficulty);
     }
+    const durationMinutes = this.matchDurationMinutes || 5;
+    const now = Date.now();
+    this.matchStartTime = now;
+    this.matchEndTime = now + (durationMinutes * 60 * 1000);
+
+    const update = {
+      matchStartTime: this.matchStartTime,
+      matchEndTime: this.matchEndTime,
+      matchDurationMinutes: durationMinutes,
+      updatedAt: now
+    };
+    if (!this.isLocalMode && isFirebaseConnected && this.roomId) {
+      db.collection('kahoot_rooms').doc(this.roomId).update(update);
+    }
+    this.startMatchTimer();
     this.sendQuestion(0);
+  },
+
+  // Butun musobaqaning umumiy vaqtini hisoblovchi taymer
+  startMatchTimer() {
+    if (this.matchTimerInterval) clearInterval(this.matchTimerInterval);
+
+    const updateTimerDisplay = () => {
+      if (!this.matchEndTime) return;
+      const remainingMs = this.matchEndTime - Date.now();
+      const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
+
+      const min = Math.floor(remainingSec / 60);
+      const sec = remainingSec % 60;
+      const timeStr = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+
+      // Barcha ekrandagi umumiy taymer ko'rsatkichlarini yangilash
+      document.querySelectorAll('.codehoot-match-timer-val').forEach(el => {
+        el.textContent = timeStr;
+      });
+
+      if (remainingSec <= 30) {
+        document.querySelectorAll('.codehoot-match-timer-badge').forEach(b => {
+          b.classList.add('urgent');
+        });
+      }
+
+      if (remainingSec <= 0) {
+        clearInterval(this.matchTimerInterval);
+        this.matchTimerInterval = null;
+        if (this.role === 'host' || this.isLocalMode) {
+          // Vaqt tugadi! G'oliblarni e'lon qilish
+          this.finishGame();
+        }
+      }
+    };
+
+    updateTimerDisplay();
+    this.matchTimerInterval = setInterval(updateTimerDisplay, 1000);
   },
 
   sendQuestion(index) {
@@ -3386,7 +3457,7 @@ const Codehoot = {
     if (hostNextBtn) {
       if (this.role === 'host') {
         hostNextBtn.style.display = 'inline-flex';
-        const isLast = (this.currentIndex >= this.questions.length - 1);
+        const isLast = (this.matchEndTime && Date.now() >= this.matchEndTime);
         hostNextBtn.textContent = isLast ? "🏆 G'oliblarni e'lon qilish" : "Keyingi savol →";
         hostNextBtn.onclick = () => this.advanceToNextQuestion();
       } else {
@@ -3438,7 +3509,7 @@ const Codehoot = {
     if (nextBtn) {
       if (this.role === 'host') {
         nextBtn.style.display = 'inline-flex';
-        const isLast = (this.currentIndex >= this.questions.length - 1);
+        const isLast = (this.matchEndTime && Date.now() >= this.matchEndTime);
         nextBtn.textContent = isLast ? "🏆 G'oliblarni e'lon qilish" : "Keyingi savol →";
       } else {
         nextBtn.style.display = 'none';
@@ -3664,8 +3735,16 @@ const Codehoot = {
 
   // Host: Keyingi savolga o'tish yoki yakunlash
   advanceToNextQuestion() {
-    if (this.currentIndex >= this.questions.length - 1) {
+    const isTimeUp = this.matchEndTime && (Date.now() >= this.matchEndTime);
+    if (isTimeUp) {
       this.finishGame();
+      return;
+    }
+    // Agar savollar tugab qolsa lekin vaqt hali bor bo'lsa, yana savollar qo'shish
+    if (this.currentIndex >= this.questions.length - 1) {
+      const extraQuestions = this.getQuestionsForCategory(this.category, 30, this.difficulty);
+      this.questions = this.questions.concat(extraQuestions);
+      this.sendQuestion(this.currentIndex + 1);
     } else {
       this.sendQuestion(this.currentIndex + 1);
     }
@@ -3673,6 +3752,10 @@ const Codehoot = {
 
   // ─── 13. O'YIN YAKUNI VA SHOHSUPA (PODIUM) ─────────────────────
   finishGame() {
+    if (this.matchTimerInterval) {
+      clearInterval(this.matchTimerInterval);
+      this.matchTimerInterval = null;
+    }
     const update = {
       status: 'finished',
       updatedAt: Date.now()
@@ -3686,6 +3769,10 @@ const Codehoot = {
   },
 
   showPodiumView() {
+    if (this.matchTimerInterval) {
+      clearInterval(this.matchTimerInterval);
+      this.matchTimerInterval = null;
+    }
     this.showScreen('podium-screen');
     codehootSound.playFanfare();
 
