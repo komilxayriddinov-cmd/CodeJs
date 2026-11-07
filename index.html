@@ -88,8 +88,8 @@
   }
   </script>
 
-  <link rel="stylesheet" href="style.css?v=2.8" />
-  <link rel="stylesheet" href="codehoot.css?v=2.8" />
+  <link rel="stylesheet" href="style.css?v=2.9" />
+  <link rel="stylesheet" href="codehoot.css?v=2.9" />
 
   <!-- Splash: sessiyada faqat bir marta ko'rsatilsin -->
   <script>
@@ -788,7 +788,12 @@ console.log("Salom, CodeJS!");</textarea>
         <span class="codehoot-header-badge">🎯 Codehoot Live</span>
         <span style="font-size:12px; color:var(--text-muted);">20 tagacha o'quvchi</span>
       </div>
-      <button class="modal-close" onclick="closeCodehoot()">✕</button>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="codehoot-fs-btn" id="codehoot-modal-fs-btn" onclick="Codehoot.toggleFullscreen()" title="Butun ekranga ochish / yopish">
+          <span id="codehoot-fs-icon">⛶</span> <span id="codehoot-fs-text">Butun ekran</span>
+        </button>
+        <button class="modal-close" onclick="closeCodehoot()">✕</button>
+      </div>
     </div>
 
     <!-- 1. WELCOME SCREEN -->
@@ -976,9 +981,14 @@ console.log("Salom, CodeJS!");</textarea>
           <div style="font-size:16px; font-weight:800; color:var(--accent-cyan); display:flex; align-items:center; gap:8px;">
             <span>📊 Jonli Reyting (Tomoshabin ekrani)</span>
           </div>
-          <button class="btn btn-primary" onclick="Codehoot.revealQuestionResult()" style="padding:6px 16px; font-size:12px; background:linear-gradient(135deg, #f59e0b, #ef4444); font-weight:700;">
-            ⏹️ Vaqtdan oldin to'xtatish
-          </button>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="codehoot-fs-btn" onclick="Codehoot.openFullscreenLeaderboard()" style="padding:6px 14px; font-size:12px; background:rgba(0, 212, 255, 0.15); border-color:#00d4ff; color:#00d4ff;">
+              ⛶ Reytingni butun ekranga ochish
+            </button>
+            <button class="btn btn-primary" onclick="Codehoot.revealQuestionResult()" style="padding:6px 16px; font-size:12px; background:linear-gradient(135deg, #f59e0b, #ef4444); font-weight:700;">
+              ⏹️ Vaqtdan oldin to'xtatish
+            </button>
+          </div>
         </div>
         <div id="codehoot-spectator-leaderboard" class="codehoot-leaderboard-container" style="max-height:220px; margin-bottom:0;"></div>
       </div>
@@ -1021,7 +1031,10 @@ console.log("Salom, CodeJS!");</textarea>
 
       <div class="codehoot-leaderboard-container" id="codehoot-leaderboard-list"></div>
 
-      <div style="text-align:center; margin-top:16px;">
+      <div style="text-align:center; margin-top:16px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+        <button class="codehoot-fs-btn" onclick="Codehoot.openFullscreenLeaderboard()" style="padding:12px 24px; font-size:15px; border-color:#00d4ff; color:#00d4ff; background:rgba(0,212,255,0.12);">
+          ⛶ Reytingni butun ekranga ochish
+        </button>
         <button class="btn btn-primary" id="codehoot-lb-next-btn" onclick="Codehoot.advanceToNextQuestion()" style="padding:12px 32px; font-size:16px; font-weight:700; display:none;">
           Keyingi savol →
         </button>
@@ -1043,6 +1056,25 @@ console.log("Salom, CodeJS!");</textarea>
         <button class="btn btn-secondary" onclick="closeCodehoot()">Chiqish</button>
         <button class="btn btn-primary" onclick="Codehoot.open()" style="background: linear-gradient(135deg, #00d4ff, #ec4899); font-weight:700;">Yangi o'yin 🎮</button>
       </div>
+    </div>
+
+    <!-- 10. BUTUN EKRAN JONLI REYTING DOSKASI (FULLSCREEN LEADERBOARD OVERLAY) -->
+    <div id="codehoot-fs-leaderboard-overlay" class="codehoot-fs-leaderboard-overlay" style="display:none;">
+      <div class="codehoot-fs-lb-header">
+        <div class="codehoot-fs-lb-title">
+          <span>🏆</span>
+          <span>Codehoot Jonli Reyting Doskasi</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div class="codehoot-match-timer-badge">
+            ⏳ Qolgan vaqt: <span class="codehoot-match-timer-val">05:00</span>
+          </div>
+          <button class="codehoot-fs-btn" onclick="Codehoot.closeFullscreenLeaderboard()" style="background:rgba(239, 68, 68, 0.2); border-color:#ef4444; color:#f87171;">
+            🗗 Oddiy rejimga qaytish (Esc)
+          </button>
+        </div>
+      </div>
+      <div class="codehoot-fs-lb-grid" id="codehoot-fs-lb-grid"></div>
     </div>
 
   </div>
@@ -3334,7 +3366,7 @@ function getAiResponse(rawInput) {
 <script src="editor-autocomplete.js?v=2.8"></script>
 
 <!-- Codehoot Multiplayer Live Quiz Engine (Kahoot Style) -->
-<script src="codehoot.js?v=2.8"></script>
+<script src="codehoot.js?v=2.9"></script>
 
 </body>
 </html>

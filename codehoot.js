@@ -2506,6 +2506,8 @@ const Codehoot = {
   matchStartTime: 0,
   matchEndTime: 0,
   matchTimerInterval: null,
+  isModalFullscreen: false,
+  isFullscreenLeaderboardOpen: false,
   
   // Game session runtime
   questions: [],
@@ -2534,6 +2536,13 @@ const Codehoot = {
   init() {
     this.playerId = 'p_' + Math.random().toString(36).substring(2, 9);
     console.log('🎮 Codehoot jonli o\'yin tizimi tayyor!');
+
+    // Esc tugmasi bosilganda butun ekran reytingidan chiqish
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.isFullscreenLeaderboardOpen) {
+        this.closeFullscreenLeaderboard();
+      }
+    });
   },
 
   // Modalni ochish
@@ -2566,6 +2575,9 @@ const Codehoot = {
 
   cleanup() {
     if (this.timerInterval) clearInterval(this.timerInterval);
+    if (this.matchTimerInterval) clearInterval(this.matchTimerInterval);
+    if (this.isFullscreenLeaderboardOpen) this.closeFullscreenLeaderboard();
+    if (this.isModalFullscreen) this.toggleFullscreen();
     if (this.roomUnsubscribe) {
       try { this.roomUnsubscribe(); } catch(e) {}
       this.roomUnsubscribe = null;
@@ -3242,6 +3254,107 @@ const Codehoot = {
         </div>
       `;
     }).join('');
+
+    // Agar Butun ekran reyting doskasi ochiq bo'lsa, uni ham real-vaqtda yangilash
+    if (this.isFullscreenLeaderboardOpen) {
+      this.updateFullscreenLeaderboardGrid();
+    }
+  },
+
+  // ─── BUTUN EKRAN REJIMI (FULLSCREEN LEADERBOARD & MODAL) ──────────
+  toggleFullscreen() {
+    const modalEl = document.getElementById('codehoot-modal');
+    if (!modalEl) return;
+
+    this.isModalFullscreen = !this.isModalFullscreen;
+    modalEl.classList.toggle('codehoot-is-fullscreen', this.isModalFullscreen);
+
+    const iconEl = document.getElementById('codehoot-fs-icon');
+    const textEl = document.getElementById('codehoot-fs-text');
+    if (this.isModalFullscreen) {
+      if (iconEl) iconEl.textContent = '🗗';
+      if (textEl) textEl.textContent = 'Kichraytirish';
+      try {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      } catch (e) {}
+    } else {
+      if (iconEl) iconEl.textContent = '⛶';
+      if (textEl) textEl.textContent = 'Butun ekran';
+      try {
+        if (document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      } catch (e) {}
+    }
+  },
+
+  openFullscreenLeaderboard() {
+    const overlay = document.getElementById('codehoot-fs-leaderboard-overlay');
+    if (!overlay) return;
+    overlay.style.display = 'flex';
+    this.isFullscreenLeaderboardOpen = true;
+    this.updateFullscreenLeaderboardGrid();
+
+    // Brauzerni to'liq ekranga o'tkazish
+    try {
+      if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    } catch (e) {}
+  },
+
+  closeFullscreenLeaderboard() {
+    const overlay = document.getElementById('codehoot-fs-leaderboard-overlay');
+    if (overlay) overlay.style.display = 'none';
+    this.isFullscreenLeaderboardOpen = false;
+
+    // Chiqishda faqat modalning o'zi to'liq ekran bo'lmasa brauzer fullscreenidan chiqish
+    if (!this.isModalFullscreen) {
+      try {
+        if (document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      } catch (e) {}
+    }
+  },
+
+  updateFullscreenLeaderboardGrid() {
+    const grid = document.getElementById('codehoot-fs-lb-grid');
+    if (!grid || !this.roomData || !this.roomData.players) return;
+
+    const players = Object.values(this.roomData.players).sort((a, b) => (b.score || 0) - (a.score || 0));
+    if (players.length === 0) {
+      grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px; color:var(--text-muted); font-size:18px;">Hozircha o'quvchilar ulanmagan</div>`;
+      return;
+    }
+
+    grid.innerHTML = players.map((p, rank) => {
+      const isMe = (p.id === this.playerId);
+      const hasAnswered = (p.lastAnswer !== null && p.lastAnswer !== undefined);
+      const avHtml = typeof getAvatarHtml === 'function' ? getAvatarHtml(p.avatar) : '👤';
+      const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank + 1}`;
+      const statusHtml = hasAnswered 
+        ? '<span style="color:#4ade80; font-size:13px; font-weight:700;">✓ Javob berdi</span>' 
+        : "<span style=\"color:var(--text-muted); font-size:13px;\">⏳ O'ylamoqda...</span>";
+
+      return `
+        <div class="codehoot-fs-lb-card rank-${rank + 1} ${isMe ? 'is-me' : ''}">
+          <div class="codehoot-fs-lb-left">
+            <div class="codehoot-fs-lb-rank">${medal}</div>
+            <div class="codehoot-fs-lb-av">${avHtml}</div>
+            <div>
+              <div class="codehoot-fs-lb-name">${this.escapeHtml(p.name)} ${isMe ? '<span style="color:#00d4ff; font-size:12px;">(Siz)</span>' : ''}</div>
+              <div style="margin-top:2px;">${statusHtml}</div>
+            </div>
+          </div>
+          <div class="codehoot-fs-lb-right">
+            <div class="codehoot-fs-lb-score">${p.score || 0} ball</div>
+          </div>
+        </div>
+      `;
+    }).join('');
   },
 
   // Taymerni hisoblash
@@ -3503,6 +3616,10 @@ const Codehoot = {
         </div>
       `;
     }).join('');
+
+    if (this.isFullscreenLeaderboardOpen) {
+      this.updateFullscreenLeaderboardGrid();
+    }
 
     // Host uchun "Keyingi savol" yoki "Natijalar" tugmasi
     const nextBtn = document.getElementById('codehoot-lb-next-btn');
