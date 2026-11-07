@@ -3225,32 +3225,43 @@ const Codehoot = {
     }
   },
 
-  // Tomoshabin (Katta ekran) jonli reytingini chiqarish
+  // Tomoshabin (Katta ekran) jonli reytingini chiqarish (Aynan Kahoot skrinshotidagi kabi - HAMMA O'YINCHI)
   renderSpectatorLeaderboard() {
     const container = document.getElementById('codehoot-spectator-leaderboard');
     if (!container || !this.roomData || !this.roomData.players) return;
 
     const players = Object.values(this.roomData.players).sort((a, b) => (b.score || 0) - (a.score || 0));
     if (players.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-muted);">Hali o'quvchilar ulanmagan</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:15px; color:#cbd5e1;">Hali o'quvchilar ulanmagan</div>`;
       return;
     }
 
-    container.innerHTML = players.slice(0, 10).map((p, rank) => {
+    container.innerHTML = players.map((p, rank) => {
+      const isMe = (p.id === this.playerId);
+      const isFirst = (rank === 0);
       const hasAnswered = (p.lastAnswer !== null && p.lastAnswer !== undefined);
       const avHtml = typeof getAvatarHtml === 'function' ? getAvatarHtml(p.avatar) : '👤';
-      const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank + 1}`;
+      const streakFlame = (isFirst || (p.streak && p.streak > 1)) ? '<span style="font-size:16px; margin-left:4px;">🔥</span>' : '';
+      const upIndicator = (!isFirst && (p.score || 0) > 0) ? '<span style="font-size:12px; margin-left:4px; opacity:0.95;">▲</span>' : '';
       const statusHtml = hasAnswered 
-        ? '<span style="color:#4ade80; font-size:12px; font-weight:700;">✓ Javob berdi</span>' 
-        : '<span style="color:var(--text-muted); font-size:12px;">⏳ O\'ylamoqda...</span>';
+        ? '<span style="color:#22c55e; font-size:12px; font-weight:700; margin-left:6px;">✓</span>' 
+        : "<span style=\"opacity:0.6; font-size:12px; margin-left:6px;\">⏳</span>";
 
       return `
-        <div class="codehoot-rank-item" style="padding:8px 14px; margin-bottom:6px; background:rgba(255,255,255,0.06);">
-          <div class="codehoot-rank-badge" style="font-size:16px; width:26px;">${medal}</div>
-          <div class="codehoot-rank-avatar" style="width:30px; height:30px;">${avHtml}</div>
-          <div class="codehoot-rank-name" style="font-size:14px; font-weight:600;">${this.escapeHtml(p.name)}</div>
-          <div style="margin-right:12px;">${statusHtml}</div>
-          <div class="codehoot-rank-score" style="font-size:15px;">${p.score || 0} ball</div>
+        <div class="codehoot-rank-item ${isFirst ? 'rank-1' : ''} ${isMe ? 'is-me' : ''}" style="margin-bottom:6px;">
+          <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
+            <div class="codehoot-rank-avatar">${avHtml}</div>
+            <div class="codehoot-rank-name">
+              <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${this.escapeHtml(p.name)}</span>
+              ${streakFlame}
+              ${isMe ? '<span style="font-size:11px; opacity:0.8;">(Siz)</span>' : ''}
+              ${statusHtml}
+            </div>
+          </div>
+          <div class="codehoot-rank-score">
+            <span>${p.score || 0}</span>
+            ${upIndicator}
+          </div>
         </div>
       `;
     }).join('');
@@ -3326,31 +3337,40 @@ const Codehoot = {
 
     const players = Object.values(this.roomData.players).sort((a, b) => (b.score || 0) - (a.score || 0));
     if (players.length === 0) {
-      grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px; color:var(--text-muted); font-size:18px;">Hozircha o'quvchilar ulanmagan</div>`;
+      grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px; color:#cbd5e1; font-size:18px;">Hozircha o'quvchilar ulanmagan</div>`;
       return;
     }
 
+    // 8 tadan ko'p o'yinchi bo'lsa barcha o'yinchilar ekranga to'liq sig'ishi uchun 2 ustun
+    grid.classList.toggle('two-cols', players.length > 8);
+
     grid.innerHTML = players.map((p, rank) => {
       const isMe = (p.id === this.playerId);
+      const isFirst = (rank === 0);
       const hasAnswered = (p.lastAnswer !== null && p.lastAnswer !== undefined);
       const avHtml = typeof getAvatarHtml === 'function' ? getAvatarHtml(p.avatar) : '👤';
-      const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank + 1}`;
+      const streakFlame = (isFirst || (p.streak && p.streak > 1)) ? '<span style="font-size:20px; margin-left:6px;">🔥</span>' : '';
+      const upIndicator = (!isFirst && (p.score || 0) > 0) ? '<span style="font-size:15px; margin-left:6px; opacity:0.95;">▲</span>' : '';
       const statusHtml = hasAnswered 
-        ? '<span style="color:#4ade80; font-size:13px; font-weight:700;">✓ Javob berdi</span>' 
-        : "<span style=\"color:var(--text-muted); font-size:13px;\">⏳ O'ylamoqda...</span>";
+        ? '<span style="color:#22c55e; font-size:13px; font-weight:700; margin-left:6px;">✓</span>' 
+        : "<span style=\"opacity:0.6; font-size:13px; margin-left:6px;\">⏳</span>";
 
       return `
-        <div class="codehoot-fs-lb-card rank-${rank + 1} ${isMe ? 'is-me' : ''}">
+        <div class="codehoot-fs-lb-card ${isFirst ? 'rank-1' : ''} ${isMe ? 'is-me' : ''}">
           <div class="codehoot-fs-lb-left">
-            <div class="codehoot-fs-lb-rank">${medal}</div>
             <div class="codehoot-fs-lb-av">${avHtml}</div>
-            <div>
-              <div class="codehoot-fs-lb-name">${this.escapeHtml(p.name)} ${isMe ? '<span style="color:#00d4ff; font-size:12px;">(Siz)</span>' : ''}</div>
-              <div style="margin-top:2px;">${statusHtml}</div>
+            <div class="codehoot-fs-lb-name">
+              <span>${this.escapeHtml(p.name)}</span>
+              ${streakFlame}
+              ${isMe ? '<span style="font-size:12px; opacity:0.8;">(Siz)</span>' : ''}
+              ${statusHtml}
             </div>
           </div>
           <div class="codehoot-fs-lb-right">
-            <div class="codehoot-fs-lb-score">${p.score || 0} ball</div>
+            <div class="codehoot-fs-lb-score">
+              <span>${p.score || 0}</span>
+              ${upIndicator}
+            </div>
           </div>
         </div>
       `;
@@ -3599,20 +3619,30 @@ const Codehoot = {
     const listEl = document.getElementById('codehoot-leaderboard-list');
     if (!listEl || !this.roomData || !this.roomData.players) return;
 
-    // Ball bo'yicha saralash
+    // Ball bo'yicha saralash - HAMMA O'YINCHILAR KO'RINADI (slice(0, 10) olib tashlandi)
     const players = Object.values(this.roomData.players).sort((a, b) => (b.score || 0) - (a.score || 0));
 
-    listEl.innerHTML = players.slice(0, 10).map((p, rank) => {
+    listEl.innerHTML = players.map((p, rank) => {
       const isMe = (p.id === this.playerId);
+      const isFirst = (rank === 0);
       const avHtml = typeof getAvatarHtml === 'function' ? getAvatarHtml(p.avatar) : '👤';
-      const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank + 1}`;
+      const streakFlame = (isFirst || (p.streak && p.streak > 1)) ? '<span style="font-size:18px; margin-left:4px;">🔥</span>' : '';
+      const upIndicator = (!isFirst && (p.score || 0) > 0) ? '<span style="font-size:13px; margin-left:4px; opacity:0.95;">▲</span>' : '';
 
       return `
-        <div class="codehoot-rank-item ${isMe ? 'is-me' : ''}">
-          <div class="codehoot-rank-badge">${medal}</div>
-          <div class="codehoot-rank-avatar">${avHtml}</div>
-          <div class="codehoot-rank-name">${this.escapeHtml(p.name)} ${isMe ? '<b>(Siz)</b>' : ''}</div>
-          <div class="codehoot-rank-score">${p.score || 0} ball</div>
+        <div class="codehoot-rank-item ${isFirst ? 'rank-1' : ''} ${isMe ? 'is-me' : ''}">
+          <div style="display:flex; align-items:center; gap:12px; min-width:0; flex:1;">
+            <div class="codehoot-rank-avatar">${avHtml}</div>
+            <div class="codehoot-rank-name">
+              <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${this.escapeHtml(p.name)}</span>
+              ${streakFlame}
+              ${isMe ? '<span style="font-size:11px; opacity:0.8;">(Siz)</span>' : ''}
+            </div>
+          </div>
+          <div class="codehoot-rank-score">
+            <span>${p.score || 0}</span>
+            ${upIndicator}
+          </div>
         </div>
       `;
     }).join('');

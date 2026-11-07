@@ -34,7 +34,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(0, 212, 255, 0.2));
+  background: #1e293b;
   border: 1px solid rgba(236, 72, 153, 0.4);
   padding: 4px 12px;
   border-radius: 100px;
@@ -60,9 +60,7 @@
   font-size: 28px;
   font-weight: 800;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, #00d4ff, #ec4899, #facc15);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffffff;
 }
 
 .codehoot-welcome-desc {
@@ -148,7 +146,7 @@
 
 /* Lobby PIN ko'rgazmasi */
 .codehoot-pin-display-box {
-  background: linear-gradient(135deg, rgba(19, 104, 206, 0.25), rgba(226, 27, 60, 0.25));
+  background: #1e1b4b;
   border: 2px dashed rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   padding: 24px;
@@ -458,12 +456,12 @@
   color: #4ade80;
 }
 
-/* ─── 5. REYTING / LEADERBOARD JADVALI ──────────────────────────── */
+/* ─── 5. REYTING / LEADERBOARD JADVALI (OFFICIAL KAHOOT STILLARI) ─── */
 .codehoot-leaderboard-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 340px;
+  max-height: 480px;
   overflow-y: auto;
   margin-bottom: 24px;
 }
@@ -471,33 +469,48 @@
 .codehoot-rank-item {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: space-between;
   padding: 10px 18px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: transform 0.2s;
+  border-radius: 6px;
+  background: #46178f;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+/* 1-o'rin: Oq fon, qora matn va olovcha 🔥 (Aynan Kahoot skrinshotidagi kabi) */
+.codehoot-rank-item.rank-1 {
+  background: #ffffff !important;
+  color: #222222 !important;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+}
+
+.codehoot-rank-item.rank-1 .codehoot-rank-name {
+  color: #222222 !important;
+}
+
+.codehoot-rank-item.rank-1 .codehoot-rank-score {
+  color: #222222 !important;
 }
 
 .codehoot-rank-item.is-me {
-  background: rgba(0, 212, 255, 0.12);
-  border-color: var(--accent-cyan, #00d4ff);
-}
-
-.codehoot-rank-badge {
-  font-size: 20px;
-  font-weight: 800;
-  width: 32px;
-  text-align: center;
+  outline: 2px solid #00d4ff;
+  outline-offset: 2px;
 }
 
 .codehoot-rank-avatar {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+  border-radius: 6px;
   overflow: hidden;
-  background: #1e293b;
+  background: #32106a;
   flex-shrink: 0;
+}
+
+.codehoot-rank-item.rank-1 .codehoot-rank-avatar {
+  background: #e2e8f0;
 }
 
 .codehoot-rank-avatar img {
@@ -508,14 +521,21 @@
 
 .codehoot-rank-name {
   flex: 1;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .codehoot-rank-score {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
-  color: var(--accent-yellow, #fbbf24);
+  font-family: var(--font-mono, monospace);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* ─── 6. SHOHSUPA / PODIUM (1, 2, 3-O'RIN) ─────────────────────── */
@@ -596,15 +616,15 @@
 }
 
 .codehoot-podium-step.rank-1 .codehoot-podium-pillar {
-  background: linear-gradient(180deg, #ffd700, #b8860b);
+  background: #eab308;
 }
 
 .codehoot-podium-step.rank-2 .codehoot-podium-pillar {
-  background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+  background: #94a3b8;
 }
 
 .codehoot-podium-step.rank-3 .codehoot-podium-pillar {
-  background: linear-gradient(180deg, #cd7f32, #8b4513);
+  background: #cd7f32;
 }
 
 .pillar-num {
@@ -664,7 +684,7 @@
   max-width: 140px;
   padding: 16px 10px;
   border-radius: 16px;
-  background: linear-gradient(145deg, #1e293b, #0f172a);
+  background: #1e293b;
   border: 2px dashed rgba(251, 191, 36, 0.45);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -678,7 +698,7 @@
   border-color: #fbbf24;
   border-style: solid;
   box-shadow: 0 12px 28px rgba(251, 191, 36, 0.4);
-  background: linear-gradient(145deg, #283548, #131d31);
+  background: #283548;
 }
 
 .codehoot-chest-icon {
@@ -711,7 +731,7 @@
 
 .codehoot-chest-card.opened.lucky {
   border: 2px solid #10b981;
-  background: linear-gradient(145deg, rgba(16, 185, 129, 0.3), rgba(6, 95, 70, 0.4));
+  background: #065f46;
   box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
   transform: scale(1.04);
 }
@@ -743,9 +763,9 @@
 }
 
 .codehoot-chest-event-box.lucky {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(245, 158, 11, 0.2));
-  border: 1px solid rgba(251, 191, 36, 0.5);
-  box-shadow: 0 4px 20px rgba(251, 191, 36, 0.2);
+  background: #064e3b;
+  border: 1px solid #10b981;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
   color: #fff;
 }
 
@@ -785,7 +805,7 @@
   to { transform: scale(1.06); box-shadow: 0 0 14px rgba(239, 68, 68, 0.5); }
 }
 
-/* ─── FULLSCREEN MODAL & FULLSCREEN LEADERBOARD ─────────────────── */
+/* ─── FULLSCREEN MODAL & OFFICIAL KAHOOT LEADERBOARD (NO GRADIENT) ─── */
 #codehoot-modal.codehoot-is-fullscreen .modal {
   position: fixed !important;
   inset: 0 !important;
@@ -800,6 +820,7 @@
   flex-direction: column !important;
   overflow-y: auto !important;
   z-index: 99999 !important;
+  background: #1e1338 !important;
 }
 
 #codehoot-modal.codehoot-is-fullscreen .codehoot-answers-grid {
@@ -807,44 +828,43 @@
 }
 
 #codehoot-modal.codehoot-is-fullscreen .codehoot-leaderboard-container {
-  max-height: 60vh !important;
+  max-height: 70vh !important;
 }
 
 .codehoot-fs-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #e2e8f0;
-  padding: 6px 14px;
-  border-radius: 8px;
+  background: #46178f;
+  border: 1px solid #7c3aed;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 6px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
   user-select: none;
 }
 
 .codehoot-fs-btn:hover {
-  background: rgba(0, 212, 255, 0.2);
-  border-color: #00d4ff;
-  color: #00d4ff;
+  background: #5b21b6;
+  border-color: #a78bfa;
   transform: translateY(-1px);
 }
 
-/* Maxsus Butun Ekran Reyting Doskasi (Full-Screen Leaderboard Overlay) */
+/* Maxsus Butun Ekran Reyting Doskasi (SOLID KAHOOT PURPLE BACKGROUND - NO GRADIENT) */
 .codehoot-fs-leaderboard-overlay {
   position: fixed;
   inset: 0;
   z-index: 100000;
-  background: radial-gradient(circle at 50% 15%, #1e1b4b 0%, #0a0e1a 100%);
+  background: #25076b;
   display: flex;
   flex-direction: column;
-  padding: 28px 40px;
+  padding: 24px 36px;
   color: #ffffff;
   overflow-y: auto;
-  animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: popIn 0.2s ease;
 }
 
 .codehoot-fs-lb-header {
@@ -853,83 +873,95 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  margin-bottom: 24px;
+  padding: 12px 24px;
+  background: #1a044d;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #46178f;
 }
 
 .codehoot-fs-lb-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 900;
-  background: linear-gradient(135deg, #00d4ff, #fbbf24);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 12px;
+  letter-spacing: 0.5px;
 }
 
 .codehoot-fs-lb-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   flex: 1;
-  align-content: start;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
+/* 8 tadan ko'p o'yinchi bo'lsa barcha o'yinchilar ekranga to'liq sig'ishi uchun 2 ustun */
+.codehoot-fs-lb-grid.two-cols {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 16px;
+  max-width: 1400px;
+}
+
+/* Har bir o'yinchi qatori (Aynan Kahoot skrinshotidagi kabi) */
 .codehoot-fs-lb-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 22px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  transition: all 0.25s ease;
+  padding: 12px 20px;
+  border-radius: 6px;
+  background: #46178f;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+  user-select: none;
 }
 
+/* 1-o'rin oq qator (Aynan Kahoot skrinshotidagi kabi) */
 .codehoot-fs-lb-card.rank-1 {
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(180, 83, 9, 0.22));
-  border: 2px solid #fbbf24;
-  box-shadow: 0 0 30px rgba(251, 191, 36, 0.35);
-  transform: scale(1.02);
+  background: #ffffff !important;
+  color: #222222 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
-.codehoot-fs-lb-card.rank-2 {
-  background: linear-gradient(135deg, rgba(226, 232, 240, 0.16), rgba(148, 163, 184, 0.16));
-  border: 1.5px solid #cbd5e1;
+.codehoot-fs-lb-card.rank-1 .codehoot-fs-lb-name {
+  color: #222222 !important;
+  font-weight: 800;
 }
 
-.codehoot-fs-lb-card.rank-3 {
-  background: linear-gradient(135deg, rgba(205, 127, 50, 0.16), rgba(139, 69, 19, 0.16));
-  border: 1.5px solid #cd7f32;
+.codehoot-fs-lb-card.rank-1 .codehoot-fs-lb-score {
+  color: #222222 !important;
+  font-weight: 800;
+}
+
+.codehoot-fs-lb-card.rank-1 .codehoot-fs-lb-av {
+  background: #e2e8f0;
 }
 
 .codehoot-fs-lb-card.is-me {
-  border-color: #00d4ff;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+  outline: 3px solid #00d4ff;
+  outline-offset: 2px;
 }
 
 .codehoot-fs-lb-left {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-
-.codehoot-fs-lb-rank {
-  font-size: 24px;
-  font-weight: 900;
-  width: 40px;
-  text-align: center;
+  gap: 14px;
 }
 
 .codehoot-fs-lb-av {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  background: #1e293b;
+  background: #32106a;
+  flex-shrink: 0;
 }
 
 .codehoot-fs-lb-av img {
@@ -939,19 +971,24 @@
 }
 
 .codehoot-fs-lb-name {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .codehoot-fs-lb-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .codehoot-fs-lb-score {
-  font-size: 20px;
-  font-weight: 900;
-  color: #fbbf24;
+  font-size: 18px;
+  font-weight: 800;
   font-family: var(--font-mono, monospace);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
