@@ -733,7 +733,217 @@ const CODEHOOT_QUESTIONS = {
       "correct": 3,
       "difficulty": "hard",
       "hint": "Luka Modrich vatani va Dubrovnik qal'asi joylashgan yurt."
-    }
+    },
+{
+    "q": "To'q ko'k, sariq va qizil vertikal chiziqli, Ruminiya bayrog'iga 99% o'xshash bo'lgan Markaziy Afrika davlati:",
+    "flagCode": "td",
+    "flagEmoji": "🇹🇩",
+    "options": [
+        "Chad",
+        "Ruminiya",
+        "Moldova",
+        "Andorra"
+    ],
+    "correct": 0,
+    "difficulty": "hard",
+    "hint": "Poytaxti Njamena bo'lgan, ko'k rangi Ruminiyanikidan bir oz to'qroq bo'lgan davlat."
+},
+{
+    "q": "Moviy, sariq va qizil chiziqlar o'rtasida ko'kragida qalqon tutgan burgut gerbi bor Yevropa davlati:",
+    "flagCode": "md",
+    "flagEmoji": "🇲🇩",
+    "options": [
+        "Ruminiya",
+        "Moldova",
+        "Andorra",
+        "Chad"
+    ],
+    "correct": 1,
+    "difficulty": "hard",
+    "hint": "Kishinyov poytaxti va Dnestr bo'yi o'lkasi."
+},
+{
+    "q": "Moviy, sariq va qizil chiziqlar o'rtasida 'Virtus Unita Fortior' shiorli knyazlik gerbi tasvirlangan Pireney davlati:",
+    "flagCode": "ad",
+    "flagEmoji": "🇦🇩",
+    "options": [
+        "Monako",
+        "Andorra",
+        "Lixtenshteyn",
+        "San-Marino"
+    ],
+    "correct": 1,
+    "difficulty": "hard",
+    "hint": "Fransiya va Ispaniya o'rtasidagi baland tog'li mitti knyazlik."
+},
+{
+    "q": "AQSH bayrog'iga juda o'xshash, lekin faqat 1 dona oq yulduz va 11 ta chiziqdan iborat G'arbiy Afrika davlati:",
+    "flagCode": "lr",
+    "flagEmoji": "🇱🇷",
+    "options": [
+        "Liberiya",
+        "Malayziya",
+        "Togo",
+        "AQSH"
+    ],
+    "correct": 0,
+    "difficulty": "hard",
+    "hint": "Ozod qilingan sobiq qullar tomonidan tashkil etilgan, poytaxti Monroviya."
+},
+{
+    "q": "To'q sariq, oq va yashil vertikal chiziqli (Irlandiya bayrog'ining teskarisi) Afrika davlati:",
+    "flagCode": "ci",
+    "flagEmoji": "🇨🇮",
+    "options": [
+        "Kot-d'Ivuar",
+        "Irlandiya",
+        "Niger",
+        "Italiya"
+    ],
+    "correct": 0,
+    "difficulty": "hard",
+    "hint": "Didiye Drogba vatani va dunyodagi eng yirik kakao yetishtiruvchi mamlakat."
+},
+{
+    "q": "Oq, ko'k, qizil gorizontal chiziqlar va chapida oq ikki tasmali xochli qizil qalqon gerbi bor davlat:",
+    "flagCode": "sk",
+    "flagEmoji": "🇸🇰",
+    "options": [
+        "Sloveniya",
+        "Slovakiya",
+        "Rossiya",
+        "Chexiya"
+    ],
+    "correct": 1,
+    "difficulty": "hard",
+    "hint": "Bratislava poytaxti va Tatra tog'lari yurti."
+},
+{
+    "q": "Oq, ko'k, qizil chiziqlar va chap tepasida uch cho'qqili Triglav tog'i gerbi tasvirlangan Yevropa davlati:",
+    "flagCode": "si",
+    "flagEmoji": "🇸🇮",
+    "options": [
+        "Slovakiya",
+        "Xorvatiya",
+        "Sloveniya",
+        "Serbiya"
+    ],
+    "correct": 2,
+    "difficulty": "hard",
+    "hint": "Lyublyana poytaxti va mashhur Bled ko'li joylashgan yashil o'lka."
+},
+{
+    "q": "Oq va och ko'k gorizontal chiziqlar hamda uchta qasr minorasi tasvirlangan dunyodagi eng qadimiy respublika:",
+    "flagCode": "sm",
+    "flagEmoji": "🇸🇲",
+    "options": [
+        "San-Marino",
+        "Vatikan",
+        "Monako",
+        "Malta"
+    ],
+    "correct": 0,
+    "difficulty": "hard",
+    "hint": "Italiya hududi bilan o'rab olingan Titano tog'i etagidagi respublika."
+},
+{
+    "q": "Ko'k va qizil gorizontal chiziqlar hamda chap tepasida oltin gersog toji tasvirlangan boy Alp davlati:",
+    "flagCode": "li",
+    "flagEmoji": "🇱🇮",
+    "options": [
+        "Lixtenshteyn",
+        "Lyuksemburg",
+        "Monako",
+        "Avstriya"
+    ],
+    "correct": 0,
+    "difficulty": "hard",
+    "hint": "Poytaxti Vaduts bo'lgan, Shveysariya va Avstriya o'rtasidagi bankirlar yurti."
+},
+{
+    "q": "Sariq va to'q sariq fonda oq Druk (momaqaldiroq ajdari) tasvirlangan Himoloy qirolligi:",
+    "flagCode": "bt",
+    "flagEmoji": "🇧🇹",
+    "options": [
+        "Nepal",
+        "Butan",
+        "Tibet",
+        "Myanma"
+    ],
+    "correct": 1,
+    "difficulty": "hard",
+    "hint": "Yalpi Milliy Baxt indeksini yurituvchi, poytaxti Thimphu bo'lgan sirli qirollik."
+},
+{
+    "q": "Moviy fonda (Tinch okeani) o'rtadan chaproqda to'lin sariq oy tasvirlangan orol-davlat:",
+    "flagCode": "pw",
+    "flagEmoji": "🇵🇼",
+    "options": [
+        "Yaponiya",
+        "Bangladesh",
+        "Palau",
+        "Mikroneziya"
+    ],
+    "correct": 2,
+    "difficulty": "hard",
+    "hint": "Jellifish ko'li va go'zal marjon riflari bilan mashhur Mikroneziya oroli."
+},
+{
+    "q": "Moviy, sariq, qizil chiziqlar o'rtasida qora-oq jangovar qalqon va nayzalar tasvirlangan Afrika qirolligi:",
+    "flagCode": "sz",
+    "flagEmoji": "🇸🇿",
+    "options": [
+        "Lesoto",
+        "Esvatini (Svazilend)",
+        "Keniya",
+        "Uganda"
+    ],
+    "correct": 1,
+    "difficulty": "hard",
+    "hint": "Janubiy Afrikadagi mutlaq monarxiya, ilgari Svazilend deb atalgan."
+},
+{
+    "q": "Moviy fonda qora, oq va sariq uchburchakli egizak Piton vulqon cho'qqilari tasvirlangan Karib oroli:",
+    "flagCode": "lc",
+    "flagEmoji": "🇱🇨",
+    "options": [
+        "Sent-Lyusiya",
+        "Barbados",
+        "Grenada",
+        "Bagam orollari"
+    ],
+    "correct": 0,
+    "difficulty": "hard",
+    "hint": "Ayol kishi nomi bilan atalgan dunyodagi yagona suveren davlat."
+},
+{
+    "q": "Qizil, ko'k, sariq va yashil 4 ta gorizontal yorqin chiziqdan iborat Hind okeanidagi jannatmonand orol:",
+    "flagCode": "mu",
+    "flagEmoji": "🇲🇺",
+    "options": [
+        "Seyshel orollari",
+        "Mavrikiy",
+        "Madagaskar",
+        "Maldiv orollari"
+    ],
+    "correct": 1,
+    "difficulty": "hard",
+    "hint": "Afsonaviy Dodo qushi vatani bo'lgan, poytaxti Port-Lui bo'lgan orol."
+},
+{
+    "q": "Qizil, oq va och havorang chiziqlardan iborat boy Yevropa Buyuk Gertsogligi:",
+    "flagCode": "lu",
+    "flagEmoji": "🇱🇺",
+    "options": [
+        "Niderlandiya",
+        "Lyuksemburg",
+        "Fransiya",
+        "Paragvay"
+    ],
+    "correct": 1,
+    "difficulty": "hard",
+    "hint": "Niderlandiya bayrog'iga juda o'xshash, lekin pastki chizig'i och ko'k (havorang)."
+}
   ],
   "javascript": [
     {
@@ -2241,6 +2451,29 @@ class CodehootAudio {
       });
     } catch(e) {}
   }
+
+  // Sirli sandiq bo'sh chiqqandagi tovush
+  playChestEmpty() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      this.playTone(200, 'sine', 0.18, 0.08);
+      setTimeout(() => this.playTone(150, 'sine', 0.22, 0.06), 110);
+    } catch(e) {}
+  }
+
+  // Sirli sandiqdan super omad chiqqandagi sehrli tovush
+  playLucky() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      const notes = [440, 554, 659, 880, 1108, 1318];
+      const times = [0, 70, 140, 210, 280, 360];
+      notes.forEach((n, idx) => {
+        setTimeout(() => this.playTone(n, 'triangle', 0.22, 0.14), times[idx]);
+      });
+    } catch(e) {}
+  }
 }
 
 const codehootSound = new CodehootAudio();
@@ -2262,6 +2495,8 @@ const Codehoot = {
   playerScore: 0,
   playerStreak: 0,
   hasAnsweredCurrent: false,
+  hasChosenChestForCurrentQ: false,
+  currentLuckyChest: null,
 
   // Host/Game config
   category: 'flags',
@@ -2783,6 +3018,8 @@ const Codehoot = {
   // ─── 9. SAVOL EKRANI (QUESTION VIEW) ──────────────────────────
   startQuestionView(index, startTime, duration) {
     this.hasAnsweredCurrent = false;
+    this.hasChosenChestForCurrentQ = false;
+    this.currentLuckyChest = Math.floor(Math.random() * 3);
     this.showScreen('game-question');
 
     const curQ = this.questions[index];
@@ -3077,19 +3314,27 @@ const Codehoot = {
     // O'yinchining o'z natijasi
     const personalResult = document.getElementById('codehoot-reveal-personal');
     if (personalResult) {
+      const isSpectator = (this.role === 'host' && this.hostMode === 'spectator');
       const myPlayerData = (this.roomData && this.roomData.players && this.roomData.players[this.playerId]) || null;
       const isCorrect = myPlayerData ? myPlayerData.lastAnswerCorrect : false;
 
-      if (isCorrect) {
+      if (isSpectator) {
+        personalResult.innerHTML = `
+          <div style="font-size:15px; color:var(--text-muted); margin-bottom:14px; background:rgba(255,255,255,0.05); padding:8px 16px; border-radius:10px; display:inline-block;">
+            📺 Tomoshabin (Katta ekran) rejimi — Natijalar ko'rinishi
+          </div>
+        `;
+      } else if (isCorrect) {
         codehootSound.playCorrect();
         personalResult.innerHTML = `
           <div class="codehoot-banner correct animate-pop">
             <span style="font-size:36px;">🎉</span>
             <div>
               <div style="font-size:20px; font-weight:700;">Barakalla! To'g'ri javob!</div>
-              <div style="font-size:14px; opacity:0.9;">Seriya: 🔥 ${this.playerStreak} ta ketma-ket</div>
+              <div style="font-size:14px; opacity:0.9;">Seriya: 🔥 ${this.playerStreak} ta ketma-ket | Ballingiz: <b>${this.playerScore}</b></div>
             </div>
           </div>
+          ${this.renderMysteryChestsHtml()}
         `;
       } else {
         codehootSound.playWrong();
@@ -3201,6 +3446,222 @@ const Codehoot = {
     }
   },
 
+
+  // ─── SIRLI SANDIQCHALAR MINIO'YINI (MYSTERY CHESTS) ────────────
+  renderMysteryChestsHtml() {
+    if (this.currentLuckyChest === null || this.currentLuckyChest === undefined) {
+      this.currentLuckyChest = Math.floor(Math.random() * 3);
+    }
+    return `
+      <div class="codehoot-chests-wrapper animate-pop" id="codehoot-chests-block">
+        <div class="codehoot-chests-title">
+          🎁 <b>Sirli Sandiqchalar!</b> 3 tadan 1 tasida super-omad yashiringan:
+        </div>
+        <div class="codehoot-chests-grid">
+          <div class="codehoot-chest-card" id="codehoot-chest-0" onclick="Codehoot.chooseMysteryChest(0)">
+            <span class="codehoot-chest-icon">🎁</span>
+            <div class="codehoot-chest-label">1-sandiq</div>
+          </div>
+          <div class="codehoot-chest-card" id="codehoot-chest-1" onclick="Codehoot.chooseMysteryChest(1)">
+            <span class="codehoot-chest-icon">🎁</span>
+            <div class="codehoot-chest-label">2-sandiq</div>
+          </div>
+          <div class="codehoot-chest-card" id="codehoot-chest-2" onclick="Codehoot.chooseMysteryChest(2)">
+            <span class="codehoot-chest-icon">🎁</span>
+            <div class="codehoot-chest-label">3-sandiq</div>
+          </div>
+        </div>
+        <div id="codehoot-chest-result-box" style="display:none;"></div>
+      </div>
+    `;
+  },
+
+  chooseMysteryChest(chosenIndex) {
+    if (this.hasChosenChestForCurrentQ) return;
+    this.hasChosenChestForCurrentQ = true;
+
+    const cards = [
+      document.getElementById('codehoot-chest-0'),
+      document.getElementById('codehoot-chest-1'),
+      document.getElementById('codehoot-chest-2')
+    ];
+    cards.forEach(c => {
+      if (c) c.classList.add('disabled');
+    });
+
+    const isLucky = (chosenIndex === this.currentLuckyChest);
+    const resultBox = document.getElementById('codehoot-chest-result-box');
+
+    // Sandiqlarni ochish va ko'rsatish
+    cards.forEach((c, idx) => {
+      if (!c) return;
+      const icon = c.querySelector('.codehoot-chest-icon');
+      const label = c.querySelector('.codehoot-chest-label');
+      if (idx === chosenIndex) {
+        if (isLucky) {
+          c.classList.add('opened', 'lucky');
+          if (icon) icon.textContent = '🌟';
+          if (label) label.textContent = 'OMAD!';
+        } else {
+          c.classList.add('opened', 'empty');
+          if (icon) icon.textContent = '💨';
+          if (label) label.textContent = "Bo'sh!";
+        }
+      } else {
+        if (idx === this.currentLuckyChest) {
+          c.classList.add('unpicked-lucky');
+          if (icon) icon.textContent = '🎁';
+          if (label) label.textContent = 'Shu yerda edi!';
+        } else {
+          c.classList.add('opened', 'empty');
+          if (icon) icon.textContent = '💨';
+          if (label) label.textContent = "Bo'sh";
+        }
+      }
+    });
+
+    if (!isLucky) {
+      codehootSound.playChestEmpty();
+      if (resultBox) {
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `
+          <div class="codehoot-chest-event-box empty animate-pop">
+            💨 <b>Afsus, bu sandiq bo'sh ekan!</b> 3 tadan 1 tasida super-omad yashiringan edi. Keyingi to'g'ri javobda yana sinab ko'ring!
+          </div>
+        `;
+      }
+      return;
+    }
+
+    // OMADLI SANDIQ TOPILDI!
+    codehootSound.playLucky();
+
+    const playersMap = (this.roomData && this.roomData.players) ? this.roomData.players : {};
+    const opponents = Object.values(playersMap).filter(p => p.id !== this.playerId);
+
+    // 3 xil super-hodisa:
+    // 0: Joy almashtirish (Swap scores/places)
+    // 1: 70% ochko o'g'irlash (Steal 70% score)
+    // 2: Haqiqiy Coin + Ball Jackpot
+    const eventType = Math.floor(Math.random() * 3);
+    let eventHtml = '';
+    let targetPlayer = null;
+    let targetNewScore = 0;
+
+    if (eventType === 0) {
+      // 🔄 1. JOY ALMASHTIRISH (SWAP PLACES / SCORES)
+      if (opponents.length > 0) {
+        const higherOpponents = opponents.filter(p => (p.score || 0) > this.playerScore);
+        targetPlayer = higherOpponents.length > 0
+          ? higherOpponents[Math.floor(Math.random() * higherOpponents.length)]
+          : opponents[Math.floor(Math.random() * opponents.length)];
+
+        const myOldScore = this.playerScore;
+        const oppOldScore = targetPlayer.score || 0;
+
+        this.playerScore = oppOldScore;
+        targetNewScore = myOldScore;
+        targetPlayer.score = targetNewScore;
+
+        if (this.roomData.players[this.playerId]) {
+          this.roomData.players[this.playerId].score = this.playerScore;
+        }
+        if (this.roomData.players[targetPlayer.id]) {
+          this.roomData.players[targetPlayer.id].score = targetNewScore;
+        }
+
+        eventHtml = `
+          <div style="font-size:18px; margin-bottom:4px;">🔄 <b>SUPER JOY ALMASHTIRISH!</b></div>
+          <div style="font-size:14px; opacity:0.95;">
+            Siz <b>${this.escapeHtml(targetPlayer.name)}</b> bilan ballaringizni va o'rningizni almashdingiz!
+            <br><span style="color:#fbbf24; font-weight:800; font-size:16px;">Yangi ballingiz: ${this.playerScore} ball!</span>
+          </div>
+        `;
+      } else {
+        this.playerScore += 800;
+        if (this.roomData.players && this.roomData.players[this.playerId]) {
+          this.roomData.players[this.playerId].score = this.playerScore;
+        }
+        eventHtml = `
+          <div style="font-size:18px; margin-bottom:4px;">👑 <b>YAKKA HUKMDOR BONUSI!</b></div>
+          <div style="font-size:14px; color:#fbbf24; font-weight:800; font-size:16px;">+800 ball taqdim etildi! (Jami: ${this.playerScore} ball)</div>
+        `;
+      }
+    } else if (eventType === 1) {
+      // 🦹 2. 70% OCHKO O'G'IRLASH (STEAL 70% POINTS)
+      const opponentsWithScore = opponents.filter(p => (p.score || 0) > 0);
+      if (opponentsWithScore.length > 0) {
+        opponentsWithScore.sort((a, b) => (b.score || 0) - (a.score || 0));
+        targetPlayer = opponentsWithScore[0];
+
+        const stolen = Math.max(50, Math.round((targetPlayer.score || 0) * 0.7));
+        targetNewScore = Math.max(0, (targetPlayer.score || 0) - stolen);
+        targetPlayer.score = targetNewScore;
+        this.playerScore = (this.playerScore || 0) + stolen;
+
+        if (this.roomData.players[this.playerId]) {
+          this.roomData.players[this.playerId].score = this.playerScore;
+        }
+        if (this.roomData.players[targetPlayer.id]) {
+          this.roomData.players[targetPlayer.id].score = targetNewScore;
+        }
+
+        eventHtml = `
+          <div style="font-size:18px; margin-bottom:4px;">🦹 <b>70% OCHKO O'G'IRLASH!</b></div>
+          <div style="font-size:14px; opacity:0.95;">
+            Siz <b>${this.escapeHtml(targetPlayer.name)}</b>dan uning 70% ochkosini (<b>+${stolen} ball</b>) o'g'irlab oldingiz!
+            <br><span style="color:#4ade80; font-weight:800; font-size:16px;">Jami ballingiz: ${this.playerScore} ball!</span>
+          </div>
+        `;
+      } else {
+        this.playerScore += 700;
+        if (this.roomData.players && this.roomData.players[this.playerId]) {
+          this.roomData.players[this.playerId].score = this.playerScore;
+        }
+        eventHtml = `
+          <div style="font-size:18px; margin-bottom:4px;">🦹 <b>MEGA O'G'IRLIK BONUSI!</b></div>
+          <div style="font-size:14px; color:#4ade80; font-weight:800; font-size:16px;">Raqiblarda hali ball yo'q edi: Sandiqdan +700 ball o'g'irlab oldingiz!</div>
+        `;
+      }
+    } else {
+      // 🪙 3. HAQIQIY COIN + BALL JACKPOT
+      const coinReward = 50;
+      if (typeof addCoins === 'function') {
+        addCoins(coinReward, "Codehoot: Sandiqdan yutib olindi!");
+      }
+      this.playerScore += 500;
+      if (this.roomData.players && this.roomData.players[this.playerId]) {
+        this.roomData.players[this.playerId].score = this.playerScore;
+      }
+      eventHtml = `
+        <div style="font-size:18px; margin-bottom:4px;">🪙 <b>JACKPOT: HAQIQIY COIN!</b></div>
+        <div style="font-size:14px; opacity:0.95;">
+          Hisobingizga darhol <b style="color:#fbbf24; font-size:16px;">+${coinReward} Haqiqiy Coin</b> va <b>+500 ball</b> qo'shildi! 💎
+          <br><span style="color:#fbbf24; font-weight:800;">Jami ballingiz: ${this.playerScore} ball!</span>
+        </div>
+      `;
+    }
+
+    if (resultBox) {
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = `
+        <div class="codehoot-chest-event-box lucky animate-pop">
+          ${eventHtml}
+        </div>
+      `;
+    }
+
+    // Firestore ma'lumotlarini darhol yangilash (Spectator va jonli reyting sinxronlanishi uchun)
+    if (!this.isLocalMode && isFirebaseConnected && this.roomId) {
+      const updateData = {};
+      updateData[`players.${this.playerId}.score`] = this.playerScore;
+      if (targetPlayer) {
+        updateData[`players.${targetPlayer.id}.score`] = targetNewScore;
+      }
+      db.collection('kahoot_rooms').doc(this.roomId).update(updateData).catch(e => console.error("Score sync error:", e));
+    }
+  },
+
   // Host: Keyingi savolga o'tish yoki yakunlash
   advanceToNextQuestion() {
     if (this.currentIndex >= this.questions.length - 1) {
@@ -3258,9 +3719,9 @@ const Codehoot = {
 
       podiumContainer.innerHTML = `
         <div class="codehoot-podium-wrapper">
-          ${renderPodiumStep(p2, 2, 140, '🥈', 50)}
-          ${renderPodiumStep(p1, 1, 190, '🥇', 100)}
-          ${renderPodiumStep(p3, 3, 100, '🥉', 30)}
+          ${renderPodiumStep(p2, 2, 140, '🥈', 100)}
+          ${renderPodiumStep(p1, 1, 190, '🥇', 150)}
+          ${renderPodiumStep(p3, 3, 100, '🥉', 50)}
         </div>
       `;
     }
@@ -3270,9 +3731,9 @@ const Codehoot = {
     if (currentUser) {
       const myRank = players.findIndex(p => p.id === this.playerId);
       let earnedCoins = 15; // Ishtirok uchun
-      if (myRank === 0) earnedCoins = 100;
-      else if (myRank === 1) earnedCoins = 50;
-      else if (myRank === 2) earnedCoins = 30;
+      if (myRank === 0) earnedCoins = 150;
+      else if (myRank === 1) earnedCoins = 100;
+      else if (myRank === 2) earnedCoins = 50;
 
       if (typeof addCoins === 'function') {
         addCoins(earnedCoins, `Codehoot viktorinasida ${myRank >= 0 ? (myRank + 1) + "-o'rin" : "ishtirok"}`);
