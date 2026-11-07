@@ -89,7 +89,7 @@
   </script>
 
   <link rel="stylesheet" href="style.css?v=2.9" />
-  <link rel="stylesheet" href="codehoot.css?v=3.0" />
+  <link rel="stylesheet" href="codehoot.css?v=3.1" />
 
   <!-- Splash: sessiyada faqat bir marta ko'rsatilsin -->
   <script>
@@ -507,19 +507,19 @@ console.log("Salom, CodeJS!");</textarea>
 
     <div class="games-grid">
       <!-- 🌟 CODEHOOT — MULTIPLAYER JONLI VIKTORINA (KAHOOT) -->
-      <div class="game-card reveal reveal-delay-1" onclick="openCodehoot()" style="border-color: rgba(236, 72, 153, 0.5); box-shadow: 0 4px 20px rgba(236, 72, 153, 0.25);">
-        <div class="game-card-visual" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(0, 212, 255, 0.25));">
-          <span class="game-visual-icon" style="filter: drop-shadow(0 0 12px rgba(236, 72, 153, 0.8));">🎯</span>
+      <div class="game-card reveal reveal-delay-1" onclick="openCodehoot()" style="border-color: rgba(0, 212, 255, 0.35);">
+        <div class="game-card-visual" style="background: #141a2e; border-bottom: 1px solid rgba(0, 212, 255, 0.15);">
+          <span class="game-visual-icon" style="filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.6));">🎯</span>
         </div>
         <div class="game-card-body">
-          <span class="game-card-tag tag-multiplayer" style="background: linear-gradient(135deg, #ec4899, #8b5cf6); color: #fff; font-weight:700;">🔥 JONLI MULTIPLAYER</span>
+          <span class="game-card-tag tag-multiplayer" style="background: rgba(0, 212, 255, 0.15); color: #00d4ff; border: 1px solid rgba(0, 212, 255, 0.3); font-weight:700;">🔥 JONLI MULTIPLAYER</span>
           <h3 class="game-card-title" data-uz="Codehoot (Kahoot o'yini)" data-en="Codehoot (Kahoot Game)" data-ru="Codehoot (Игра Kahoot)">Codehoot (Kahoot o'yini)</h3>
           <p class="game-card-desc" data-uz="Xona oching yoki PIN kod bilan kiring! Davlatlar bayroqlari, JavaScript va IT mavzularida 20 tagacha o'quvchi bir vaqtda jonli bellashadi!" data-en="Create a room or join with PIN! Compete live with up to 20 players on World Flags, JavaScript, and IT topics!" data-ru="Создайте комнату или войдите по PIN! До 20 игроков соревнуются в реальном времени по флагам мира, JavaScript и IT!">
             Xona oching yoki PIN kod bilan kiring! Davlatlar bayroqlari, JavaScript va IT mavzularida 20 tagacha o'quvchi bir vaqtda jonli bellashadi!
           </p>
           <div class="game-card-footer">
             <span class="game-players">👥 1–20 o'quvchi</span>
-            <button class="game-play-btn" style="background: linear-gradient(135deg, #ec4899, #00d4ff);" data-uz="Xonaga kirish" data-en="Join Room" data-ru="Войти в комнату">Xonaga kirish</button>
+            <button class="game-play-btn" style="background: #00d4ff; color: #0a0e1a; font-weight: 700; border: none;" data-uz="Xonaga kirish" data-en="Join Room" data-ru="Войти в комнату">Xonaga kirish</button>
           </div>
         </div>
       </div>
@@ -839,7 +839,7 @@ console.log("Salom, CodeJS!");</textarea>
 
       <div style="display:flex; gap:12px; margin-top:24px;">
         <button class="btn btn-secondary" onclick="Codehoot.showScreen('welcome')" style="flex:1;">Orqaga</button>
-        <button class="btn btn-primary" onclick="Codehoot.joinRoom()" style="flex:2; background:#46178f; font-weight:700;">Ulanish 🚀</button>
+        <button class="btn btn-primary" onclick="Codehoot.joinRoom()" style="flex:2; background:#00d4ff; color:#0a0e1a; font-weight:700;">Ulanish 🚀</button>
       </div>
     </div>
 
@@ -914,7 +914,7 @@ console.log("Salom, CodeJS!");</textarea>
 
       <div style="display:flex; gap:12px; margin-top:24px;">
         <button class="btn btn-secondary" onclick="Codehoot.showScreen('welcome')" style="flex:1;">Orqaga</button>
-        <button class="btn btn-primary" onclick="Codehoot.createRoom()" style="flex:2; background:linear-gradient(135deg, #00d4ff, #ec4899); font-weight:700;">Xonani ochish →</button>
+        <button class="btn btn-primary" onclick="Codehoot.createRoom()" style="flex:2; background:#00d4ff; color:#0a0e1a; font-weight:700;">Xonani ochish →</button>
       </div>
     </div>
 
@@ -939,7 +939,7 @@ console.log("Salom, CodeJS!");</textarea>
         <button class="btn btn-secondary" onclick="Codehoot.addTestBots(3)" style="padding:10px 16px; font-size:13px;">
           🤖 +3 ta Test Bot qo'shish
         </button>
-        <button class="btn btn-primary" id="codehoot-host-start-btn" onclick="Codehoot.startGame()" style="background: linear-gradient(135deg, #26890c, #10b981); font-size:16px; font-weight:800; padding:12px 28px;">
+        <button class="btn btn-primary" id="codehoot-host-start-btn" onclick="Codehoot.startGame()" style="background: #10b981; color:#ffffff; font-size:16px; font-weight:800; padding:12px 28px;">
           ▶️ O'yinni boshlash!
         </button>
       </div>
@@ -1044,7 +1044,7 @@ console.log("Salom, CodeJS!");</textarea>
     <!-- 9. GAME: PODIUM (FINISH) -->
     <div id="codehoot-podium-screen" style="display:none; padding:20px 0; text-align:center;">
       <div style="font-size:48px; margin-bottom:6px;">🎉 🏆 🎊</div>
-      <h2 style="font-size:28px; font-weight:900; margin-bottom:6px; background:linear-gradient(135deg, #ffd700, #facc15, #ff007f); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+      <h2 style="font-size:28px; font-weight:900; margin-bottom:6px; color:#fbbf24;">
         G'oliblar shohsupasi!
       </h2>
       <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Codehoot musobaqasi yakunlandi!</p>
@@ -1054,7 +1054,7 @@ console.log("Salom, CodeJS!");</textarea>
 
       <div style="margin-top:28px; display:flex; gap:12px; justify-content:center;">
         <button class="btn btn-secondary" onclick="closeCodehoot()">Chiqish</button>
-        <button class="btn btn-primary" onclick="Codehoot.open()" style="background:#46178f; font-weight:700;">Yangi o'yin 🎮</button>
+        <button class="btn btn-primary" onclick="Codehoot.open()" style="background:#00d4ff; color:#0a0e1a; font-weight:700;">Yangi o'yin 🎮</button>
       </div>
     </div>
 
@@ -3366,7 +3366,7 @@ function getAiResponse(rawInput) {
 <script src="editor-autocomplete.js?v=2.8"></script>
 
 <!-- Codehoot Multiplayer Live Quiz Engine (Kahoot Style) -->
-<script src="codehoot.js?v=3.0"></script>
+<script src="codehoot.js?v=3.1"></script>
 
 </body>
 </html>

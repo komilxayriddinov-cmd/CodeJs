@@ -456,7 +456,7 @@
   color: #4ade80;
 }
 
-/* ─── 5. REYTING / LEADERBOARD JADVALI (OFFICIAL KAHOOT STILLARI) ─── */
+/* ─── 5. REYTING / LEADERBOARD JADVALI (CODEJS DIZAYN - NO GRADIENT) ─── */
 .codehoot-leaderboard-container {
   display: flex;
   flex-direction: column;
@@ -470,29 +470,37 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 18px;
-  border-radius: 6px;
-  background: #46178f;
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease;
+  padding: 12px 18px;
+  border-radius: 8px;
+  background: #141a2e;
+  color: #e8ecf4;
+  border: 1px solid rgba(0, 212, 255, 0.16);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s ease;
   user-select: none;
 }
 
-/* 1-o'rin: Oq fon, qora matn va olovcha 🔥 (Aynan Kahoot skrinshotidagi kabi) */
+.codehoot-rank-item:hover {
+  background: #182038;
+  border-color: rgba(0, 212, 255, 0.35);
+}
+
+/* 1-o'rin: CodeJS Chempion uslubi (Oq fon, to'q matn va CodeJS neon cyan chegarasi) */
 .codehoot-rank-item.rank-1 {
   background: #ffffff !important;
-  color: #222222 !important;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+  color: #0a0e1a !important;
+  border: 2px solid #00d4ff !important;
+  box-shadow: 0 4px 18px rgba(0, 212, 255, 0.35) !important;
 }
 
 .codehoot-rank-item.rank-1 .codehoot-rank-name {
-  color: #222222 !important;
+  color: #0a0e1a !important;
+  font-weight: 800;
 }
 
 .codehoot-rank-item.rank-1 .codehoot-rank-score {
-  color: #222222 !important;
+  color: #0a0e1a !important;
+  font-weight: 900;
 }
 
 .codehoot-rank-item.is-me {
@@ -503,14 +511,16 @@
 .codehoot-rank-avatar {
   width: 36px;
   height: 36px;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  background: #32106a;
+  background: #0f1424;
+  border: 1px solid rgba(0, 212, 255, 0.2);
   flex-shrink: 0;
 }
 
 .codehoot-rank-item.rank-1 .codehoot-rank-avatar {
   background: #e2e8f0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .codehoot-rank-avatar img {
@@ -532,7 +542,7 @@
   font-size: 17px;
   font-weight: 800;
   font-family: var(--font-mono, monospace);
-  color: #ffffff;
+  color: #00d4ff;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -805,7 +815,7 @@
   to { transform: scale(1.06); box-shadow: 0 0 14px rgba(239, 68, 68, 0.5); }
 }
 
-/* ─── FULLSCREEN MODAL & OFFICIAL KAHOOT LEADERBOARD (NO GRADIENT) ─── */
+/* ─── FULLSCREEN MODAL & CODEJS LEADERBOARD (NO GRADIENT) ─── */
 #codehoot-modal.codehoot-is-fullscreen .modal {
   position: fixed !important;
   inset: 0 !important;
@@ -820,7 +830,7 @@
   flex-direction: column !important;
   overflow-y: auto !important;
   z-index: 99999 !important;
-  background: #1e1338 !important;
+  background: #0a0e1a !important;
 }
 
 #codehoot-modal.codehoot-is-fullscreen .codehoot-answers-grid {
@@ -835,11 +845,11 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #46178f;
-  border: 1px solid #7c3aed;
-  color: #ffffff;
+  background: #141a2e;
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  color: #00d4ff;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -848,21 +858,21 @@
 }
 
 .codehoot-fs-btn:hover {
-  background: #5b21b6;
-  border-color: #a78bfa;
+  background: rgba(0, 212, 255, 0.15);
+  border-color: #00d4ff;
   transform: translateY(-1px);
 }
 
-/* Maxsus Butun Ekran Reyting Doskasi (SOLID KAHOOT PURPLE BACKGROUND - NO GRADIENT) */
+/* Maxsus Butun Ekran Reyting Doskasi (CODEJS THEME: SOLID #0a0e1a BACKGROUND - NO GRADIENT) */
 .codehoot-fs-leaderboard-overlay {
   position: fixed;
   inset: 0;
   z-index: 100000;
-  background: #25076b;
+  background: #0a0e1a;
   display: flex;
   flex-direction: column;
   padding: 24px 36px;
-  color: #ffffff;
+  color: #e8ecf4;
   overflow-y: auto;
   animation: popIn 0.2s ease;
 }
@@ -873,17 +883,17 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 12px 24px;
-  background: #1a044d;
-  border-radius: 8px;
+  padding: 14px 24px;
+  background: #0f1424;
+  border-radius: 12px;
   margin-bottom: 20px;
-  border-bottom: 2px solid #46178f;
+  border: 1px solid rgba(0, 212, 255, 0.25);
 }
 
 .codehoot-fs-lb-title {
   font-size: 24px;
   font-weight: 900;
-  color: #ffffff;
+  color: #00d4ff;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -908,44 +918,51 @@
   max-width: 1400px;
 }
 
-/* Har bir o'yinchi qatori (Aynan Kahoot skrinshotidagi kabi) */
+/* Har bir o'yinchi qatori (CodeJS Cards) */
 .codehoot-fs-lb-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  border-radius: 6px;
-  background: #46178f;
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease;
+  border-radius: 8px;
+  background: #141a2e;
+  color: #e8ecf4;
+  border: 1px solid rgba(0, 212, 255, 0.16);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transition: all 0.15s ease;
   user-select: none;
 }
 
-/* 1-o'rin oq qator (Aynan Kahoot skrinshotidagi kabi) */
+.codehoot-fs-lb-card:hover {
+  background: #182038;
+  border-color: rgba(0, 212, 255, 0.35);
+}
+
+/* 1-o'rin oq qator (CodeJS White & Cyan Glow) */
 .codehoot-fs-lb-card.rank-1 {
   background: #ffffff !important;
-  color: #222222 !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  color: #0a0e1a !important;
+  border: 2px solid #00d4ff !important;
+  box-shadow: 0 4px 18px rgba(0, 212, 255, 0.35) !important;
 }
 
 .codehoot-fs-lb-card.rank-1 .codehoot-fs-lb-name {
-  color: #222222 !important;
+  color: #0a0e1a !important;
   font-weight: 800;
 }
 
 .codehoot-fs-lb-card.rank-1 .codehoot-fs-lb-score {
-  color: #222222 !important;
-  font-weight: 800;
+  color: #0a0e1a !important;
+  font-weight: 900;
 }
 
 .codehoot-fs-lb-card.rank-1 .codehoot-fs-lb-av {
   background: #e2e8f0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .codehoot-fs-lb-card.is-me {
-  outline: 3px solid #00d4ff;
+  outline: 2px solid #00d4ff;
   outline-offset: 2px;
 }
 
@@ -958,9 +975,10 @@
 .codehoot-fs-lb-av {
   width: 38px;
   height: 38px;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  background: #32106a;
+  background: #0f1424;
+  border: 1px solid rgba(0, 212, 255, 0.2);
   flex-shrink: 0;
 }
 
