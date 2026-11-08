@@ -1097,32 +1097,24 @@ function openLesson(catId, lessonNum) {
   const user = getCurrentUser();
   const isCompleted = user && user.completedLessons && user.completedLessons.includes(lessonKey);
 
-  let lessonInfo = LESSON_DATABASE[lessonKey];
+  const lessonsList = (typeof getLessons === 'function') ? getLessons(catId) : [];
+  const item = lessonsList.find(l => l.num === lessonNum) || { title: `Dars #${lessonNum}`, desc: "Mavzuni o'rganing" };
+
+  let lessonInfo = (typeof LessonEngine !== 'undefined')
+    ? LessonEngine.getLesson(catId, lessonNum, item)
+    : LESSON_DATABASE[lessonKey];
+
   if (!lessonInfo) {
     const catName = (lessonsData[currentLang] || lessonsData.uz).categories.find(c => c.id === catId)?.name || 'Darslik';
-    const lessonsList = getLessons(catId);
-    const item = lessonsList.find(l => l.num === lessonNum) || { title: `Dars #${lessonNum}`, desc: 'Mavzuni o\'rganing' };
-
     lessonInfo = {
       title: item.title,
       badge: catName,
       difficulty: item.difficulty === 'hard' ? 'Qiyin' : item.difficulty === 'medium' ? 'O\'rta' : 'Oson',
-      theory: `
-        <h3>${item.title} haqida</h3>
-        <p>${item.desc}. Ushbu mavzuni o'rganish orqali siz dasturlash ko'nikmalaringizni mustahkamlaysiz.</p>
-        <div class="info-box">
-          💡 <b>Muhim eslatma:</b> Har bir dars amaliyot orqali yaxshi o'zlashtiriladi. Pastdagi topshiriqni bajaring va 20 🪙 CodeJS tangasini qo'lga kiriting!
-        </div>
-        <pre>// Namuna kod:
-const mavzu = "${item.title}";
-console.log(mavzu + " darsi muvaffaqiyatli bajarildi!");</pre>
-      `,
+      theoryHtml: `<h3>${item.title}</h3><p>${item.desc}</p>`,
       challenge: `console.log("${item.title}") buyrug'ini yozing va tekshiring.`,
       starterCode: `// ${item.title} uchun topshiriq kodini yozing:\n\n`,
       validator: (code) => {
-        if (code.includes('console.log')) {
-          return { success: true };
-        }
+        if (code.includes('console.log')) return { success: true };
         return { success: false, error: 'Iltimos, kodda console.log(...) buyrug\'ini yozing.' };
       }
     };
@@ -1137,7 +1129,7 @@ console.log(mavzu + " darsi muvaffaqiyatli bajarildi!");</pre>
 
   document.getElementById('lesson-cat-badge').textContent = lessonInfo.badge;
   document.getElementById('lesson-modal-title').textContent = `#${lessonNum} — ${lessonInfo.title}`;
-  document.getElementById('lesson-modal-content').innerHTML = lessonInfo.theory;
+  document.getElementById('lesson-modal-content').innerHTML = lessonInfo.theoryHtml || lessonInfo.theory;
   document.getElementById('lesson-challenge-desc').innerHTML = lessonInfo.challenge;
   document.getElementById('lesson-challenge-code').value = lessonInfo.starterCode;
 

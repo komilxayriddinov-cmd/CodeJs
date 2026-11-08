@@ -2478,6 +2478,154 @@ img { max-width: 100%; display: block; }
   color: var(--text-secondary);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   PROFESSIONAL LESSON STRUCTURE STYLES (5-BOSQICHLI TIZIM)
+   ═══════════════════════════════════════════════════════════════ */
+.lesson-professional-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.lesson-section-card {
+  background: #141a2e;
+  border: 1px solid rgba(0, 212, 255, 0.16);
+  border-radius: var(--radius-md);
+  padding: 20px 22px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.lesson-section-card:hover {
+  border-color: rgba(0, 212, 255, 0.35);
+}
+
+.lesson-sec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 12px;
+}
+
+.badge-theory {
+  background: rgba(0, 212, 255, 0.12);
+  color: #00d4ff;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.badge-syntax {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.badge-realworld {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-breakdown {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.badge-summary {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.lesson-sec-body {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.lesson-sec-body h4 {
+  margin: 0 0 10px 0;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.lesson-sec-body pre {
+  background: #0a0e1a;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  margin: 12px 0;
+  color: #38bdf8;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.lesson-breakdown-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.lesson-step-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-left: 3px solid var(--accent-cyan);
+}
+
+.lesson-step-num {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: var(--accent-cyan);
+  font-size: 13px;
+  min-width: 22px;
+}
+
+.lesson-step-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+.lesson-summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lesson-summary-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.lesson-summary-list li::before {
+  content: "✓";
+  color: #4ade80;
+  font-weight: 800;
+  font-size: 14px;
+}
+
 .lesson-content h3 {
   font-size: 18px;
   font-weight: 700;
