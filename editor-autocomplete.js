@@ -481,14 +481,16 @@
         `;
       }).join('');
 
-      // Sichqoncha orqali bosilganda joylash
+      // Sichqoncha yoki sensorli ekran (mobil) orqali bosilganda joylash
       this.list.querySelectorAll('.vscode-intellisense-item').forEach(el => {
-        el.addEventListener('mousedown', (e) => {
+        const handleSelect = (e) => {
           e.preventDefault(); // Fokusni textarea'da saqlab qolish
           const idx = parseInt(el.dataset.index, 10);
           this.selectedIndex = idx;
           this.insertSelected();
-        });
+        };
+        el.addEventListener('mousedown', handleSelect);
+        el.addEventListener('touchstart', handleSelect, { passive: false });
       });
     }
 
@@ -517,12 +519,12 @@
       let top = (taRect.top - parentRect.top) + (coords.top - this.textarea.scrollTop) + coords.height + 4;
       let left = (taRect.left - parentRect.left) + (coords.left - this.textarea.scrollLeft);
 
-      // Chegaralardan chiqib ketmasligini ta'minlash
-      const boxWidth = 320;
+      // Chegaralardan chiqib ketmasligini ta'minlash (mobil va kichik ekranlarga moslashish)
+      const boxWidth = Math.min(320, window.innerWidth - 24);
       const boxHeight = 220;
 
       if (left + boxWidth > parentRect.width - 10) {
-        left = Math.max(10, parentRect.width - boxWidth - 16);
+        left = Math.max(6, parentRect.width - boxWidth - 12);
       }
 
       // Agar pastga sig'masa, kursor tepasida ko'rsatish

@@ -91,6 +91,8 @@ html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--accent-cyan) var(--bg-secondary);
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
@@ -99,6 +101,7 @@ body {
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
+  width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -2010,13 +2013,86 @@ img { max-width: 100%; display: block; }
   .hero-title { font-size: clamp(28px, 8vw, 48px); }
   
   .typing-stats { flex-wrap: wrap; }
+
+  /* Modallar va O'yinlar mobil moslashuvi (768px gacha) */
+  .modal-overlay {
+    padding: 12px;
+  }
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 22px 18px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    border-radius: var(--radius-lg) !important;
+  }
+  .lesson-modal .modal,
+  .shop-modal .modal,
+  .auth-modal .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    touch-action: manipulation;
+  }
+  .playground-editor-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .playground-actions {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .snake-canvas-wrapper canvas {
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1;
+  }
+  .snake-ctrl-btn, .btn, .game-play-btn, .editor-btn-secondary {
+    touch-action: manipulation;
+  }
 }
 
 @media (max-width: 480px) {
-  .hero { padding: 100px 16px 60px; }
-  .section { padding: 60px 16px; }
+  .hero { padding: 90px 16px 50px; }
+  .section { padding: 50px 14px; }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { width: 100%; justify-content: center; }
+
+  /* Kichik ekranli smartfonlar uchun maxsus (480px gacha) */
+  .modal {
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
+  }
+  .lesson-section-card {
+    padding: 14px 12px !important;
+  }
+  .lesson-sec-badge {
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+  }
+  .memory-grid {
+    max-width: 100% !important;
+    gap: 6px !important;
+  }
+  .snake-game-area {
+    padding: 12px 6px;
+  }
+  .snake-ctrl-btn {
+    width: 46px;
+    height: 46px;
+  }
+  .snake-d-pad {
+    grid-template-columns: repeat(3, 46px);
+    grid-template-rows: repeat(3, 46px);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════

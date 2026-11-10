@@ -1145,3 +1145,178 @@
   align-items: center;
   gap: 6px;
 }
+
+/* ─── MOBIL VA KICHIK EKRANLAR UCHUN MOSLASHUV (RESPONSIVE) ───────── */
+@media (max-width: 640px) {
+  #codehoot-modal .modal {
+    padding: 16px 12px;
+    width: 98%;
+    border-radius: 16px;
+    max-height: 92vh;
+  }
+
+  .codehoot-welcome-title {
+    font-size: 22px;
+  }
+
+  .codehoot-welcome-desc {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .codehoot-role-card {
+    padding: 16px 12px;
+    flex: 1 1 140px;
+  }
+
+  .codehoot-pin-number {
+    font-size: 38px;
+    letter-spacing: 3px;
+  }
+
+  /* Shohsupa (Podium) - 3 ustun ekranga to'liq sig'ishi */
+  .codehoot-podium-wrapper {
+    gap: 8px;
+    min-height: 230px;
+    padding-bottom: 10px;
+  }
+
+  .codehoot-podium-step {
+    width: 96px;
+    max-width: 31vw;
+  }
+
+  .codehoot-podium-av {
+    width: 44px;
+    height: 44px;
+  }
+
+  .codehoot-podium-name {
+    max-width: 85px;
+    font-size: 11px;
+  }
+
+  .codehoot-podium-medal {
+    font-size: 22px;
+  }
+
+  .pillar-num {
+    font-size: 22px;
+  }
+
+  .codehoot-podium-reward {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
+  /* Sirli sandiqchalar mobil */
+  .codehoot-chests-wrapper {
+    padding: 12px 8px;
+    margin: 10px auto;
+    max-width: 100%;
+  }
+
+  .codehoot-chests-grid {
+    gap: 8px;
+  }
+
+  .codehoot-chest-card {
+    padding: 10px 4px;
+    border-radius: 12px;
+    max-width: 110px;
+  }
+
+  .codehoot-chest-icon {
+    font-size: 32px;
+  }
+
+  .codehoot-chest-label {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  /* Raqib tanlash doskasi mobil */
+  .codehoot-target-picker {
+    padding: 12px 10px;
+    margin-top: 10px;
+  }
+
+  .codehoot-target-header {
+    font-size: 15px;
+  }
+
+  .codehoot-target-desc {
+    font-size: 12px;
+  }
+
+  .codehoot-target-item {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .codehoot-target-rank {
+    min-width: 20px;
+    font-size: 12px;
+  }
+
+  .codehoot-target-name {
+    font-size: 13px;
+  }
+
+  .codehoot-target-action-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  /* Savol va javoblar mobil */
+  .codehoot-answers-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .codehoot-answer-btn {
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+
+  /* Katta ekran doskasi mobil */
+  .codehoot-fs-leaderboard-overlay {
+    padding: 14px 10px;
+  }
+
+  .codehoot-fs-lb-header {
+    padding: 10px 12px;
+  }
+
+  .codehoot-fs-lb-title {
+    font-size: 18px;
+  }
+
+  .codehoot-fs-lb-grid.two-cols {
+    grid-template-columns: 1fr;
+  }
+
+  .codehoot-fs-lb-card {
+    padding: 10px 12px;
+  }
+
+  .codehoot-fs-lb-name {
+    font-size: 14px;
+  }
+
+  .codehoot-fs-lb-score {
+    font-size: 15px;
+  }
+
+  #codehoot-modal.codehoot-is-fullscreen .modal {
+    padding: 14px 10px !important;
+  }
+
+  .codehoot-btn, 
+  .codehoot-answer-btn, 
+  .codehoot-chest-card,
+  .codehoot-target-item,
+  .codehoot-fs-btn {
+    touch-action: manipulation;
+  }
+}
