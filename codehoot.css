@@ -785,6 +785,141 @@
   color: #94a3b8;
 }
 
+/* ─── TARGET OPPONENT PICKER (REYTINGDAN RAQIB TANLASH - NO GRADIENT) ─── */
+.codehoot-target-picker {
+  margin-top: 14px;
+  background: #141a2e;
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: left;
+}
+
+.codehoot-target-header {
+  font-size: 17px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.codehoot-target-desc {
+  font-size: 13px;
+  color: #94a3b8;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.codehoot-target-timer-bar {
+  text-align: center;
+  font-size: 12px;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  padding: 6px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.codehoot-target-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 230px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.codehoot-target-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.codehoot-target-item:hover {
+  background: #27354a;
+  border-color: #00d4ff;
+  transform: translateX(3px);
+}
+
+.codehoot-target-item.top-target {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: #1f2d42;
+}
+
+.codehoot-target-rank {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fbbf24;
+  min-width: 24px;
+}
+
+.codehoot-target-avatar {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.codehoot-target-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.codehoot-target-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f8fafc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.codehoot-target-score {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.codehoot-target-action-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s ease;
+}
+
+.codehoot-target-action-btn.btn-steal {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.codehoot-target-action-btn.btn-swap {
+  background: #00d4ff;
+  color: #0a0e1a;
+}
+
+.codehoot-target-item:hover .codehoot-target-action-btn {
+  transform: scale(1.05);
+}
+
+.codehoot-reveal-countdown-badge {
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin: 0 4px;
+  font-size: 13px;
+  color: #fde047;
+  font-weight: 800;
+}
+
 /* ─── UMUMIY O'YIN TAYMERI (MATCH COUNTDOWN TIMER) ───────────────── */
 .codehoot-match-timer-badge {
   display: inline-flex;

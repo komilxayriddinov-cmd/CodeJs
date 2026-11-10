@@ -2497,6 +2497,8 @@ const Codehoot = {
   hasAnsweredCurrent: false,
   hasChosenChestForCurrentQ: false,
   currentLuckyChest: null,
+  revealAutoAdvanceTimer: null,
+  targetAutoSelectTimer: null,
 
   // Host/Game config
   category: 'flags',
@@ -2576,6 +2578,14 @@ const Codehoot = {
   cleanup() {
     if (this.timerInterval) clearInterval(this.timerInterval);
     if (this.matchTimerInterval) clearInterval(this.matchTimerInterval);
+    if (this.revealAutoAdvanceTimer) {
+      clearInterval(this.revealAutoAdvanceTimer);
+      this.revealAutoAdvanceTimer = null;
+    }
+    if (this.targetAutoSelectTimer) {
+      clearInterval(this.targetAutoSelectTimer);
+      this.targetAutoSelectTimer = null;
+    }
     if (this.isFullscreenLeaderboardOpen) this.closeFullscreenLeaderboard();
     if (this.isModalFullscreen) this.toggleFullscreen();
     if (this.roomUnsubscribe) {
@@ -2586,6 +2596,16 @@ const Codehoot = {
 
   // Ekranlarni almashtirish
   showScreen(screenId) {
+    if (screenId !== 'reveal-screen') {
+      if (this.revealAutoAdvanceTimer) {
+        clearInterval(this.revealAutoAdvanceTimer);
+        this.revealAutoAdvanceTimer = null;
+      }
+      if (this.targetAutoSelectTimer) {
+        clearInterval(this.targetAutoSelectTimer);
+        this.targetAutoSelectTimer = null;
+      }
+    }
     const screens = [
       'welcome', 'host-create', 'host-lobby', 'player-join', 'player-lobby',
       'game-question', 'reveal-screen', 'leaderboard-screen', 'podium-screen'
@@ -3584,17 +3604,67 @@ const Codehoot = {
       }).join('');
     }
 
-    // Host uchun to'g'ridan-to'g'ri "Keyingi savol" tugmasi
-    // (Har bir savoldan keyin ortiqcha reyting ekrani ko'rsatilmaydi, o'yin tez va jonli o'tadi!)
+    // Host uchun to'g'ridan-to'g'ri "Keyingi savol" tugmasi + 5 soniyalik avtomatik o'tish taymeri
+    if (this.revealAutoAdvanceTimer) {
+      clearInterval(this.revealAutoAdvanceTimer);
+      this.revealAutoAdvanceTimer = null;
+    }
+
     const hostNextBtn = document.getElementById('codehoot-reveal-next-btn');
+    const autoNotice = document.getElementById('codehoot-reveal-auto-notice');
+    const isLast = (this.matchEndTime && Date.now() >= this.matchEndTime);
+    let revealSec = 5;
+
     if (hostNextBtn) {
       if (this.role === 'host') {
         hostNextBtn.style.display = 'inline-flex';
-        const isLast = (this.matchEndTime && Date.now() >= this.matchEndTime);
-        hostNextBtn.textContent = isLast ? "🏆 G'oliblarni e'lon qilish" : "Keyingi savol →";
-        hostNextBtn.onclick = () => this.advanceToNextQuestion();
+        const labelBase = isLast ? "🏆 G'oliblarni e'lon qilish" : "Keyingi savol";
+        hostNextBtn.innerHTML = `<span>${labelBase}</span> <span class="codehoot-reveal-countdown-badge">5s</span> →`;
+        hostNextBtn.onclick = () => {
+          if (this.revealAutoAdvanceTimer) {
+            clearInterval(this.revealAutoAdvanceTimer);
+            this.revealAutoAdvanceTimer = null;
+          }
+          this.advanceToNextQuestion();
+        };
+
+        if (autoNotice) {
+          autoNotice.style.display = 'block';
+          autoNotice.innerHTML = `⏱️ Agar tugma bosilmasa, <b id="codehoot-reveal-sec-text" style="color:#00d4ff;">5</b> soniyada keyingi savolga o'zi o'tkazib yuboradi`;
+        }
+
+        this.revealAutoAdvanceTimer = setInterval(() => {
+          revealSec--;
+          const badge = hostNextBtn.querySelector('.codehoot-reveal-countdown-badge');
+          if (badge) badge.textContent = `${revealSec}s`;
+          const secText = document.getElementById('codehoot-reveal-sec-text');
+          if (secText) secText.textContent = `${revealSec}`;
+
+          if (revealSec <= 0) {
+            if (this.revealAutoAdvanceTimer) {
+              clearInterval(this.revealAutoAdvanceTimer);
+              this.revealAutoAdvanceTimer = null;
+            }
+            this.advanceToNextQuestion();
+          }
+        }, 1000);
       } else {
         hostNextBtn.style.display = 'none';
+        if (autoNotice) {
+          autoNotice.style.display = 'block';
+          autoNotice.innerHTML = `⏱️ Keyingi savol <b id="codehoot-reveal-sec-text" style="color:#00d4ff;">5</b> soniyada boshlanadi...`;
+          this.revealAutoAdvanceTimer = setInterval(() => {
+            revealSec--;
+            const secText = document.getElementById('codehoot-reveal-sec-text');
+            if (secText) secText.textContent = `${revealSec}`;
+            if (revealSec <= 0) {
+              if (this.revealAutoAdvanceTimer) {
+                clearInterval(this.revealAutoAdvanceTimer);
+                this.revealAutoAdvanceTimer = null;
+              }
+            }
+          }, 1000);
+        }
       }
     }
   },
@@ -3698,6 +3768,11 @@ const Codehoot = {
     if (this.hasChosenChestForCurrentQ) return;
     this.hasChosenChestForCurrentQ = true;
 
+    if (this.targetAutoSelectTimer) {
+      clearInterval(this.targetAutoSelectTimer);
+      this.targetAutoSelectTimer = null;
+    }
+
     const cards = [
       document.getElementById('codehoot-chest-0'),
       document.getElementById('codehoot-chest-1'),
@@ -3756,132 +3831,184 @@ const Codehoot = {
 
     const playersMap = (this.roomData && this.roomData.players) ? this.roomData.players : {};
     const opponents = Object.values(playersMap).filter(p => p.id !== this.playerId);
+    // Eng ko'p ochko bor odamdan eng kamigacha saralash
+    opponents.sort((a, b) => (b.score || 0) - (a.score || 0));
 
-    // 3 xil super-hodisa:
-    // 0: Joy almashtirish (Swap scores/places)
-    // 1: 70% ochko o'g'irlash (Steal 70% score)
-    // 2: Haqiqiy Coin + Ball Jackpot
-    const eventType = Math.floor(Math.random() * 3);
-    let eventHtml = '';
-    let targetPlayer = null;
-    let targetNewScore = 0;
+    // 2 xil super-hodisa: 80% ochko o'g'irlash yoki ochko almashish (COIN BUTUNLAY YO'Q)
+    const isSteal = (Math.random() < 0.5);
+    const eventType = isSteal ? 'steal_80' : 'swap';
 
-    if (eventType === 0) {
-      // 🔄 1. JOY ALMASHTIRISH (SWAP PLACES / SCORES)
-      if (opponents.length > 0) {
-        const higherOpponents = opponents.filter(p => (p.score || 0) > this.playerScore);
-        targetPlayer = higherOpponents.length > 0
-          ? higherOpponents[Math.floor(Math.random() * higherOpponents.length)]
-          : opponents[Math.floor(Math.random() * opponents.length)];
-
-        const myOldScore = this.playerScore;
-        const oppOldScore = targetPlayer.score || 0;
-
-        this.playerScore = oppOldScore;
-        targetNewScore = myOldScore;
-        targetPlayer.score = targetNewScore;
-
-        if (this.roomData.players[this.playerId]) {
-          this.roomData.players[this.playerId].score = this.playerScore;
-        }
-        if (this.roomData.players[targetPlayer.id]) {
-          this.roomData.players[targetPlayer.id].score = targetNewScore;
-        }
-
-        eventHtml = `
-          <div style="font-size:18px; margin-bottom:4px;">🔄 <b>SUPER JOY ALMASHTIRISH!</b></div>
-          <div style="font-size:14px; opacity:0.95;">
-            Siz <b>${this.escapeHtml(targetPlayer.name)}</b> bilan ballaringizni va o'rningizni almashdingiz!
-            <br><span style="color:#fbbf24; font-weight:800; font-size:16px;">Yangi ballingiz: ${this.playerScore} ball!</span>
-          </div>
-        `;
-      } else {
-        this.playerScore += 800;
-        if (this.roomData.players && this.roomData.players[this.playerId]) {
-          this.roomData.players[this.playerId].score = this.playerScore;
-        }
-        eventHtml = `
-          <div style="font-size:18px; margin-bottom:4px;">👑 <b>YAKKA HUKMDOR BONUSI!</b></div>
-          <div style="font-size:14px; color:#fbbf24; font-weight:800; font-size:16px;">+800 ball taqdim etildi! (Jami: ${this.playerScore} ball)</div>
-        `;
-      }
-    } else if (eventType === 1) {
-      // 🦹 2. 70% OCHKO O'G'IRLASH (STEAL 70% POINTS)
-      const opponentsWithScore = opponents.filter(p => (p.score || 0) > 0);
-      if (opponentsWithScore.length > 0) {
-        opponentsWithScore.sort((a, b) => (b.score || 0) - (a.score || 0));
-        targetPlayer = opponentsWithScore[0];
-
-        const stolen = Math.max(50, Math.round((targetPlayer.score || 0) * 0.7));
-        targetNewScore = Math.max(0, (targetPlayer.score || 0) - stolen);
-        targetPlayer.score = targetNewScore;
-        this.playerScore = (this.playerScore || 0) + stolen;
-
-        if (this.roomData.players[this.playerId]) {
-          this.roomData.players[this.playerId].score = this.playerScore;
-        }
-        if (this.roomData.players[targetPlayer.id]) {
-          this.roomData.players[targetPlayer.id].score = targetNewScore;
-        }
-
-        eventHtml = `
-          <div style="font-size:18px; margin-bottom:4px;">🦹 <b>70% OCHKO O'G'IRLASH!</b></div>
-          <div style="font-size:14px; opacity:0.95;">
-            Siz <b>${this.escapeHtml(targetPlayer.name)}</b>dan uning 70% ochkosini (<b>+${stolen} ball</b>) o'g'irlab oldingiz!
-            <br><span style="color:#4ade80; font-weight:800; font-size:16px;">Jami ballingiz: ${this.playerScore} ball!</span>
-          </div>
-        `;
-      } else {
-        this.playerScore += 700;
-        if (this.roomData.players && this.roomData.players[this.playerId]) {
-          this.roomData.players[this.playerId].score = this.playerScore;
-        }
-        eventHtml = `
-          <div style="font-size:18px; margin-bottom:4px;">🦹 <b>MEGA O'G'IRLIK BONUSI!</b></div>
-          <div style="font-size:14px; color:#4ade80; font-weight:800; font-size:16px;">Raqiblarda hali ball yo'q edi: Sandiqdan +700 ball o'g'irlab oldingiz!</div>
-        `;
-      }
-    } else {
-      // 🪙 3. HAQIQIY COIN + BALL JACKPOT
-      const coinReward = 50;
-      if (typeof addCoins === 'function') {
-        addCoins(coinReward, "Codehoot: Sandiqdan yutib olindi!");
-      }
-      this.playerScore += 500;
-      if (this.roomData.players && this.roomData.players[this.playerId]) {
+    if (opponents.length === 0) {
+      // Yakka rejimda raqiblar bo'lmaganda
+      this.playerScore += 800;
+      if (this.roomData && this.roomData.players && this.roomData.players[this.playerId]) {
         this.roomData.players[this.playerId].score = this.playerScore;
       }
-      eventHtml = `
-        <div style="font-size:18px; margin-bottom:4px;">🪙 <b>JACKPOT: HAQIQIY COIN!</b></div>
+      if (resultBox) {
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `
+          <div class="codehoot-chest-event-box lucky animate-pop">
+            <div style="font-size:18px; margin-bottom:4px; color:#4ade80;">👑 <b>YAKKA HUKMDOR BONUSI!</b></div>
+            <div style="font-size:14px; opacity:0.95;">
+              Raqiblar bo'lmaganligi sababli sandiqdan +800 ball qo'shildi!
+              <br><span style="color:#00d4ff; font-weight:800; font-size:16px;">Jami ballingiz: ${this.playerScore} ball!</span>
+            </div>
+          </div>
+        `;
+      }
+      return;
+    }
+
+    // Raqiblar reytingini ko'rsatish va o'g'irlash/almashish uchun tanlash
+    if (resultBox) {
+      resultBox.style.display = 'block';
+      let targetSec = 5;
+
+      resultBox.innerHTML = `
+        <div class="codehoot-target-picker animate-pop">
+          <div class="codehoot-target-header">
+            ${eventType === 'steal_80' 
+              ? '🦹 <span style="color:#ef4444;">80% OCHKO O\'G\'IRLASH!</span>' 
+              : '🔄 <span style="color:#00d4ff;">OCHKO VA O\'RIN ALMASHISH!</span>'}
+          </div>
+          <div class="codehoot-target-desc">
+            ${eventType === 'steal_80'
+              ? 'Qaysi raqibdan 80% ochko o\'g\'irlamoqchisiz? Tanlang (eng ko\'p ochkodan kamigacha):'
+              : 'Qaysi raqib bilan ballaringizni almashmoqchisiz? Tanlang (eng ko\'p ochkodan kamigacha):'}
+          </div>
+          <div class="codehoot-target-timer-bar">
+            ⏱️ Tanlash vaqti: <b id="codehoot-target-timer-sec">${targetSec}</b>s (aks holda 1-o'rindagi eng yuqori balli raqib tanlanadi)
+          </div>
+          <div class="codehoot-target-list">
+            ${opponents.map((p, idx) => {
+              const avHtml = typeof getAvatarHtml === 'function' ? getAvatarHtml(p.avatar) : '👤';
+              const oppScore = p.score || 0;
+              const stealAmount = Math.max(50, Math.round(oppScore * 0.8));
+              const actionText = eventType === 'steal_80'
+                ? `🦹 80% o'g'irlash (+${stealAmount})`
+                : `🔄 Almashish (${oppScore} ball)`;
+              const actionClass = eventType === 'steal_80' ? 'btn-steal' : 'btn-swap';
+
+              return `
+                <div class="codehoot-target-item ${idx === 0 ? 'top-target' : ''}" onclick="Codehoot.executeStealOrSwap('${eventType}', '${p.id}')">
+                  <div class="codehoot-target-rank">#${idx + 1}</div>
+                  <div class="codehoot-target-avatar">${avHtml}</div>
+                  <div class="codehoot-target-info">
+                    <div class="codehoot-target-name">${this.escapeHtml(p.name)}</div>
+                    <div class="codehoot-target-score">${oppScore} ball</div>
+                  </div>
+                  <button class="codehoot-target-action-btn ${actionClass}">
+                    ${actionText}
+                  </button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+
+      // Agar o'yinchi 5 soniya ichida tanlamasa, avtomatik 1-o'rindagi (eng yuqori balli) raqib tanlanadi
+      this.targetAutoSelectTimer = setInterval(() => {
+        targetSec--;
+        const secEl = document.getElementById('codehoot-target-timer-sec');
+        if (secEl) secEl.textContent = targetSec;
+        if (targetSec <= 0) {
+          if (this.targetAutoSelectTimer) {
+            clearInterval(this.targetAutoSelectTimer);
+            this.targetAutoSelectTimer = null;
+          }
+          this.executeStealOrSwap(eventType, opponents[0].id);
+        }
+      }, 1000);
+    }
+  },
+
+  executeStealOrSwap(eventType, targetPlayerId) {
+    if (this.targetAutoSelectTimer) {
+      clearInterval(this.targetAutoSelectTimer);
+      this.targetAutoSelectTimer = null;
+    }
+
+    const playersMap = (this.roomData && this.roomData.players) ? this.roomData.players : {};
+    const targetPlayer = playersMap[targetPlayerId] || Object.values(playersMap).find(p => p.id !== this.playerId);
+    if (!targetPlayer) return;
+
+    let resultHtml = '';
+    let targetNewScore = 0;
+
+    if (eventType === 'steal_80') {
+      const oppOldScore = targetPlayer.score || 0;
+      const stolen = Math.max(50, Math.round(oppOldScore * 0.8));
+      targetNewScore = Math.max(0, oppOldScore - stolen);
+      targetPlayer.score = targetNewScore;
+      this.playerScore = (this.playerScore || 0) + stolen;
+
+      resultHtml = `
+        <div style="font-size:18px; margin-bottom:6px; color:#4ade80;">🦹 <b>80% OCHKO O'G'IRLANDI!</b></div>
         <div style="font-size:14px; opacity:0.95;">
-          Hisobingizga darhol <b style="color:#fbbf24; font-size:16px;">+${coinReward} Haqiqiy Coin</b> va <b>+500 ball</b> qo'shildi! 💎
-          <br><span style="color:#fbbf24; font-weight:800;">Jami ballingiz: ${this.playerScore} ball!</span>
+          Siz <b>${this.escapeHtml(targetPlayer.name)}</b>dan uning 80% ochkosini (<b>+${stolen} ball</b>) o'g'irlab oldingiz!
+          <br><span style="color:#00d4ff; font-weight:800; font-size:16px;">Yangi ballingiz: ${this.playerScore} ball!</span>
+          <br><span style="font-size:12px; color:var(--text-muted);">(Raqibda ${targetNewScore} ball qoldi)</span>
+        </div>
+      `;
+    } else {
+      // Joy / Ochko almashish (Swap scores)
+      const myOldScore = this.playerScore || 0;
+      const oppOldScore = targetPlayer.score || 0;
+
+      this.playerScore = oppOldScore;
+      targetNewScore = myOldScore;
+      targetPlayer.score = targetNewScore;
+
+      resultHtml = `
+        <div style="font-size:18px; margin-bottom:6px; color:#00d4ff;">🔄 <b>OCHKO VA O'RIN ALMASHILDI!</b></div>
+        <div style="font-size:14px; opacity:0.95;">
+          Siz <b>${this.escapeHtml(targetPlayer.name)}</b> bilan ballaringizni va o'rningizni almashdingiz!
+          <br><span style="color:#00d4ff; font-weight:800; font-size:16px;">Yangi ballingiz: ${this.playerScore} ball!</span>
+          <br><span style="font-size:12px; color:var(--text-muted);">(Raqibga: ${targetNewScore} ball berildi)</span>
         </div>
       `;
     }
 
+    if (this.roomData && this.roomData.players) {
+      if (this.roomData.players[this.playerId]) {
+        this.roomData.players[this.playerId].score = this.playerScore;
+      }
+      if (this.roomData.players[targetPlayer.id]) {
+        this.roomData.players[targetPlayer.id].score = targetNewScore;
+      }
+    }
+
+    // Natija xabarini ko'rsatish
+    const resultBox = document.getElementById('codehoot-chest-result-box');
     if (resultBox) {
       resultBox.style.display = 'block';
       resultBox.innerHTML = `
         <div class="codehoot-chest-event-box lucky animate-pop">
-          ${eventHtml}
+          ${resultHtml}
         </div>
       `;
     }
 
-    // Firestore ma'lumotlarini darhol yangilash (Spectator va jonli reyting sinxronlanishi uchun)
+    // Firestore ma'lumotlarini sinxronlash
     if (!this.isLocalMode && isFirebaseConnected && this.roomId) {
       const updateData = {};
       updateData[`players.${this.playerId}.score`] = this.playerScore;
-      if (targetPlayer) {
-        updateData[`players.${targetPlayer.id}.score`] = targetNewScore;
-      }
+      updateData[`players.${targetPlayer.id}.score`] = targetNewScore;
       db.collection('kahoot_rooms').doc(this.roomId).update(updateData).catch(e => console.error("Score sync error:", e));
     }
   },
 
   // Host: Keyingi savolga o'tish yoki yakunlash
   advanceToNextQuestion() {
+    if (this.revealAutoAdvanceTimer) {
+      clearInterval(this.revealAutoAdvanceTimer);
+      this.revealAutoAdvanceTimer = null;
+    }
+    if (this.targetAutoSelectTimer) {
+      clearInterval(this.targetAutoSelectTimer);
+      this.targetAutoSelectTimer = null;
+    }
     const isTimeUp = this.matchEndTime && (Date.now() >= this.matchEndTime);
     if (isTimeUp) {
       this.finishGame();

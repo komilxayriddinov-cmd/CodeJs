@@ -1525,10 +1525,10 @@ img { max-width: 100%; display: block; }
   padding: 8px 20px;
   border: none;
   border-radius: var(--radius-sm);
-  background: var(--gradient-main);
-  color: white;
+  background: var(--accent-cyan);
+  color: #0a0e1a;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--font-sans);
   cursor: pointer;
   transition: all 0.3s ease;
