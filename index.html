@@ -103,6 +103,8 @@
   <style>
     html.no-splash #splash { display: none; }
   </style>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
 
@@ -242,11 +244,6 @@
 <section class="hero" id="bosh-sahifa">
   <div class="hero-bg">
     <div class="hero-grid"></div>
-    <div class="hero-glow-1"></div>
-    <div class="hero-glow-2"></div>
-    <div class="hero-glow-3"></div>
-
-    <div class="hero-particles" id="hero-particles"></div>
   </div>
 
   <div class="hero-content">
@@ -266,11 +263,23 @@
     </p>
 
     <div class="hero-actions">
-      <button class="btn btn-primary" onclick="scrollToSection('darsliklar')" data-uz="📚 Darsliklarni boshlash" data-en="📚 Start Learning" data-ru="📚 Начать обучение">
-        📚 Darsliklarni boshlash
+      <button class="btn btn-primary" onclick="scrollToSection('darsliklar')" data-uz="📚 Ta'limni boshlash" data-en="📚 Start Learning" data-ru="📚 Начать обучение">
+        📚 Ta'limni boshlash
       </button>
-      <button class="btn btn-secondary" onclick="scrollToSection('muharrir')" data-uz="⚡ Kod yozish" data-en="⚡ Write Code" data-ru="⚡ Писать код">
-        ⚡ Kod yozish
+      <button class="btn btn-secondary" onclick="scrollToSection('muharrir')" data-uz="⚡ Muharrirni ochish" data-en="⚡ Open Editor" data-ru="⚡ Открыть редактор">
+        ⚡ Muharrirni ochish
+      </button>
+    </div>
+
+    <!-- Continue Last Lesson Quick Card -->
+    <div class="continue-learning-widget" id="hero-continue-widget">
+      <div class="continue-widget-info">
+        <div class="continue-widget-tag" id="continue-tag">DAVOM ETTIRISH</div>
+        <div class="continue-widget-title" id="continue-title">01. HTML nima? — Veb sahifalar tuzilishi</div>
+        <div class="continue-widget-desc" id="continue-desc">Oxirgi to'xtagan darsingizdan bir zumda davom eting</div>
+      </div>
+      <button class="btn btn-primary continue-widget-btn" id="continue-btn" onclick="continueLastLesson()">
+        Darsni davom ettirish →
       </button>
     </div>
 
@@ -315,6 +324,101 @@
 <!-- ═══════════════════════════════════════════════════════════════
      FEATURES SECTION
      ═══════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT ROADMAP SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="roadmap-section" id="yol-xaritasi">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label" data-uz="Ta'lim yo'nalishi" data-en="Learning Path" data-ru="Траектория обучения">Ta'lim yo'nalishi</div>
+      <h2 class="section-title" data-uz="JavaScript Yo'l Xaritasi" data-en="JavaScript Roadmap" data-ru="Дорожная карта JavaScript">JavaScript <span class="gradient-text">Yo'l Xaritasi</span></h2>
+      <p class="section-desc" data-uz="Noldan professional darajagacha 7 ta asosiy bosqich. Kerakli mavzuni tanlang va to'g'ridan-to'g'ri darsliklarga o'ting." data-en="7 core milestones from zero to professional. Select any milestone to jump directly into the curriculum." data-ru="7 ключевых этапов от новичка до профессионала. Выберите нужный раздел для быстрого перехода к урокам.">
+        Noldan professional darajagacha 7 ta asosiy bosqich. Kerakli mavzuni tanlang va to'g'ridan-to'g'ri darsliklarga o'ting.
+      </p>
+    </div>
+
+    <div class="roadmap-grid reveal">
+      <div class="roadmap-card" onclick="selectRoadmapTopic('js-basics')">
+        <span class="roadmap-step-badge">BOSQICH 01 • ASOSLAR</span>
+        <h3 class="roadmap-card-title">1. Sintaksis va O'zgaruvchilar</h3>
+        <p class="roadmap-card-desc">JavaScript tili asoslari, let/const/var, ma'lumot turlari, arifmetik va mantiqiy operatorlar.</p>
+        <ul class="roadmap-topics">
+          <li class="roadmap-topic-tag">let / const</li>
+          <li class="roadmap-topic-tag">typeof</li>
+          <li class="roadmap-topic-tag">Number / String</li>
+          <li class="roadmap-topic-tag">Boolean</li>
+        </ul>
+        <span class="roadmap-card-action">Darslarni ko'rish →</span>
+      </div>
+
+      <div class="roadmap-card" onclick="selectRoadmapTopic('js-basics')">
+        <span class="roadmap-step-badge">BOSQICH 02 • MANTIQ</span>
+        <h3 class="roadmap-card-title">2. Shartlar va Sikllar</h3>
+        <p class="roadmap-card-desc">Dastur oqimini boshqarish, if-else, switch, ternar operator, for, while va do-while sikllari.</p>
+        <ul class="roadmap-topics">
+          <li class="roadmap-topic-tag">if...else</li>
+          <li class="roadmap-topic-tag">switch</li>
+          <li class="roadmap-topic-tag">for loop</li>
+          <li class="roadmap-topic-tag">while</li>
+        </ul>
+        <span class="roadmap-card-action">Darslarni ko'rish →</span>
+      </div>
+
+      <div class="roadmap-card" onclick="selectRoadmapTopic('js-functions')">
+        <span class="roadmap-step-badge">BOSQICH 03 • FUNKSIYALAR</span>
+        <h3 class="roadmap-card-title">3. Funksiyalar va Scope</h3>
+        <p class="roadmap-card-desc">Funksiya e'lon qilish, Arrow functions, parametrlar, return, closure va scope qoidalari.</p>
+        <ul class="roadmap-topics">
+          <li class="roadmap-topic-tag">() => {}</li>
+          <li class="roadmap-topic-tag">Closures</li>
+          <li class="roadmap-topic-tag">Default Params</li>
+          <li class="roadmap-topic-tag">Callbacks</li>
+        </ul>
+        <span class="roadmap-card-action">Darslarni ko'rish →</span>
+      </div>
+
+      <div class="roadmap-card" onclick="selectRoadmapTopic('js-arrays')">
+        <span class="roadmap-step-badge">BOSQICH 04 • STRUKTURALAR</span>
+        <h3 class="roadmap-card-title">4. Massivlar va Obyektlar</h3>
+        <p class="roadmap-card-desc">Murakkab ma'lumotlar bilan ishlash, map, filter, reduce, destructuring va spread operatori.</p>
+        <ul class="roadmap-topics">
+          <li class="roadmap-topic-tag">.map()</li>
+          <li class="roadmap-topic-tag">.filter()</li>
+          <li class="roadmap-topic-tag">Destructuring</li>
+          <li class="roadmap-topic-tag">Spread [...]</li>
+        </ul>
+        <span class="roadmap-card-action">Darslarni ko'rish →</span>
+      </div>
+
+      <div class="roadmap-card" onclick="selectRoadmapTopic('dom')">
+        <span class="roadmap-step-badge">BOSQICH 05 • DOM & HODISALAR</span>
+        <h3 class="roadmap-card-title">5. Brauzer DOM & Interfeys</h3>
+        <p class="roadmap-card-desc">HTML elementlarini boshqarish, click, input hodisalari, dinamik element yaratish va LocalStorage.</p>
+        <ul class="roadmap-topics">
+          <li class="roadmap-topic-tag">querySelector</li>
+          <li class="roadmap-topic-tag">addEventListener</li>
+          <li class="roadmap-topic-tag">classList</li>
+          <li class="roadmap-topic-tag">localStorage</li>
+        </ul>
+        <span class="roadmap-card-action">Darslarni ko'rish →</span>
+      </div>
+
+      <div class="roadmap-card" onclick="selectRoadmapTopic('async')">
+        <span class="roadmap-step-badge">BOSQICH 06 • ASINXRON JS</span>
+        <h3 class="roadmap-card-title">6. Asinxron Dasturlash</h3>
+        <p class="roadmap-card-desc">Server bilan aloqa, Promise zanjirlari, zamonaviy async/await va Fetch API orqali ma'lumot olish.</p>
+        <ul class="roadmap-topics">
+          <li class="roadmap-topic-tag">Promise</li>
+          <li class="roadmap-topic-tag">async / await</li>
+          <li class="roadmap-topic-tag">fetch()</li>
+          <li class="roadmap-topic-tag">JSON</li>
+        </ul>
+        <span class="roadmap-card-action">Darslarni ko'rish →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="xususiyatlar">
   <div class="container">
     <div class="section-header reveal">
@@ -380,6 +484,43 @@
 <!-- ═══════════════════════════════════════════════════════════════
      LESSONS / CURRICULUM SECTION
      ═══════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════
+     DAILY CHALLENGE SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="daily-challenge-section" id="kunlik-topshiriq">
+  <div class="container">
+    <div class="daily-challenge-card reveal">
+      <div class="daily-info-pane">
+        <div class="daily-info-header">
+          <span class="daily-badge">⚡ KUNLIK TOPSHIRIQ</span>
+          <span class="daily-reward">🪙 +15 Coin • ⭐ +25 XP</span>
+        </div>
+        <h3 class="daily-challenge-title">Massivdagi juft sonlar yig'indisini toping</h3>
+        <p class="daily-challenge-desc">
+          Sizga butun sonlardan iborat massiv berilgan. Massivdagi barcha <strong>juft sonlarning</strong> yig'indisini hisoblaydigan funksiya yozing.
+          <br><br>
+          <em>Misol:</em> <code>sumEvens([1, 2, 3, 4, 5, 6])</code> natijasi <code>12</code> bo'lishi kerak (2 + 4 + 6 = 12).
+        </p>
+        <div id="daily-feedback" style="display:none; padding:10px 14px; border-radius:6px; margin-top:12px; font-size:13px; font-weight:600;"></div>
+      </div>
+      <div class="daily-editor-box">
+        <textarea id="daily-code-input" class="daily-code-input" spellcheck="false">function sumEvens(numbers) {
+  // Kodingizni shu yerda yozing:
+  return numbers
+    .filter(n => n % 2 === 0)
+    .reduce((sum, n) => sum + n, 0);
+}</textarea>
+        <div class="daily-card-footer">
+          <span class="daily-result-badge" id="daily-test-status">Sinov: [1,2,3,4,5,6] -> 12</span>
+          <button class="btn btn-primary" onclick="checkDailyChallenge()" style="padding:8px 18px; font-size:13px;">
+            Tekshirish ▶
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="darsliklar">
   <div class="container">
     <div class="section-header reveal">
@@ -388,6 +529,20 @@
       <p class="section-desc" data-uz="Har bir mavzuni chuqur o'rganing — oddiydan murakkabga qarab yuring." data-en="Study each topic in depth — go from simple to complex." data-ru="Изучайте каждую тему глубоко — от простого к сложному.">
         Har bir mavzuni chuqur o'rganing — oddiydan murakkabga qarab yuring.
       </p>
+    </div>
+
+    <div class="lessons-toolbar reveal">
+      <div class="lessons-search-wrap">
+        <span class="lessons-search-icon">🔍</span>
+        <input type="text" id="lessonSearchInput" class="lessons-search-input" placeholder="Darsliklarni qidirish (nomi yoki kalit so'z)..." oninput="handleLessonSearch(this.value)">
+      </div>
+      <div class="lessons-filter-pills" id="lesson-filter-pills">
+        <button class="filter-pill active" data-filter="all" onclick="filterLessonsByDifficulty('all')">Hammasi</button>
+        <button class="filter-pill" data-filter="easy" onclick="filterLessonsByDifficulty('easy')">Oson</button>
+        <button class="filter-pill" data-filter="medium" onclick="filterLessonsByDifficulty('medium')">O'rta</button>
+        <button class="filter-pill" data-filter="hard" onclick="filterLessonsByDifficulty('hard')">Qiyin</button>
+        <button class="filter-pill" data-filter="completed" onclick="filterLessonsByDifficulty('completed')">Bajarilganlar</button>
+      </div>
     </div>
 
     <div class="lessons-container reveal">
@@ -416,6 +571,11 @@
       </p>
     </div>
 
+    <div class="playground-mobile-nav">
+      <button class="mobile-nav-btn active" id="mob-tab-code" onclick="switchMobileEditorTab('code')">💻 Kod Muharriri</button>
+      <button class="mobile-nav-btn" id="mob-tab-output" onclick="switchMobileEditorTab('output')">📺 Jonli Natija</button>
+      <button class="mobile-nav-btn" id="mob-tab-console" onclick="switchMobileEditorTab('console')">📟 Konsol</button>
+    </div>
     <div class="playground-wrapper reveal">
       <div class="playground-editor">
         <div class="playground-editor-header">
@@ -511,8 +671,7 @@
     }
     .card {
       background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid #1c273e;
       border-radius: 20px;
       padding: 40px;
       text-align: center;
@@ -549,9 +708,16 @@ console.log("Salom, CodeJS!");</textarea>
       </div>
       <div class="playground-output">
         <div class="playground-output-header">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span>📺</span>
-            <span data-uz="Natija" data-en="Output" data-ru="Результат">Natija</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:13px;">
+              <span>📺</span>
+              <span data-uz="Natija" data-en="Output" data-ru="Результат">Natija</span>
+            </div>
+            <div class="device-toggles">
+              <button class="device-toggle-btn active" id="btn-view-desktop" onclick="setPreviewDevice('100%')" title="Desktop">💻 100%</button>
+              <button class="device-toggle-btn" id="btn-view-tablet" onclick="setPreviewDevice('768px')" title="Planshet">📱 768px</button>
+              <button class="device-toggle-btn" id="btn-view-mobile" onclick="setPreviewDevice('375px')" title="Mobil">📱 375px</button>
+            </div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
             <button class="editor-btn-secondary" onclick="EditorTools.toggleConsole()" id="editor-console-btn" style="padding:4px 10px; font-size:12px;" title="Konsol loglarini ko'rish">
@@ -775,7 +941,7 @@ console.log("Salom, CodeJS!");</textarea>
         <div class="quiz-progress-bar">
           <div class="quiz-progress-fill" id="quiz-progress-fill" style="width:0%"></div>
         </div>
-        <span class="quiz-progress-text" id="quiz-progress-text">0 / 10</span>
+        <span class="quiz-progress-text" id="quiz-progress-text">0 / 20</span>
       </div>
       <div class="quiz-question-card">
         <div class="quiz-question-num" id="quiz-q-num">Savol 1</div>
@@ -1267,7 +1433,7 @@ console.log("Salom, CodeJS!");</textarea>
         </div>
         <div style="display:flex; gap:8px;">
           <input type="text" id="profile-change-name-input" class="codehoot-input" placeholder="Yangi ismingizni kiriting..." maxlength="25" style="padding:9px 12px; font-size:14px; flex:1;" />
-          <button class="btn btn-primary" onclick="handleProfileNameChange()" style="padding:9px 16px; font-size:13px; font-weight:700; white-space:nowrap; background:linear-gradient(135deg, #fbbf24, #f59e0b); color:#000;">
+          <button class="btn btn-primary" onclick="handleProfileNameChange()" style="padding:9px 16px; font-size:13px; font-weight:700; white-space:nowrap; background:#f59e0b; color:#090d16;">
             Saqlash
           </button>
         </div>
@@ -2026,7 +2192,7 @@ function renderLessons(catId) {
   container.innerHTML = lessons.map(l => {
     const isDone = completed.includes(`${catId}-${l.num}`);
     return `
-      <div class="lesson-card ${isDone ? 'completed' : ''}" onclick="openLesson('${catId}', '${l.num}')" style="cursor:pointer;" title="Darsni boshlash">
+      <div class="lesson-card diff-${l.difficulty} ${isDone ? 'completed' : ''}" data-diff="${l.difficulty}" onclick="openLesson('${catId}', '${l.num}')" style="cursor:pointer;" title="Darsni boshlash">
         <div class="lesson-card-num">#${l.num}</div>
         <div class="lesson-card-title">${l.title}</div>
         <div class="lesson-card-desc">${l.desc}</div>
@@ -2042,6 +2208,9 @@ function renderLessons(catId) {
       </div>
     `;
   }).join('');
+  if (typeof applyLessonFilters === 'function') {
+    applyLessonFilters();
+  }
 }
 
 function selectCategory(catId) {
@@ -2104,19 +2273,13 @@ function runPlayground() {
     <\/script>
   `;
 
-  const fullCode = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      ${consoleInterceptScript}
-      <style>${cssCode}</style>
-    </head>
-    <body>
-      ${htmlCode}
-      <script>${jsCode}<\/script>
-    </body>
-    </html>
-  `;
+    const fullCode = '<!DOCTYPE html><html><head>' +
+      consoleInterceptScript +
+      '<style>' + cssCode + '</style>' +
+      '</head><body>' +
+      htmlCode +
+      '<script>' + jsCode + '<' + '/script>' +
+      '</body></html>';
 
   doc.open();
   doc.write(fullCode);
@@ -2201,6 +2364,66 @@ const quizQuestions = [
     options: ['"53"', '2', 'NaN', 'Error'],
     correct: 1
   },
+  {
+    q: 'NaN === NaN ifodasining natijasi nima?',
+    code: 'console.log(NaN === NaN);',
+    options: ['true', 'false', 'undefined', 'TypeError'],
+    correct: 1
+  },
+  {
+    q: 'Massivning har bir elementini qayta ishlab yangi massiv hosil qiluvchi metod qaysi?',
+    code: null,
+    options: ['forEach()', 'map()', 'filter()', 'reduce()'],
+    correct: 1
+  },
+  {
+    q: 'Qaysi o\'zgaruvchilar blok ko\'lamiga (block scope) ega?',
+    code: null,
+    options: ['Faqat var', 'var va let', 'let va const', 'Barcha o\'zgaruvchilar'],
+    correct: 2
+  },
+  {
+    q: 'JSON matnini JavaScript obyektiga aylantirish uchun nima ishlatiladi?',
+    code: null,
+    options: ['JSON.stringify()', 'JSON.parse()', 'JSON.toObject()', 'JSON.convert()'],
+    correct: 1
+  },
+  {
+    q: 'Quyidagi kod natijasi nima?',
+    code: 'console.log(Boolean(""));',
+    options: ['true', 'false', 'null', 'undefined'],
+    correct: 1
+  },
+  {
+    q: 'Massivning oxirgi elementini o\'chirish uchun qaysi metod ishlatiladi?',
+    code: null,
+    options: ['pop()', 'shift()', 'slice()', 'splice()'],
+    correct: 0
+  },
+  {
+    q: 'async kalit so\'zi bilan e\'lon qilingan funksiya nima qaytaradi?',
+    code: null,
+    options: ['Callback', 'Promise', 'Generator', 'Boolean'],
+    correct: 1
+  },
+  {
+    q: 'Brauzer yopilgandan keyin ham ma\'lumotni saqlab qoluvchi ombor qaysi?',
+    code: null,
+    options: ['sessionStorage', 'localStorage', 'cookies faqat', 'memoryCache'],
+    correct: 1
+  },
+  {
+    q: 'Massiv elementlarini bitta qiymatga yig\'ish (aggregatsiya) uchun qaysi metod mos?',
+    code: null,
+    options: ['reduce()', 'filter()', 'find()', 'concat()'],
+    correct: 0
+  },
+  {
+    q: 'Quyidagi destrukturizatsiya natijasida x nechiga teng bo\'ladi?',
+    code: 'const [x, y] = [10, 20]; console.log(x);',
+    options: ['[10, 20]', '20', '10', 'undefined'],
+    correct: 2
+  }
 ];
 
 let quizIndex = 0;
@@ -2873,6 +3096,9 @@ function renderMemoryGrid() {
       </div>
     `;
   }).join('');
+  if (typeof applyLessonFilters === 'function') {
+    applyLessonFilters();
+  }
 }
 
 function flipMemoryCard(index) {
@@ -3221,6 +3447,9 @@ function renderCommunityUsers() {
       </div>
     `;
   }).join('');
+  if (typeof applyLessonFilters === 'function') {
+    applyLessonFilters();
+  }
 }
 
 // Global hook for live sync
@@ -3529,6 +3758,165 @@ function getAiResponse(rawInput) {
 
 <!-- Codehoot Multiplayer Live Quiz Engine (Kahoot Style) -->
 <script src="codehoot.js?v=3.4"></script>
+
+
+<script>
+// ─── CodeJS 2.0 Helper Logic ────────────────────────────────────
+let currentLessonFilter = 'all';
+let currentLessonSearchQuery = '';
+
+function updateContinueWidget() {
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  const completed = user?.completedLessons || [];
+  const tagEl = document.getElementById('continue-tag');
+  const titleEl = document.getElementById('continue-title');
+  const descEl = document.getElementById('continue-desc');
+  const btnEl = document.getElementById('continue-btn');
+
+  if (completed.length > 0) {
+    const lastDone = completed[completed.length - 1];
+    if (tagEl) tagEl.textContent = `DAVOM ETTIRISH • ${completed.length} TA BAJARILGAN`;
+    if (titleEl) titleEl.textContent = `Keyingi darsga o'tish (Oxirgi: ${lastDone})`;
+    if (descEl) descEl.textContent = "O'rganishni to'xtagan joyingizdan muvaffaqiyatli davom ettiring";
+    if (btnEl) btnEl.textContent = "O'qishni davom etish →";
+  } else {
+    if (tagEl) tagEl.textContent = "BOSHLANG'ICH DARS";
+    if (titleEl) titleEl.textContent = "01. HTML nima? — Veb sahifalar tuzilishi";
+    if (descEl) descEl.textContent = "Dasturlash olamiga ilk qadamni hoziroq qo'ying!";
+    if (btnEl) btnEl.textContent = "Darsni boshlash →";
+  }
+}
+
+function continueLastLesson() {
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  const completed = user?.completedLessons || [];
+  if (completed.length > 0) {
+    // Open next lesson or curriculum
+    scrollToSection('darsliklar');
+  } else {
+    if (typeof openLesson === 'function') openLesson('html', '01');
+  }
+}
+
+function selectRoadmapTopic(catId) {
+  if (typeof selectCategory === 'function') {
+    selectCategory(catId);
+  }
+  scrollToSection('darsliklar');
+}
+
+function handleLessonSearch(query) {
+  currentLessonSearchQuery = (query || '').toLowerCase().trim();
+  applyLessonFilters();
+}
+
+function filterLessonsByDifficulty(diff) {
+  currentLessonFilter = diff;
+  document.querySelectorAll('.filter-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === diff);
+  });
+  applyLessonFilters();
+}
+
+function applyLessonFilters() {
+  const container = document.getElementById('lessons-grid');
+  if (!container) return;
+  const cards = container.querySelectorAll('.lesson-card');
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  const completed = user?.completedLessons || [];
+
+  cards.forEach(card => {
+    const title = (card.querySelector('.lesson-card-title')?.textContent || '').toLowerCase();
+    const desc = (card.querySelector('.lesson-card-desc')?.textContent || '').toLowerCase();
+    const isDone = card.classList.contains('completed');
+    const matchesQuery = !currentLessonSearchQuery || title.includes(currentLessonSearchQuery) || desc.includes(currentLessonSearchQuery);
+
+    let matchesDiff = true;
+    if (currentLessonFilter === 'completed') {
+      matchesDiff = isDone;
+    } else if (currentLessonFilter !== 'all') {
+      matchesDiff = card.classList.contains(`diff-${currentLessonFilter}`) || card.dataset.diff === currentLessonFilter;
+    }
+
+    card.style.display = (matchesQuery && matchesDiff) ? 'flex' : 'none';
+  });
+}
+
+function switchMobileEditorTab(tab) {
+  const editorPane = document.querySelector('.playground-editor');
+  const outputPane = document.querySelector('.playground-output');
+  const consoleDrawer = document.getElementById('editor-console-drawer');
+
+  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById(`mob-tab-${tab}`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  if (tab === 'code') {
+    if (editorPane) editorPane.style.display = 'flex';
+    if (outputPane) outputPane.style.display = 'none';
+  } else if (tab === 'output') {
+    if (editorPane) editorPane.style.display = 'none';
+    if (outputPane) outputPane.style.display = 'flex';
+    if (consoleDrawer) consoleDrawer.style.display = 'none';
+  } else if (tab === 'console') {
+    if (editorPane) editorPane.style.display = 'none';
+    if (outputPane) outputPane.style.display = 'flex';
+    if (consoleDrawer) consoleDrawer.style.display = 'flex';
+  }
+}
+
+function setPreviewDevice(width) {
+  const iframe = document.getElementById('output-frame');
+  document.querySelectorAll('.device-toggle-btn').forEach(b => b.classList.remove('active'));
+  if (width === '100%') document.getElementById('btn-view-desktop')?.classList.add('active');
+  if (width === '768px') document.getElementById('btn-view-tablet')?.classList.add('active');
+  if (width === '375px') document.getElementById('btn-view-mobile')?.classList.add('active');
+
+  if (iframe) {
+    iframe.style.maxWidth = width;
+  }
+}
+
+function checkDailyChallenge() {
+  const code = document.getElementById('daily-code-input').value;
+  const feedback = document.getElementById('daily-feedback');
+  try {
+    // Isolated evaluation
+    const fn = new Function(`${code}; return sumEvens([1, 2, 3, 4, 5, 6]);`);
+    const res = fn();
+    if (res === 12) {
+      feedback.style.display = 'block';
+      feedback.style.background = '#063124';
+      feedback.style.color = '#10b981';
+      feedback.style.border = '1px solid #10b981';
+      feedback.innerHTML = '🎉 To\'g\'ri! sumEvens([1, 2, 3, 4, 5, 6]) = 12. Mukofot: +25 XP & 15 Coin olindi!';
+      if (typeof addCoins === 'function') addCoins(15, 'Kunlik topshiriq muvaffaqiyati!');
+      document.getElementById('daily-test-status').textContent = '✅ Sinov muvaffaqiyatli o\'tdi!';
+      document.getElementById('daily-test-status').style.color = '#10b981';
+    } else {
+      feedback.style.display = 'block';
+      feedback.style.background = '#351318';
+      feedback.style.color = '#ef4444';
+      feedback.style.border = '1px solid #ef4444';
+      feedback.innerHTML = `⚠️ Noto\'g\'ri javob: Natija ${res} chiqdi, 12 kutilgan edi. Qayta urinib ko\'ring!`;
+    }
+  } catch (err) {
+    feedback.style.display = 'block';
+    feedback.style.background = '#351318';
+    feedback.style.color = '#ef4444';
+    feedback.style.border = '1px solid #ef4444';
+    feedback.innerHTML = `❌ Kodda xatolik: ${err.message}`;
+  }
+}
+
+// Initialize on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+  updateContinueWidget();
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+});
+</script>
 
 </body>
 </html>

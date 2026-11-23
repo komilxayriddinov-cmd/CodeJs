@@ -439,22 +439,24 @@ function openProfileModal(userId = null) {
   const nameClass = user.equippedFrame ? 'name-' + user.equippedFrame : '';
   let titleHtml = user.equippedTitle ? ` <span class="user-title-tag">${user.equippedTitle}</span>` : '';
   document.getElementById('profile-modal-name').innerHTML = `<span class="${nameClass}">${user.name}</span>` + titleHtml;
-  document.getElementById('profile-modal-email').textContent = user.email;
+  const isMe = !userId || (getCurrentUser() && getCurrentUser().id === user.id);
+  const maskedEmail = user.email ? user.email.replace(/(.{2})(.*)(?=@)/, (_, a, b) => a + '*'.repeat(Math.max(1, b.length))) : 'Maxfiy';
+  document.getElementById('profile-modal-email').textContent = isMe ? user.email : maskedEmail;
   document.getElementById('profile-modal-coins').textContent = `${user.coins || 0} 🪙`;
   document.getElementById('profile-modal-lessons').textContent = (user.completedLessons || []).length;
   document.getElementById('profile-modal-date').textContent = user.joined || '2026-01-01';
   document.getElementById('profile-modal-role').textContent = user.role === 'admin' ? '👑 Bosh Administrator' : '🎓 O\'quvchi / Dasturchi';
 
-  // Rank determination
+  // Professional developer rank determination
   const count = (user.completedLessons || []).length;
-  let rank = '🌱 Yangi o\'rganuvchi';
-  if (count >= 15) rank = '🧙‍♂️ JavaScript Ustasi';
-  else if (count >= 8) rank = '⚡ Ilg\'or Dasturchi';
-  else if (count >= 3) rank = '🚀 Faol O\'quvchi';
+  let rank = '🌱 Junior Developer';
+  if (count >= 20) rank = '👑 Staff / Tech Lead';
+  else if (count >= 14) rank = '🧙‍♂️ Senior JavaScript Engineer';
+  else if (count >= 8) rank = '⚡ Middle Frontend Developer';
+  else if (count >= 3) rank = '🚀 Junior+ Developer';
   document.getElementById('profile-modal-rank').textContent = rank;
 
   // Profil egasi bo'lsa, ism o'zgartirish va ramkalarni boshqarishni ko'rsatish
-  const isMe = !userId || (getCurrentUser() && getCurrentUser().id === user.id);
   const isAdmin = typeof isMainAdmin === 'function' && isMainAdmin(user);
   const nameChangeSec = document.getElementById('profile-name-change-section');
   if (nameChangeSec) nameChangeSec.style.display = isMe ? 'block' : 'none';
