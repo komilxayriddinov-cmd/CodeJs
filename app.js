@@ -1218,8 +1218,8 @@ window.renderLessonsWithAuth = function(catId) {
   const container = document.getElementById('lessons-grid');
   if (!container) return;
 
-  const lessons = getLessons(catId);
-  const user = getCurrentUser();
+  const lessons = (typeof getLessons === 'function') ? getLessons(catId) : [];
+  const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
   const completed = user?.completedLessons || [];
 
   const diffLabels = {
@@ -1228,17 +1228,19 @@ window.renderLessonsWithAuth = function(catId) {
     ru: { easy: 'Легко', medium: 'Средне', hard: 'Сложно' },
   };
 
+  const currentL = (typeof currentLang !== 'undefined') ? currentLang : 'uz';
+
   container.innerHTML = lessons.map(l => {
     const isDone = completed.includes(`${catId}-${l.num}`);
     return `
-      <div class="lesson-card ${isDone ? 'completed' : ''}" onclick="openLesson('${catId}', '${l.num}')" style="cursor:pointer;" title="Darsni boshlash">
+      <div class="lesson-card diff-${l.difficulty} ${isDone ? 'completed' : ''}" data-diff="${l.difficulty}" onclick="openLesson('${catId}', '${l.num}')" style="cursor:pointer;" title="Darsni boshlash">
         <div class="lesson-card-num">#${l.num}</div>
         <div class="lesson-card-title">${l.title}</div>
         <div class="lesson-card-desc">${l.desc}</div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
           <span class="lesson-card-difficulty difficulty-${l.difficulty}">
             ${l.difficulty === 'easy' ? '🟢' : l.difficulty === 'medium' ? '🟡' : '🔴'}
-            ${(diffLabels[currentLang] || diffLabels.uz)[l.difficulty]}
+            ${(diffLabels[currentL] || diffLabels.uz)[l.difficulty]}
           </span>
           <span style="font-size:12px; color:var(--accent-yellow); font-weight:700;">
             ${isDone ? '✅ Bajarilgan' : '🪙 +20'}
@@ -1247,6 +1249,9 @@ window.renderLessonsWithAuth = function(catId) {
       </div>
     `;
   }).join('');
+  if (typeof applyLessonFilters === 'function') {
+    applyLessonFilters();
+  }
 };
 
 // ─── 7. INITIALIZE ENGINE ON DOM READY & STORAGE SYNC ───────────
