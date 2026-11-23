@@ -177,14 +177,14 @@
     </div>
 
     <!-- Code Shop Button -->
-    <button class="btn btn-secondary" onclick="openCoinShop()" style="padding:7px 14px; font-size:13px; border-color:rgba(251, 191, 36, 0.4); color:var(--accent-yellow); display:inline-flex; align-items:center; gap:6px;">
-      <span>🛒</span> <span data-uz="Do'kon" data-en="Shop" data-ru="Магазин">Do'kon</span>
+    <button class="btn btn-secondary nav-shop-btn" onclick="openCoinShop()" style="padding:7px 14px; font-size:13px; border-color:rgba(251, 191, 36, 0.4); color:var(--accent-yellow); display:inline-flex; align-items:center; gap:6px;">
+      <span>🛒</span> <span class="shop-btn-text" data-uz="Do'kon" data-en="Shop" data-ru="Магазин">Do'kon</span>
     </button>
 
     <!-- Auth Container: Login Button OR User Profile -->
     <div id="nav-auth-container">
       <button class="nav-auth-btn" id="nav-login-btn" onclick="openAuthModal('login')">
-        🔐 <span data-uz="Kirish" data-en="Login" data-ru="Войти">Kirish</span>
+        🔐 <span class="auth-btn-text" data-uz="Kirish" data-en="Login" data-ru="Войти">Kirish</span>
       </button>
       
       <div class="nav-user" id="nav-user-profile" style="display:none;" onclick="toggleUserDropdown(event)">
