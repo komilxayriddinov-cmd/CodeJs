@@ -1233,17 +1233,20 @@ window.renderLessonsWithAuth = function(catId) {
   container.innerHTML = lessons.map(l => {
     const isDone = completed.includes(`${catId}-${l.num}`);
     return `
-      <div class="lesson-card diff-${l.difficulty} ${isDone ? 'completed' : ''}" data-diff="${l.difficulty}" onclick="openLesson('${catId}', '${l.num}')" style="cursor:pointer;" title="Darsni boshlash">
-        <div class="lesson-card-num">#${l.num}</div>
-        <div class="lesson-card-title">${l.title}</div>
-        <div class="lesson-card-desc">${l.desc}</div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+      <div class="lesson-card diff-${l.difficulty} ${isDone ? 'completed' : ''}" data-diff="${l.difficulty}" onclick="openLesson('${catId}', '${l.num}')" title="Darsni boshlash">
+        <div class="lesson-card-header">
+          <span class="lesson-card-num">#${l.num}</span>
+          ${isDone ? '<span class="lesson-done-badge">✅ Bajarilgan</span>' : ''}
+        </div>
+        <h4 class="lesson-card-title">${l.title}</h4>
+        <p class="lesson-card-desc">${l.desc}</p>
+        <div class="lesson-card-footer">
           <span class="lesson-card-difficulty difficulty-${l.difficulty}">
             ${l.difficulty === 'easy' ? '🟢' : l.difficulty === 'medium' ? '🟡' : '🔴'}
             ${(diffLabels[currentL] || diffLabels.uz)[l.difficulty]}
           </span>
-          <span style="font-size:12px; color:var(--accent-yellow); font-weight:700;">
-            ${isDone ? '✅ Bajarilgan' : '🪙 +20'}
+          <span class="lesson-reward-badge">
+            ${isDone ? '' : '🪙 +20'}
           </span>
         </div>
       </div>

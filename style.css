@@ -1088,58 +1088,96 @@ background-size: 60px 60px;
 }
 
 .lesson-card {
-  padding: 20px;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  min-height: 150px;
+  padding: 18px 20px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  
   cursor: pointer;
-  transition: all 0.3s var(--ease-smooth);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .lesson-card:hover {
-  border-color: var(--border-accent);
+  border-color: var(--accent-cyan);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm), var(--shadow-glow-cyan);
+  box-shadow: var(--shadow-md);
+}
+
+.lesson-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
 .lesson-card-num {
   font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
-  margin-bottom: 8px;
+}
+
+.lesson-done-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #10b981;
+  background: #063124;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .lesson-card-title {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  line-height: 1.4;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+  line-height: 1.35;
 }
 
 .lesson-card-desc {
   font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.5;
+  margin: 0 0 14px 0;
+  flex-grow: 1;
+}
+
+.lesson-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
 }
 
 .lesson-card-difficulty {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 12px;
-  padding: 3px 10px;
-  border-radius: 100px;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
   font-size: 11px;
   font-weight: 600;
+  border: 1px solid var(--border-subtle);
 }
 
-.difficulty-easy { background: rgba(34, 211, 238, 0.1); color: var(--accent-green); }
-.difficulty-medium { background: rgba(251, 191, 36, 0.1); color: var(--accent-yellow); }
-.difficulty-hard { background: rgba(236, 72, 153, 0.1); color: var(--accent-pink); }
+.difficulty-easy { background: rgba(16, 185, 129, 0.12); color: #10b981; border-color: rgba(16, 185, 129, 0.25); }
+.difficulty-medium { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border-color: rgba(245, 158, 11, 0.25); }
+.difficulty-hard { background: rgba(239, 68, 68, 0.12); color: #ef4444; border-color: rgba(239, 68, 68, 0.25); }
+
+.lesson-reward-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-yellow);
+}
 
 /* ═══════════════════════════════════════════════════════════════
    PLAYGROUND SECTION
