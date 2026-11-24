@@ -164,7 +164,7 @@
     <li><a href="#bosh-sahifa" class="active" data-nav="bosh-sahifa" data-uz="Bosh sahifa" data-en="Home" data-ru="Главная">Bosh sahifa</a></li>
     <li><a href="#xususiyatlar" data-nav="xususiyatlar" data-uz="Xususiyatlar" data-en="Features" data-ru="Функции">Xususiyatlar</a></li>
     <li><a href="#darsliklar" data-nav="darsliklar" data-uz="Darsliklar" data-en="Lessons" data-ru="Уроки">Darsliklar</a></li>
-    <li><a href="#muharrir" data-nav="muharrir" data-uz="Muharrir" data-en="Editor" data-ru="Редактор">Muharrir</a></li>
+    <li><a href="editor.html" data-nav="muharrir" data-uz="Muharrir" data-en="Editor" data-ru="Редактор">Muharrir</a></li>
     <li><a href="#oyinlar" data-nav="oyinlar" data-uz="O'yinlar" data-en="Games" data-ru="Игры">O'yinlar</a></li>
     <li><a href="#foydalanuvchilar" data-nav="foydalanuvchilar" data-uz="Foydalanuvchilar" data-en="Users" data-ru="Пользователи">Foydalanuvchilar</a></li>
   </ul>
@@ -267,9 +267,9 @@
       <button class="btn btn-primary" onclick="scrollToSection('darsliklar')" data-uz="📚 Ta'limni boshlash" data-en="📚 Start Learning" data-ru="📚 Начать обучение">
         📚 Ta'limni boshlash
       </button>
-      <button class="btn btn-secondary" onclick="scrollToSection('muharrir')" data-uz="⚡ Muharrirni ochish" data-en="⚡ Open Editor" data-ru="⚡ Открыть редактор">
+      <a href="editor.html" class="btn btn-secondary" data-uz="⚡ Muharrirni ochish" data-en="⚡ Open Editor" data-ru="⚡ Открыть редактор">
         ⚡ Muharrirni ochish
-      </button>
+      </a>
     </div>
 
     <!-- Continue Last Lesson Quick Card -->
@@ -566,181 +566,55 @@
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label" data-uz="Jonli muharrir" data-en="Live Editor" data-ru="Живой редактор">Jonli muharrir</div>
-      <h2 class="section-title" data-uz="Kod yozing — natijani ko'ring" data-en="Write Code — See Results" data-ru="Пишите код — видите результат">Kod yozing — <span class="gradient-text">natijani ko'ring</span></h2>
-      <p class="section-desc" data-uz="Brauzerda to'g'ridan-to'g'ri HTML, CSS va JavaScript yozing. O'zgarishlar bir zumda ko'rsatiladi." data-en="Write HTML, CSS, and JavaScript directly in the browser. Changes are shown instantly." data-ru="Пишите HTML, CSS и JavaScript прямо в браузере. Изменения отображаются мгновенно.">
-        Brauzerda to'g'ridan-to'g'ri HTML, CSS va JavaScript yozing. O'zgarishlar bir zumda ko'rsatiladi.
+      <h2 class="section-title" data-uz="Professional Kod Muharriri (Web IDE)" data-en="Professional Code Editor (Web IDE)" data-ru="Профессиональный редактор кода (Web IDE)">Professional Kod Muharriri <span class="gradient-text">(Web IDE)</span></h2>
+      <p class="section-desc" data-uz="Brauzerda to'g'ridan-to'g'ri HTML, CSS va JavaScript yozing. VS Code uslubidagi aqlli autocomplete, Emmet shablonlari (Shift + !), AI tahlil va real vaqtdagi jonli natija." data-en="Write HTML, CSS, and JavaScript directly in your browser with VS Code IntelliSense, Emmet shortcuts (Shift + !), AI assistant, and live output." data-ru="Пишите HTML, CSS и JavaScript прямо в браузере с автодополнением в стиле VS Code, шаблонами Emmet (Shift + !), AI-помощником и живым результатом.">
+        Brauzerda to'g'ridan-to'g'ri HTML, CSS va JavaScript yozing. VS Code uslubidagi aqlli autocomplete, Emmet shablonlari (Shift + !), AI tahlil va real vaqtdagi jonli natija.
       </p>
     </div>
 
-    <div class="playground-mobile-nav">
-      <button class="mobile-nav-btn active" id="mob-tab-code" onclick="switchMobileEditorTab('code')">💻 Kod Muharriri</button>
-      <button class="mobile-nav-btn" id="mob-tab-output" onclick="switchMobileEditorTab('output')">📺 Jonli Natija</button>
-      <button class="mobile-nav-btn" id="mob-tab-console" onclick="switchMobileEditorTab('console')">📟 Konsol</button>
-    </div>
-    <div class="playground-wrapper reveal">
-      <div class="playground-editor">
-        <div class="playground-editor-header">
-          <div class="playground-tabs">
-            <button class="playground-tab active" data-tab="html" onclick="switchTab('html')">HTML</button>
-            <button class="playground-tab" data-tab="css" onclick="switchTab('css')">CSS</button>
-            <button class="playground-tab" data-tab="js" onclick="switchTab('js')">JS</button>
-          </div>
-          
-          <div class="playground-actions">
-            <!-- Shablonlar menyusi -->
-            <div class="editor-dropdown">
-              <button class="editor-btn-secondary" onclick="EditorTools.toggleTemplatesMenu()" id="editor-templates-btn" title="Tayyor loyiha shablonlari">
-                📦 <span>Shablonlar ▾</span>
-              </button>
-              <div class="editor-dropdown-menu" id="editor-templates-menu" style="display:none;">
-                <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('calculator')">
-                  <span class="icon">🧮</span>
-                  <div>
-                    <div class="title">Kalkulyator</div>
-                    <div class="desc">Ishlaydigan neon kalkulyator</div>
-                  </div>
-                </div>
-                <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('todo')">
-                  <span class="icon">📝</span>
-                  <div>
-                    <div class="title">To-Do List</div>
-                    <div class="desc">Vazifalar qo'shish va o'chirish</div>
-                  </div>
-                </div>
-                <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('clock')">
-                  <span class="icon">⏰</span>
-                  <div>
-                    <div class="title">Raqamli Soat</div>
-                    <div class="desc">Jonli soniyali neon soat</div>
-                  </div>
-                </div>
-                <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('tictactoe')">
-                  <span class="icon">🎮</span>
-                  <div>
-                    <div class="title">X va O O'yini</div>
-                    <div class="desc">2 kishilik klassik o'yin</div>
-                  </div>
-                </div>
-                <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('neoncard')">
-                  <span class="icon">🎨</span>
-                  <div>
-                    <div class="title">Neon Kartochka</div>
-                    <div class="desc">CSS 3D animatsiyali karta</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- AI Tahlil va xatolarni tuzatuvchi -->
-            <button class="editor-btn-secondary" onclick="EditorTools.analyzeCode()" title="AI orqali xatolarni aniqlash va tuzatish">
-              🤖 <span>AI Tahlil</span>
-            </button>
-
-            <!-- Kodni formatlash -->
-            <button class="editor-btn-secondary" onclick="EditorTools.formatCode()" title="Kodni chiroyli tartibga keltirish">
-              ✨ <span>Format</span>
-            </button>
-
-            <!-- Saqlash & Loyihalarim -->
-            <button class="editor-btn-secondary" onclick="EditorTools.openProjectsModal()" title="Kodni saqlash va saqlangan loyihalar">
-              💾 <span>Loyihalarim</span>
-            </button>
-
-            <!-- Havola ulashish -->
-            <button class="editor-btn-secondary" onclick="EditorTools.shareCode()" title="Kodni havola orqali ulashish">
-              🔗 <span>Ulashish</span>
-            </button>
-
-            <!-- Ishga tushirish -->
-            <button class="playground-run-btn" onclick="runPlayground()">
-              ▶ <span data-uz="Ishga tushirish" data-en="Run" data-ru="Запустить">Ishga tushirish</span>
-            </button>
-          </div>
+    <!-- IDE Showcase Card -->
+    <div class="ide-showcase-card reveal" style="background:#090d16; border:1px solid var(--border-subtle); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lg);">
+      <!-- Window Title Bar -->
+      <div style="background:#0c1220; padding:12px 20px; border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="width:12px; height:12px; border-radius:50%; background:#ef4444; display:inline-block;"></span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#f59e0b; display:inline-block;"></span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#10b981; display:inline-block;"></span>
+          <span style="font-family:var(--font-mono); font-size:12px; color:var(--text-muted); margin-left:8px;">CodeJS Web IDE — index.html</span>
         </div>
-        <textarea class="playground-textarea" id="editor-html" spellcheck="false" placeholder="HTML kodni yozing...">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-  &lt;style&gt;
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      background: #0a0e1a;
-      font-family: 'Inter', sans-serif;
-    }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid #1c273e;
-      border-radius: 20px;
-      padding: 40px;
-      text-align: center;
-      color: white;
-      animation: fadeIn 0.8s ease;
-    }
-    .card h1 {
-      color: #00d4ff;
-      font-size: 2em;
-      margin-bottom: 12px;
-    }
-    .card p { color: #8b95b0; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;div class="card"&gt;
-    &lt;h1&gt;Salom, CodeJS! 🚀&lt;/h1&gt;
-    &lt;p&gt;Brauzerda kod yozishni boshlang&lt;/p&gt;
-  &lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea>
-        <textarea class="playground-textarea" id="editor-css" spellcheck="false" placeholder="CSS kodni yozing..." style="display:none">/* CSS kodingiz */
-body {
-  font-family: sans-serif;
-  background: #0a0e1a;
-  color: white;
-}</textarea>
-        <textarea class="playground-textarea" id="editor-js" spellcheck="false" placeholder="JavaScript kodni yozing..." style="display:none">// JavaScript kodingiz
-console.log("Salom, CodeJS!");</textarea>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="font-size:11px; font-family:var(--font-mono); background:rgba(0,212,255,0.12); color:var(--accent-cyan); padding:3px 8px; border-radius:4px; border:1px solid rgba(0,212,255,0.3);">⚡ Shift + ! (Emmet)</span>
+          <span style="font-size:11px; font-family:var(--font-mono); background:rgba(16,185,129,0.12); color:#10b981; padding:3px 8px; border-radius:4px; border:1px solid rgba(16,185,129,0.3);">🤖 AI Tahlil</span>
+          <span style="font-size:11px; font-family:var(--font-mono); background:rgba(251,191,36,0.12); color:var(--accent-yellow); padding:3px 8px; border-radius:4px; border:1px solid rgba(251,191,36,0.3);">📦 Shablonlar</span>
+        </div>
       </div>
-      <div class="playground-output">
-        <div class="playground-output-header">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:13px;">
-              <span>📺</span>
-              <span data-uz="Natija" data-en="Output" data-ru="Результат">Natija</span>
-            </div>
-            <div class="device-toggles">
-              <button class="device-toggle-btn active" id="btn-view-desktop" onclick="setPreviewDevice('100%')" title="Desktop">💻 100%</button>
-              <button class="device-toggle-btn" id="btn-view-tablet" onclick="setPreviewDevice('768px')" title="Planshet">📱 768px</button>
-              <button class="device-toggle-btn" id="btn-view-mobile" onclick="setPreviewDevice('375px')" title="Mobil">📱 375px</button>
-            </div>
-          </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <button class="editor-btn-secondary" onclick="EditorTools.toggleConsole()" id="editor-console-btn" style="padding:4px 10px; font-size:12px;" title="Konsol loglarini ko'rish">
-              📟 <span>Konsol</span>
-            </button>
-            <button class="editor-btn-secondary" onclick="EditorTools.openFullscreenPreview()" style="padding:4px 10px; font-size:12px;" title="Katta ekranda ko'rish">
-              ⛶ <span>Katta ekran</span>
-            </button>
-          </div>
+
+      <!-- Code Preview Mockup -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); background:#060a12;">
+        <div style="padding:24px; border-right:1px solid var(--border-subtle); font-family:var(--font-mono); font-size:13.5px; line-height:1.6; color:#94a3b8; overflow-x:auto;">
+          <div style="color:#64748b; margin-bottom:10px;">// 💡 Shift + ! bosilganda avtomatik chiqadigan HTML5 karkasi:</div>
+          <div><span style="color:#38bdf8;">&lt;!DOCTYPE</span> <span style="color:#f43f5e;">html</span><span style="color:#38bdf8;">&gt;</span></div>
+          <div><span style="color:#38bdf8;">&lt;html</span> <span style="color:#fbbf24;">lang</span>=<span style="color:#34d399;">"uz"</span><span style="color:#38bdf8;">&gt;</span></div>
+          <div><span style="color:#38bdf8;">&lt;head&gt;</span></div>
+          <div style="padding-left:18px;"><span style="color:#38bdf8;">&lt;meta</span> <span style="color:#fbbf24;">charset</span>=<span style="color:#34d399;">"UTF-8"</span> <span style="color:#38bdf8;">/&gt;</span></div>
+          <div style="padding-left:18px;"><span style="color:#38bdf8;">&lt;title&gt;</span><span style="color:#f1f5f9;">CodeJS Dasturi</span><span style="color:#38bdf8;">&lt;/title&gt;</span></div>
+          <div><span style="color:#38bdf8;">&lt;/head&gt;</span></div>
+          <div><span style="color:#38bdf8;">&lt;body&gt;</span></div>
+          <div style="padding-left:18px;"><span style="color:#38bdf8;">&lt;h1&gt;</span><span style="color:#00d4ff;">Salom, CodeJS IDE! 🚀</span><span style="color:#38bdf8;">&lt;/h1&gt;</span></div>
+          <div style="padding-left:18px;"><span style="color:#38bdf8;">&lt;script&gt;</span><span style="color:#a78bfa;">console</span>.<span style="color:#60a5fa;">log</span>(<span style="color:#34d399;">"Tayyor!"</span>);<span style="color:#38bdf8;">&lt;/script&gt;</span></div>
+          <div><span style="color:#38bdf8;">&lt;/body&gt;</span></div>
+          <div><span style="color:#38bdf8;">&lt;/html&gt;</span></div>
         </div>
-        <div class="playground-output-body">
-          <iframe id="output-frame" title="Output"></iframe>
-        </div>
-        <!-- Interaktiv Konsol paneli -->
-        <div class="editor-console-drawer" id="editor-console-drawer" style="display:none;">
-          <div class="editor-console-header">
-            <span>📟 Konsol Natijasi (console.log)</span>
-            <button class="editor-console-clear-btn" onclick="EditorTools.clearConsole()">Tozalash ✕</button>
-          </div>
-          <div class="editor-console-logs" id="editor-console-logs">
-            <div class="editor-console-empty">Hozircha konsolda xabarlar yo'q</div>
-          </div>
+
+        <div style="padding:32px 24px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:#080d1a;">
+          <div style="font-size:36px; margin-bottom:12px;">💻</div>
+          <h3 style="font-size:20px; font-weight:700; color:var(--text-primary); margin-bottom:8px;" data-uz="Alohida Web IDE sahifasi" data-en="Dedicated Web IDE Page" data-ru="Отдельная страница Web IDE">Alohida Web IDE sahifasi</h3>
+          <p style="font-size:14px; color:var(--text-secondary); max-width:360px; line-height:1.5; margin-bottom:24px;" data-uz="Barcha qulayliklar bilan to'liq ekranli dasturlash muhiti: qator raqamlari, avtosaqlash, shablonlar va konsol." data-en="Full-screen development environment with line numbers, auto-save, templates, and console." data-ru="Полноэкранная среда разработки со всеми удобствами: номера строк, автосохранение, шаблоны и консоль.">
+            Barcha qulayliklar bilan to'liq ekranli dasturlash muhiti: qator raqamlari, avtosaqlash, shablonlar va konsol.
+          </p>
+          <a href="editor.html" class="btn btn-primary" style="font-size:15px; padding:13px 28px; font-weight:700; box-shadow:0 4px 18px rgba(0, 212, 255, 0.25); display:inline-flex; align-items:center; gap:8px;" data-uz="⚡ Muharrirni ochish (editor.html) →" data-en="⚡ Open Editor (editor.html) →" data-ru="⚡ Открыть редактор (editor.html) →">
+            ⚡ Muharrirni ochish (editor.html) →
+          </a>
         </div>
       </div>
     </div>
@@ -1602,7 +1476,7 @@ console.log("Salom, CodeJS!");</textarea>
       <h4 class="footer-col-title" data-uz="Platforma" data-en="Platform" data-ru="Платформа">Platforma</h4>
       <ul class="footer-links">
         <li><a href="#darsliklar" data-uz="Darsliklar" data-en="Lessons" data-ru="Уроки">Darsliklar</a></li>
-        <li><a href="#muharrir" data-uz="Muharrir" data-en="Editor" data-ru="Редактор">Muharrir</a></li>
+        <li><a href="editor.html" data-uz="Muharrir" data-en="Editor" data-ru="Редактор">Muharrir</a></li>
         <li><a href="#oyinlar" data-uz="O'yinlar" data-en="Games" data-ru="Игры">O'yinlar</a></li>
         <li><a href="#" data-uz="Topshiriqlar" data-en="Tasks" data-ru="Задания">Topshiriqlar</a></li>
       </ul>

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeJS — Professional Kod Muharriri (Web IDE)</title>
+  <meta name="description" content="CodeJS Web IDE — Brauzerda jonli HTML, CSS va JavaScript yozing. VS Code uslubidagi autocomplete, Emmet shablonlari, AI tahlil va real vaqtda natija." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       STANDALONE WEB IDE FULLSCREEN STYLES
+       ═══════════════════════════════════════════════════════════════ */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: var(--bg-primary, #060910);
+      color: var(--text-primary, #f1f5f9);
+      font-family: var(--font-sans, 'Inter', sans-serif);
+    }
+
+    .ide-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      background: #060910;
+    }
+
+    /* Top IDE Bar */
+    .ide-navbar {
+      height: 56px;
+      background: #090d16;
+      border-bottom: 1px solid var(--border-subtle, #1e293b);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 12px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .ide-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .ide-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle, #1e293b);
+      border-radius: var(--radius-sm, 6px);
+      color: var(--text-secondary, #94a3b8);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .ide-back-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary, #ffffff);
+      border-color: var(--accent-cyan, #00d4ff);
+    }
+
+    .ide-badge {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--accent-cyan, #00d4ff);
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
+    /* Tabs */
+    .ide-tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #0c1220;
+      padding: 3px 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle, #1e293b);
+    }
+
+    .ide-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--text-secondary, #94a3b8);
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .ide-tab:hover {
+      color: var(--text-primary, #ffffff);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .ide-tab.active {
+      color: var(--accent-cyan, #00d4ff);
+      background: #151d30;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Action buttons in header */
+    .ide-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .ide-run-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      background: #10b981;
+      color: #042417;
+      border: none;
+      border-radius: var(--radius-sm, 6px);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+      white-space: nowrap;
+    }
+
+    .ide-run-btn:hover {
+      background: #059669;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* Emmet Tip Banner */
+    .emmet-tip-bar {
+      background: #0c1322;
+      border-bottom: 1px solid var(--border-subtle, #1e293b);
+      padding: 6px 16px;
+      font-size: 12px;
+      color: var(--text-secondary, #94a3b8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .emmet-tip-bar kbd {
+      background: #19243d;
+      border: 1px solid #2d3c5f;
+      color: var(--accent-cyan, #00d4ff);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono, monospace);
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    /* Workspace */
+    .ide-workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      background: #060910;
+    }
+
+    /* Editor Pane */
+    .ide-editor-pane {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: #0a0e1a;
+      border-right: 1px solid var(--border-subtle, #1e293b);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ide-editor-container {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Line Numbers */
+    .ide-line-numbers {
+      width: 44px;
+      padding: 16px 8px 16px 0;
+      text-align: right;
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #3b4c6e;
+      user-select: none;
+      background: #070b14;
+      border-right: 1px solid #141b2b;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    /* Textareas */
+    .ide-textarea-wrap {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ide-textarea {
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      padding: 16px;
+      margin: 0;
+      background: transparent;
+      color: #e2e8f0;
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: 13.5px;
+      line-height: 1.6;
+      border: none;
+      outline: none;
+      resize: none;
+      tab-size: 2;
+      white-space: pre;
+      overflow-wrap: normal;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+
+    /* Output Pane */
+    .ide-output-pane {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: #060910;
+      position: relative;
+    }
+
+    .ide-output-header {
+      height: 40px;
+      background: #0a0f1d;
+      border-bottom: 1px solid var(--border-subtle, #1e293b);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      flex-shrink: 0;
+    }
+
+    .ide-output-frame-wrap {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #03060c;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #output-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #ffffff;
+      transition: max-width 0.3s ease;
+    }
+
+    /* Mobile navigation bar */
+    .playground-mobile-nav {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .ide-workspace {
+        grid-template-columns: 1fr;
+      }
+      .playground-mobile-nav {
+        display: flex;
+        background: #090d16;
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 6px 12px;
+        gap: 6px;
+      }
+      .playground-mobile-nav .mobile-nav-btn {
+        flex: 1;
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+      .ide-actions .ide-btn-label {
+        display: none;
+      }
+      .emmet-tip-bar {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .ide-navbar {
+        padding: 0 8px;
+        height: 50px;
+      }
+      .ide-tab {
+        padding: 5px 8px;
+        font-size: 12px;
+      }
+      .ide-run-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+      .device-toggles {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ide-container">
+    <!-- 1. Top IDE Navigation Bar -->
+    <header class="ide-navbar">
+      <div class="ide-nav-left">
+        <a href="index.html" class="ide-back-btn" title="Bosh sahifaga qaytish">
+          <span>←</span> <span>Bosh sahifa</span>
+        </a>
+        <div class="nav-brand" style="margin-left:4px;">
+          <div class="nav-brand-icon">{}</div>
+          <span><span class="code">code</span><span class="js">JS</span><span class="ide-badge">IDE</span></span>
+        </div>
+      </div>
+
+      <!-- File tabs -->
+      <div class="ide-tabs">
+        <button class="ide-tab active" data-tab="html" onclick="switchTab('html')">
+          <span>🌐</span> <span>index.html</span>
+        </button>
+        <button class="ide-tab" data-tab="css" onclick="switchTab('css')">
+          <span>🎨</span> <span>style.css</span>
+        </button>
+        <button class="ide-tab" data-tab="js" onclick="switchTab('js')">
+          <span>⚡</span> <span>script.js</span>
+        </button>
+      </div>
+
+      <!-- Actions -->
+      <div class="ide-actions">
+        <!-- Shablonlar menyusi -->
+        <div class="editor-dropdown">
+          <button class="editor-btn-secondary" onclick="EditorTools.toggleTemplatesMenu()" id="editor-templates-btn" title="Tayyor loyiha shablonlari">
+            📦 <span class="ide-btn-label">Shablonlar ▾</span>
+          </button>
+          <div class="editor-dropdown-menu" id="editor-templates-menu" style="display:none;">
+            <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('calculator')">
+              <span class="icon">🧮</span>
+              <div>
+                <div class="title">Kalkulyator</div>
+                <div class="desc">Ishlaydigan kalkulyator dasturi</div>
+              </div>
+            </div>
+            <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('todo')">
+              <span class="icon">📝</span>
+              <div>
+                <div class="title">To-Do List</div>
+                <div class="desc">Vazifalar boshqarish ilovasi</div>
+              </div>
+            </div>
+            <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('clock')">
+              <span class="icon">⏰</span>
+              <div>
+                <div class="title">Raqamli Soat</div>
+                <div class="desc">Jonli soniyali soat</div>
+              </div>
+            </div>
+            <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('tictactoe')">
+              <span class="icon">🎮</span>
+              <div>
+                <div class="title">X va O O'yini</div>
+                <div class="desc">2 kishilik klassik o'yin</div>
+              </div>
+            </div>
+            <div class="editor-dropdown-item" onclick="EditorTools.loadTemplate('neoncard')">
+              <span class="icon">🎨</span>
+              <div>
+                <div class="title">3D Karta</div>
+                <div class="desc">CSS 3D animatsiyali karta</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Tahlil -->
+        <button class="editor-btn-secondary" onclick="EditorTools.analyzeCode()" title="AI orqali xatolarni aniqlash va tuzatish">
+          🤖 <span class="ide-btn-label">AI Tahlil</span>
+        </button>
+
+        <!-- Format -->
+        <button class="editor-btn-secondary" onclick="EditorTools.formatCode()" title="Kodni toza formatlash">
+          ✨ <span class="ide-btn-label">Format</span>
+        </button>
+
+        <!-- Loyihalarim -->
+        <button class="editor-btn-secondary" onclick="EditorTools.openProjectsModal()" title="Kodni saqlash va boshqarish">
+          💾 <span class="ide-btn-label">Loyihalarim</span>
+        </button>
+
+        <!-- Ulashish -->
+        <button class="editor-btn-secondary" onclick="EditorTools.shareCode()" title="Kodni havola orqali ulashish">
+          🔗 <span class="ide-btn-label">Ulashish</span>
+        </button>
+
+        <!-- Ishga tushirish -->
+        <button class="ide-run-btn" onclick="runPlayground()" title="Kodni ishga tushirish (Ctrl + Enter)">
+          ▶ <span>Ishga tushirish</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. VS Code Emmet Hint Banner -->
+    <div class="emmet-tip-bar">
+      <div>
+        <span>💡 <b>VS Code Emmet:</b> HTML maydonida</span>
+        <kbd>Shift + !</kbd> <span>(yoki</span> <kbd>!</kbd><span>) yozib</span>
+        <kbd>Tab</kbd> <span>yoki</span> <kbd>Enter</kbd> <span>bosing — to'liq HTML5 karkasi avtomatik chiqadi!</span>
+      </div>
+      <div>
+        <span style="font-family:var(--font-mono); font-size:11px; opacity:0.8;">Ctrl + Enter — Ishga tushirish</span>
+      </div>
+    </div>
+
+    <!-- Mobile view switch tabs -->
+    <div class="playground-mobile-nav">
+      <button class="mobile-nav-btn active" id="mob-tab-code" onclick="switchMobileEditorTab('code')">💻 Kod Muharriri</button>
+      <button class="mobile-nav-btn" id="mob-tab-output" onclick="switchMobileEditorTab('output')">📺 Jonli Natija</button>
+      <button class="mobile-nav-btn" id="mob-tab-console" onclick="switchMobileEditorTab('console')">📟 Konsol</button>
+    </div>
+
+    <!-- 3. Main Workspace Split View -->
+    <main class="ide-workspace">
+      <!-- Left: Editor Pane -->
+      <section class="ide-editor-pane">
+        <div class="ide-editor-container">
+          <div class="ide-line-numbers" id="line-numbers">1</div>
+          <div class="ide-textarea-wrap">
+            <textarea class="ide-textarea playground-textarea" id="editor-html" spellcheck="false" placeholder="HTML kodni yozing... (Shift + ! bosib Tab bosing)"><!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salom, CodeJS!</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #090d16;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: #f1f5f9;
+    }
+    .card {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 36px 44px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    h1 {
+      color: #00d4ff;
+      margin: 0 0 10px 0;
+      font-size: 28px;
+    }
+    p {
+      color: #94a3b8;
+      margin: 0 0 20px 0;
+      font-size: 15px;
+    }
+    button {
+      background: #00d4ff;
+      color: #090d16;
+      border: none;
+      padding: 10px 22px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Salom, CodeJS IDE! 🚀</h1>
+    <p>VS Code uslubidagi onlayn dasturlash muhiti</p>
+    <button onclick="salom()">Meni bosing!</button>
+  </div>
+</body>
+</html></textarea>
+
+            <textarea class="ide-textarea playground-textarea" id="editor-css" spellcheck="false" placeholder="CSS kodni yozing..." style="display:none">/* Alohida CSS qoidalari */
+body {
+  margin: 0;
+  padding: 0;
+}</textarea>
+
+            <textarea class="ide-textarea playground-textarea" id="editor-js" spellcheck="false" placeholder="JavaScript kodni yozing..." style="display:none">// JavaScript kodingiz
+function salom() {
+  console.log("Tugma bosildi! CodeJS IDE ajoyib ishlamoqda.");
+  alert("Salom, CodeJS Web IDE foydalanuvchisi! 🚀");
+}
+
+console.log("CodeJS IDE tayyor. Kod yozing va Ishga tushiring!");</textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Output Pane -->
+      <section class="ide-output-pane">
+        <div class="ide-output-header">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:13px;">
+              <span>📺</span>
+              <span>Natija</span>
+            </div>
+            <div class="device-toggles">
+              <button class="device-toggle-btn active" id="btn-view-desktop" onclick="setPreviewDevice('100%')" title="Desktop">💻 100%</button>
+              <button class="device-toggle-btn" id="btn-view-tablet" onclick="setPreviewDevice('768px')" title="Planshet">📱 768px</button>
+              <button class="device-toggle-btn" id="btn-view-mobile" onclick="setPreviewDevice('375px')" title="Mobil">📱 375px</button>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="editor-btn-secondary" onclick="EditorTools.toggleConsole()" id="editor-console-btn" style="padding:4px 10px; font-size:12px;" title="Konsol loglarini ko'rish">
+              📟 <span>Konsol</span>
+            </button>
+            <button class="editor-btn-secondary" onclick="EditorTools.openFullscreenPreview()" style="padding:4px 10px; font-size:12px;" title="Katta ekranda ko'rish">
+              ⛶ <span>Katta ekran</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="ide-output-frame-wrap playground-output-body">
+          <iframe id="output-frame" title="Live Output"></iframe>
+        </div>
+
+        <!-- Konsol drawer -->
+        <div class="editor-console-drawer" id="editor-console-drawer" style="display:none;">
+          <div class="editor-console-header">
+            <span>📟 Konsol Natijasi (console.log)</span>
+            <button class="editor-console-clear-btn" onclick="EditorTools.clearConsole()">Tozalash ✕</button>
+          </div>
+          <div class="editor-console-logs" id="editor-console-logs">
+            <div class="editor-console-empty">Hozircha konsolda xabarlar yo'q</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="editor-tools.js"></script>
+  <script src="editor-autocomplete.js"></script>
+
+  <script>
+    // ─── IDE TAB CONTROLLER ─────────────────────────────────────────
+    let activeTab = 'html';
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.ide-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === tab);
+      });
+      document.querySelectorAll('.ide-textarea').forEach(ta => {
+        ta.style.display = 'none';
+      });
+      const activeEl = document.getElementById('editor-' + tab);
+      if (activeEl) {
+        activeEl.style.display = 'block';
+        activeEl.focus();
+        updateLineNumbers(activeEl);
+      }
+    }
+
+    // ─── RUN PLAYGROUND ─────────────────────────────────────────────
+    function runPlayground() {
+      const htmlEl = document.getElementById('editor-html');
+      const cssEl = document.getElementById('editor-css');
+      const jsEl = document.getElementById('editor-js');
+      const frame = document.getElementById('output-frame');
+
+      if (!htmlEl || !frame) return;
+
+      const htmlCode = htmlEl.value || '';
+      const cssCode = cssEl ? cssEl.value : '';
+      const jsCode = jsEl ? jsEl.value : '';
+
+      // Auto-save to localStorage
+      try {
+        localStorage.setItem('codejs.editor.html', htmlCode);
+        localStorage.setItem('codejs.editor.css', cssCode);
+        localStorage.setItem('codejs.editor.js', jsCode);
+      } catch(e) {}
+
+      const doc = frame.contentDocument || frame.contentWindow?.document;
+      if (!doc) return;
+
+      const consoleInterceptScript = '<' + 'script>' +
+        '(function() {' +
+          'const _log = console.log;' +
+          'const _error = console.error;' +
+          'const _warn = console.warn;' +
+          'function send(type, args) {' +
+            'try {' +
+              'const msg = args.map(a => (typeof a === "object" && a !== null) ? JSON.stringify(a) : String(a)).join(" ");' +
+              'window.parent.postMessage({ type: "codejs_console", logType: type, message: msg }, "*");' +
+            '} catch(e) {}' +
+          '}' +
+          'console.log = function(...args) { _log.apply(console, args); send("log", args); };' +
+          'console.error = function(...args) { _error.apply(console, args); send("error", args); };' +
+          'console.warn = function(...args) { _warn.apply(console, args); send("warn", args); };' +
+          'window.onerror = function(msg, url, line) {' +
+            'send("error", [msg + (line ? " (Qator: " + line + ")" : "")]);' +
+          '};' +
+        '})();' +
+      '<' + '/script>';
+
+      // Combine HTML, CSS, JS
+      let fullCode = '';
+      if (htmlCode.includes('<!DOCTYPE') || htmlCode.includes('<html')) {
+        // Agar to'liq HTML5 hujjati bo'lsa
+        let modifiedHtml = htmlCode;
+        if (cssCode.trim()) {
+          const styleTag = '<style>' + cssCode + '</style>';
+          if (modifiedHtml.includes('</head>')) {
+            modifiedHtml = modifiedHtml.replace('</head>', styleTag + '</head>');
+          } else {
+            modifiedHtml = styleTag + modifiedHtml;
+          }
+        }
+        if (jsCode.trim()) {
+          const scriptTag = '<script>' + jsCode + '<' + '/script>';
+          if (modifiedHtml.includes('</body>')) {
+            modifiedHtml = modifiedHtml.replace('</body>', scriptTag + '</body>');
+          } else {
+            modifiedHtml = modifiedHtml + scriptTag;
+          }
+        }
+        fullCode = consoleInterceptScript + modifiedHtml;
+      } else {
+        fullCode = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+          consoleInterceptScript +
+          '<style>' + cssCode + '</style>' +
+          '</head><body>' +
+          htmlCode +
+          '<script>' + jsCode + '<' + '/script>' +
+          '</body></html>';
+      }
+
+      doc.open();
+      doc.write(fullCode);
+      doc.close();
+    }
+
+    // ─── LINE NUMBERS SYNC ──────────────────────────────────────────
+    function updateLineNumbers(textarea) {
+      const lineNumbersEl = document.getElementById('line-numbers');
+      if (!lineNumbersEl || !textarea) return;
+
+      const lines = textarea.value.split('\n').length;
+      let numbersStr = '';
+      for (let i = 1; i <= Math.max(lines, 1); i++) {
+        numbersStr += i + '\n';
+      }
+      lineNumbersEl.textContent = numbersStr;
+      lineNumbersEl.scrollTop = textarea.scrollTop;
+    }
+
+    ['editor-html', 'editor-css', 'editor-js'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => updateLineNumbers(el));
+        el.addEventListener('scroll', () => {
+          const lineNumbersEl = document.getElementById('line-numbers');
+          if (lineNumbersEl) lineNumbersEl.scrollTop = el.scrollTop;
+        });
+      }
+    });
+
+    // ─── DEVICE PREVIEW SWITCHER ────────────────────────────────────
+    function setPreviewDevice(width) {
+      const iframe = document.getElementById('output-frame');
+      document.querySelectorAll('.device-toggle-btn').forEach(b => b.classList.remove('active'));
+      if (width === '100%') document.getElementById('btn-view-desktop')?.classList.add('active');
+      if (width === '768px') document.getElementById('btn-view-tablet')?.classList.add('active');
+      if (width === '375px') document.getElementById('btn-view-mobile')?.classList.add('active');
+
+      if (iframe) {
+        iframe.style.maxWidth = width;
+      }
+    }
+
+    // ─── MOBILE VIEW SWITCHER ───────────────────────────────────────
+    function switchMobileEditorTab(tab) {
+      const editorPane = document.querySelector('.ide-editor-pane');
+      const outputPane = document.querySelector('.ide-output-pane');
+      const consoleDrawer = document.getElementById('editor-console-drawer');
+
+      document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`mob-tab-${tab}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (tab === 'code') {
+        if (editorPane) editorPane.style.display = 'flex';
+        if (outputPane) outputPane.style.display = 'none';
+      } else if (tab === 'output') {
+        if (editorPane) editorPane.style.display = 'none';
+        if (outputPane) outputPane.style.display = 'flex';
+        if (consoleDrawer) consoleDrawer.style.display = 'none';
+      } else if (tab === 'console') {
+        if (editorPane) editorPane.style.display = 'none';
+        if (outputPane) outputPane.style.display = 'flex';
+        if (consoleDrawer) consoleDrawer.style.display = 'flex';
+      }
+    }
+
+    // ─── KEYBOARD SHORTCUTS ────────────────────────────────────────
+    window.addEventListener('keydown', (e) => {
+      // Ctrl + Enter or Cmd + Enter to run
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        runPlayground();
+      }
+      // Ctrl + S to save project
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        EditorTools.saveProject();
+      }
+    });
+
+    // ─── INITIALIZATION ─────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check saved code in localStorage
+      try {
+        const savedHtml = localStorage.getItem('codejs.editor.html');
+        const savedCss = localStorage.getItem('codejs.editor.css');
+        const savedJs = localStorage.getItem('codejs.editor.js');
+        if (savedHtml) document.getElementById('editor-html').value = savedHtml;
+        if (savedCss) document.getElementById('editor-css').value = savedCss;
+        if (savedJs) document.getElementById('editor-js').value = savedJs;
+      } catch(e) {}
+
+      updateLineNumbers(document.getElementById('editor-html'));
+
+      // Initial run
+      setTimeout(() => {
+        runPlayground();
+      }, 200);
+    });
+  </script>
+</body>
+</html>

@@ -101,6 +101,8 @@
   ];
 
   const HTML_COMPLETIONS = [
+    { label: '!', insertText: '<!DOCTYPE html>\n<html lang="uz">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>CodeJS Dasturi</title>\n</head>\n<body>\n  $0\n</body>\n</html>', kind: 'snippet', detail: '! (HTML5 Boilerplate)', doc: "VS Code Emmet: Standart HTML5 boshlang'ich hujjati tuzilmasi (Doctype, head, meta, title, body)" },
+    { label: 'html:5', insertText: '<!DOCTYPE html>\n<html lang="uz">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>CodeJS Dasturi</title>\n</head>\n<body>\n  $0\n</body>\n</html>', kind: 'snippet', detail: 'html:5 (HTML5 Boilerplate)', doc: "VS Code Emmet: Standart HTML5 shabloni" },
     { label: '<div>', insertText: '<div class="$0">\n  \n</div>', kind: 'tag', detail: '<div> blok elementi', doc: 'Universal konteyner bloki' },
     { label: '<button>', insertText: '<button onclick="$0"></button>', kind: 'tag', detail: '<button> tugmasi', doc: 'Bosiladigan interaktiv tugma' },
     { label: '<p>', insertText: '<p>$0</p>', kind: 'tag', detail: '<p> paragraf', doc: 'Matnli abzas' },
@@ -306,8 +308,8 @@
       const cursorPos = this.textarea.selectionStart;
       const textBefore = this.textarea.value.slice(0, cursorPos);
 
-      // Kursor oldidagi joriy so'zni ajratib olish (harflar, raqamlar, nuqta, qavs, chiziqcha, kichik belgi)
-      const match = textBefore.match(/([a-zA-Z0-9_\-\.<>:]+)$/);
+      // Kursor oldidagi joriy so'zni ajratib olish (harflar, raqamlar, nuqta, qavs, chiziqcha, kichik belgi, undov)
+      const match = textBefore.match(/([a-zA-Z0-9_\-\.<>:!]+)$/);
       if (!match) {
         this.close();
         return;
@@ -354,6 +356,35 @@
     }
 
     handleKeyDown(e) {
+      // 0. VS Code Emmet: Shift + ! (yoki !) yozilganda / Tab yoki Enter bosilganda HTML5 shablonini chiqarish
+      if (this.mode === 'html') {
+        if (e.key === '!' || (e.shiftKey && (e.key === '!' || e.code === 'Digit1'))) {
+          setTimeout(() => {
+            this.handleInput();
+          }, 10);
+        }
+
+        if (e.key === 'Tab' || e.key === 'Enter') {
+          const cursorPos = this.textarea.selectionStart;
+          const textBefore = this.textarea.value.slice(0, cursorPos);
+          const lineBefore = textBefore.split('\n').pop().trim();
+          if (lineBefore === '!' || lineBefore === 'html:5') {
+            e.preventDefault();
+            const start = cursorPos - lineBefore.length;
+            const end = cursorPos;
+            const val = this.textarea.value;
+            const boilerplate = '<!DOCTYPE html>\n<html lang="uz">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>CodeJS Dasturi</title>\n</head>\n<body>\n  \n</body>\n</html>';
+            this.textarea.value = val.substring(0, start) + boilerplate + val.substring(end);
+            const bodyPos = val.substring(0, start).length + boilerplate.indexOf('<body>\n  ') + '<body>\n  '.length;
+            this.textarea.selectionStart = this.textarea.selectionEnd = bodyPos;
+            this.textarea.focus();
+            this.textarea.dispatchEvent(new Event('input', { bubbles: true }));
+            this.close();
+            return;
+          }
+        }
+      }
+
       // Agar takliflar oynasi ochiq bo'lsa
       if (this.isOpen) {
         if (e.key === 'ArrowDown') {
