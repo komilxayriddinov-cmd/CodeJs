@@ -2917,6 +2917,43 @@ background-size: 60px 60px;
   font-size: 14px;
 }
 
+/* ── BOOKMARK BUTTON (in lesson modal header) ── */
+.btn-bookmark-lesson {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+.btn-bookmark-lesson:hover,
+.btn-bookmark-lesson.bookmarked {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  background: rgba(0,212,255,0.08);
+}
+
+/* ── BOOKMARKED CARD indicator ── */
+.bookmarked-card {
+  border-color: rgba(0,212,255,0.4) !important;
+}
+.lesson-bookmark-icon {
+  font-size: 13px;
+}
+
+/* ── CERTIFICATE MODAL canvas ── */
+#cert-canvas {
+  display: block;
+  margin: 0 auto;
+}
+
 .lesson-challenge {
   margin-top: 32px;
   padding: 24px;

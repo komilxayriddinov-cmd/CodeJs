@@ -542,6 +542,7 @@
         <button class="filter-pill" data-filter="medium" onclick="filterLessonsByDifficulty('medium')">O'rta</button>
         <button class="filter-pill" data-filter="hard" onclick="filterLessonsByDifficulty('hard')">Qiyin</button>
         <button class="filter-pill" data-filter="completed" onclick="filterLessonsByDifficulty('completed')">Bajarilganlar</button>
+        <button class="filter-pill" data-filter="bookmarked" onclick="filterLessonsByDifficulty('bookmarked')">🔖 Saqlangan</button>
       </div>
     </div>
 
@@ -1348,7 +1349,10 @@
         </div>
         <h2 class="modal-title" id="lesson-modal-title" style="margin-top:6px;">Dars nomi</h2>
       </div>
-      <button class="modal-close" onclick="closeModal('lesson-modal')">✕</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn-bookmark-lesson" id="lesson-bookmark-btn" onclick="toggleLessonBookmark()" title="Saqlanganlar">🔖</button>
+        <button class="modal-close" onclick="closeModal('lesson-modal')">✕</button>
+      </div>
     </div>
 
     <!-- Progress indicator -->
@@ -3702,16 +3706,20 @@ function applyLessonFilters() {
   const cards = container.querySelectorAll('.lesson-card');
   const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
   const completed = user?.completedLessons || [];
+  const bookmarks = (typeof getBookmarks === 'function') ? getBookmarks() : [];
 
   cards.forEach(card => {
     const title = (card.querySelector('.lesson-card-title')?.textContent || '').toLowerCase();
     const desc = (card.querySelector('.lesson-card-desc')?.textContent || '').toLowerCase();
     const isDone = card.classList.contains('completed');
+    const isBookmarked = card.dataset.bookmarked === 'true';
     const matchesQuery = !currentLessonSearchQuery || title.includes(currentLessonSearchQuery) || desc.includes(currentLessonSearchQuery);
 
     let matchesDiff = true;
     if (currentLessonFilter === 'completed') {
       matchesDiff = isDone;
+    } else if (currentLessonFilter === 'bookmarked') {
+      matchesDiff = isBookmarked;
     } else if (currentLessonFilter !== 'all') {
       matchesDiff = card.classList.contains(`diff-${currentLessonFilter}`) || card.dataset.diff === currentLessonFilter;
     }
@@ -3795,6 +3803,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CERTIFICATE MODAL
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="certificate-modal">
+  <div class="modal" style="max-width:680px; text-align:center;">
+    <div class="modal-header" style="border-bottom:1px solid var(--border-subtle);">
+      <h2 class="modal-title">🏆 Sertifikat</h2>
+      <button class="modal-close" onclick="closeModal('certificate-modal')">✕</button>
+    </div>
+    <div style="padding:24px;">
+      <canvas id="cert-canvas" width="660" height="420" style="width:100%;border-radius:12px;border:1px solid var(--border-subtle);"></canvas>
+      <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;">
+        <button class="btn btn-primary" onclick="downloadCertificate()">⬇️ Yuklab olish (PNG)</button>
+        <button class="btn btn-secondary" onclick="closeModal('certificate-modal')">Yopish</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

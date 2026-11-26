@@ -1152,6 +1152,7 @@ function openLesson(catId, lessonNum) {
   }
 
   modal.classList.add('active');
+  updateBookmarkBtn(lessonKey);
 }
 
 function checkCurrentLesson() {
@@ -1198,6 +1199,8 @@ function checkCurrentLesson() {
     if (typeof renderLessons === 'function') {
       renderLessons(activeLessonContext.catId);
     }
+    // Check if entire category is complete → show certificate
+    checkAndShowCertificate(activeLessonContext.catId);
   } else {
     resultBox.className = 'lesson-challenge-result error';
     resultBox.innerHTML = `❌ <b>Xatolik yuz berdi:</b><br>${outcome.error || 'Qaytadan tekshirib ko\'ring.'}`;
@@ -1221,6 +1224,7 @@ window.renderLessonsWithAuth = function(catId) {
   const lessons = (typeof getLessons === 'function') ? getLessons(catId) : [];
   const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
   const completed = user?.completedLessons || [];
+  const bookmarks = getBookmarks();
 
   const diffLabels = {
     uz: { easy: 'Oson', medium: "O'rta", hard: 'Qiyin' },
@@ -1232,11 +1236,15 @@ window.renderLessonsWithAuth = function(catId) {
 
   container.innerHTML = lessons.map(l => {
     const isDone = completed.includes(`${catId}-${l.num}`);
+    const isBookmarked = bookmarks.includes(`${catId}-${l.num}`);
     return `
-      <div class="lesson-card diff-${l.difficulty} ${isDone ? 'completed' : ''}" data-diff="${l.difficulty}" onclick="openLesson('${catId}', '${l.num}')" title="Darsni boshlash">
+      <div class="lesson-card diff-${l.difficulty} ${isDone ? 'completed' : ''} ${isBookmarked ? 'bookmarked-card' : ''}" data-diff="${l.difficulty}" data-bookmarked="${isBookmarked}" onclick="openLesson('${catId}', '${l.num}')" title="Darsni boshlash">
         <div class="lesson-card-header">
           <span class="lesson-card-num">#${l.num}</span>
-          ${isDone ? '<span class="lesson-done-badge">✅ Bajarilgan</span>' : ''}
+          <div style="display:flex;align-items:center;gap:6px;">
+            ${isBookmarked ? '<span class="lesson-bookmark-icon" title="Saqlangan">🔖</span>' : ''}
+            ${isDone ? '<span class="lesson-done-badge">✅ Bajarilgan</span>' : ''}
+          </div>
         </div>
         <h4 class="lesson-card-title">${l.title}</h4>
         <p class="lesson-card-desc">${l.desc}</p>
@@ -1287,3 +1295,154 @@ window.addEventListener('storage', (e) => {
     }
   }
 });
+
+// ═══════════════════════════════════════════════════════════════
+//  BOOKMARK SYSTEM
+// ═══════════════════════════════════════════════════════════════
+const BOOKMARKS_KEY = 'codejs.bookmarks';
+
+function getBookmarks() {
+  try { return JSON.parse(localStorage.getItem(BOOKMARKS_KEY)) || []; }
+  catch(e) { return []; }
+}
+
+function saveBookmarks(list) {
+  localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(list));
+}
+
+function toggleLessonBookmark() {
+  if (!activeLessonContext) return;
+  const key = activeLessonContext.key;
+  let bm = getBookmarks();
+  const btn = document.getElementById('lesson-bookmark-btn');
+  if (bm.includes(key)) {
+    bm = bm.filter(k => k !== key);
+    if (btn) { btn.classList.remove('bookmarked'); btn.title = 'Saqlanganlar'; }
+    showToast('🔖 Xatcho\'pdan olib tashlandi');
+  } else {
+    bm.push(key);
+    if (btn) { btn.classList.add('bookmarked'); btn.title = 'Saqlanganlardan olib tashlash'; }
+    showToast('🔖 Xatcho\'plarga saqlandi!');
+  }
+  saveBookmarks(bm);
+  if (typeof renderLessons === 'function' && activeLessonContext) {
+    renderLessons(activeLessonContext.catId);
+  }
+}
+
+function updateBookmarkBtn(lessonKey) {
+  const btn = document.getElementById('lesson-bookmark-btn');
+  if (!btn) return;
+  const bm = getBookmarks();
+  if (bm.includes(lessonKey)) {
+    btn.classList.add('bookmarked');
+    btn.title = 'Saqlanganlardan olib tashlash';
+  } else {
+    btn.classList.remove('bookmarked');
+    btn.title = 'Saqlanganlar';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CERTIFICATE SYSTEM (Canvas API)
+// ═══════════════════════════════════════════════════════════════
+function checkAndShowCertificate(catId) {
+  const user = getCurrentUser();
+  if (!user) return;
+  const completed = user.completedLessons || [];
+  const catLessons = (typeof getLessons === 'function') ? getLessons(catId) : [];
+  if (catLessons.length === 0) return;
+  const allDone = catLessons.every(l => completed.includes(`${catId}-${l.num}`));
+  if (allDone) {
+    setTimeout(() => openCertificateModal(catId, user.name || user.login || 'Foydalanuvchi'), 800);
+  }
+}
+
+function openCertificateModal(catId, userName) {
+  const modal = document.getElementById('certificate-modal');
+  if (!modal) return;
+  drawCertificate(catId, userName);
+  modal.classList.add('active');
+}
+
+function drawCertificate(catId, userName) {
+  const canvas = document.getElementById('cert-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // Background
+  ctx.fillStyle = '#090d16';
+  ctx.fillRect(0, 0, W, H);
+
+  // Border
+  ctx.strokeStyle = '#00d4ff';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(12, 12, W - 24, H - 24);
+
+  // Inner border
+  ctx.strokeStyle = 'rgba(0,212,255,0.25)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(20, 20, W - 40, H - 40);
+
+  // Trophy emoji
+  ctx.font = '56px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🏆', W / 2, 90);
+
+  // Title
+  ctx.fillStyle = '#00d4ff';
+  ctx.font = 'bold 28px Inter, Arial, sans-serif';
+  ctx.fillText('SERTIFIKAT', W / 2, 140);
+
+  // Subtitle
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '14px Inter, Arial, sans-serif';
+  ctx.fillText('Muvaffaqiyatli kursni tamomladi', W / 2, 168);
+
+  // User name
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 32px Inter, Arial, sans-serif';
+  ctx.fillText(userName, W / 2, 230);
+
+  // Underline
+  const nameW = ctx.measureText(userName).width;
+  ctx.strokeStyle = '#00d4ff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W/2 - nameW/2, 240);
+  ctx.lineTo(W/2 + nameW/2, 240);
+  ctx.stroke();
+
+  // Course name
+  const catNames = { html: 'HTML Asoslari', css: 'CSS Dizayn', js: 'JavaScript', 'js-basics': 'JavaScript Asoslari' };
+  const catLabel = catNames[catId] || catId.toUpperCase();
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.font = '16px Inter, Arial, sans-serif';
+  ctx.fillText(`"${catLabel}" kursi bo'yicha`, W / 2, 278);
+
+  // Date
+  const now = new Date();
+  const dateStr = `${now.getDate().toString().padStart(2,'0')}.${(now.getMonth()+1).toString().padStart(2,'0')}.${now.getFullYear()}`;
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = '13px Inter, Arial, sans-serif';
+  ctx.fillText(`Sana: ${dateStr}`, W / 2, 318);
+
+  // CodeJS watermark
+  ctx.fillStyle = '#00d4ff';
+  ctx.font = 'bold 18px Inter, Arial, sans-serif';
+  ctx.fillText('codeJS', W / 2, 370);
+  ctx.fillStyle = 'rgba(0,212,255,0.3)';
+  ctx.font = '12px Inter, Arial, sans-serif';
+  ctx.fillText('codejs-delta.vercel.app', W / 2, 392);
+}
+
+function downloadCertificate() {
+  const canvas = document.getElementById('cert-canvas');
+  if (!canvas) return;
+  const link = document.createElement('a');
+  link.download = 'codejs-sertifikat.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('✅ Sertifikat yuklab olindi!');
+}
