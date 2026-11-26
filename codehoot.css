@@ -296,8 +296,9 @@
 }
 
 .codehoot-flag-img {
+  width: 200px;
   max-width: 260px;
-  height: 130px;
+  height: 135px;
   object-fit: contain;
   border-radius: 6px;
   display: block;

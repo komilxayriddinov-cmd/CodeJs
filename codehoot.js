@@ -3163,14 +3163,31 @@ const Codehoot = {
     // Bayroq yoki kod namoyishi
     if (mediaContainer) {
       if (curQ.flagCode) {
+        const fCode = String(curQ.flagCode).trim().toLowerCase();
         mediaContainer.style.display = 'flex';
         mediaContainer.innerHTML = `
           <div class="codehoot-flag-box">
-            <img src="https://flagcdn.com/w320/${curQ.flagCode}.png" 
-                 alt="Bayroq" 
+            <img src="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/flags/4x3/${fCode}.svg"
+                 alt="Davlat bayrog'i"
                  class="codehoot-flag-img"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-            <div class="codehoot-flag-fallback" style="display:none; font-size:72px;">${curQ.flagEmoji || '🏳️'}</div>
+                 data-step="0"
+                 onerror="
+                   const s = Number(this.dataset.step || 0);
+                   if (s === 0) {
+                     this.dataset.step = '1';
+                     this.src = 'https://flagcdn.com/w320/${fCode}.png';
+                   } else if (s === 1) {
+                     this.dataset.step = '2';
+                     this.src = 'https://unpkg.com/flag-icons@7.2.3/flags/4x3/${fCode}.svg';
+                   } else {
+                     this.style.display = 'none';
+                     this.nextElementSibling.style.display = 'flex';
+                   }
+                 " />
+            <div class="codehoot-flag-fallback" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-width:180px; min-height:110px; padding:12px; color:#94a3b8; font-size:13px; text-align:center;">
+              <span style="font-size:36px;">🏳️</span>
+              <span>${curQ.hint ? this.escapeHtml(curQ.hint) : 'Bayroq tasviri yuklanmadi'}</span>
+            </div>
           </div>
         `;
       } else if (curQ.code) {
